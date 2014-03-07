@@ -1,0 +1,14 @@
+{
+  "name": "snakerules",
+  "version": "1.0.0",
+  "main": "game.js",
+  "private": true,
+  "devDependencies": {
+    "chai": "^1.9.0",
+    "mocha": "^1.17.1",
+    "gulp-browserify": "^0.4.6",
+    "gulp": "^3.5.5",
+    "gulp-uglify": "^0.2.1",
+    "browserify": "^3.32.0"
+  }
+}
