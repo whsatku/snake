@@ -1,9 +1,12 @@
 "use strict";
 
+var EventEmitter = require("events").EventEmitter;
+var MovingWorldObject = require("./movingworldobject");
 var Snake = require("./snake");
-var EventEmitter = require('events').EventEmitter;
 
 var Game = function SnakeGame(){
+	this.objects = [];
+	this._snakes = [];
 };
 Game.STATES = {
 	PREPARE: 0,
@@ -27,13 +30,12 @@ Game.prototype.state = {
 	updateRate: 500
 };
 
-Game.prototype.objects = [];
-
 Game.prototype.addSnake = function(snake){
 	if(snake === undefined){
 		snake = new Snake(this);
 	}
 	this.objects.push(snake);
+	this._snakes.push(snake);
 	return snake;
 };
 
@@ -42,6 +44,19 @@ Game.prototype.step = function(){
 		this.objects[index].update();
 	}
 	this.emit("step");
+};
+
+Game.prototype.getSnake = function(id){
+	return this._snakes[id];
+};
+
+Game.prototype.input = function(player, input){
+	var snake = this.getSnake(player);
+	if(!snake){
+		return;
+	}
+
+	snake.input(input);
 };
 
 module.exports = Game;

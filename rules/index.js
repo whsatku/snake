@@ -1,6 +1,6 @@
 module.exports = {
 	"Game": require("./game"),
-	"Snake": require("./snake"),
 	"WorldObject": require("./worldobject"),
-	"MovingWorldObject": require("./movingworldobject")
+	"MovingWorldObject": require("./movingworldobject"),
+	"Snake": require("./snake")
 };

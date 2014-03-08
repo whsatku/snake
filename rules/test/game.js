@@ -63,15 +63,34 @@ describe("Game", function(){
 		});
 	});
 
+	describe("#getSnake", function(){
+		before(function(){
+			this.game = new Game();
+			this.snake0 = this.game.addSnake();
+			this.snake1 = this.game.addSnake();
+			this.snake2 = this.game.addSnake();
+		});
+
+		it("should return a snake", function(){
+			expect(this.game.getSnake(0)).to.eql(this.snake0);
+			expect(this.game.getSnake(1)).to.eql(this.snake1);
+			expect(this.game.getSnake(2)).to.eql(this.snake2);
+		});
+	});
+
 	describe("#step", function(){
-		var game = new Game();
-		game.addSnake();
+
+		before(function(){
+			this.game = new Game();
+			this.game.addSnake();
+		});
 
 		it("should be a function", function(){
 			expect(Game).to.respondTo("step");
 		});
 
-		it("should make snake move", function(done){
+		it("should call child's update function", function(done){
+			var game = new Game();
 			var MockWorldObject = new GameLogic.WorldObject(game);
 			MockWorldObject.update = done;
 
@@ -80,15 +99,39 @@ describe("Game", function(){
 		});
 
 		it("should make snake move", function(){
-			var snakePos = game.objects[0].x;
-			game.step();
-			expect(game.objects[0].x).to.not.eql(snakePos);
+			var snakePos = this.game.objects[0].x;
+			this.game.step();
+			expect(this.game.objects[0].x).to.not.eql(snakePos);
 		});
 
 		it("should fire step event", function(next){
-			game.once("step", next);
-			game.step();
+			this.game.once("step", next);
+			this.game.step();
 		});
+	});
+
+	describe("#input", function(){
+
+		before(function(){
+			this.game = new Game();
+			this.snake = this.game.addSnake();
+			this.game.addSnake();
+			this.game.addSnake();
+			this.game.addSnake();
+		});
+
+		it("should be a function", function(){
+			expect(Game).to.respondTo("input");
+		});
+
+		it("should give input to snake", function(done){
+			this.snake.input = function(input){
+				expect(input).to.eql("command");
+				done();
+			};
+			this.game.input(0, "command");
+		});
+
 	});
 
 });

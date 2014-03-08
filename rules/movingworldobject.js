@@ -32,4 +32,19 @@ MovingWorldObject.prototype.update = function(){
 	}
 };
 
+MovingWorldObject.prototype.isOpposite = function(dir1, dir2){
+	if(dir2 === undefined){
+		dir2 = dir1;
+		dir1 = this.direction;
+	}
+	return MovingWorldObject.isOpposite(dir1, dir2);
+};
+
+MovingWorldObject.isOpposite = function(dir1, dir2){
+	return (dir1 === MovingWorldObject.DIR.LEFT && dir2 === MovingWorldObject.DIR.RIGHT)
+		|| (dir1 === MovingWorldObject.DIR.UP && dir2 === MovingWorldObject.DIR.DOWN)
+		|| (dir1 === MovingWorldObject.DIR.RIGHT && dir2 === MovingWorldObject.DIR.LEFT)
+		|| (dir1 === MovingWorldObject.DIR.DOWN && dir2 === MovingWorldObject.DIR.UP)
+};
+
 module.exports = MovingWorldObject;

@@ -4,6 +4,7 @@
 
 window.GameScene = cc.Scene.extend({
 	gridSize: [20, 20],
+	player: 0,
 
 	objectsMap: {
 
@@ -12,10 +13,11 @@ window.GameScene = cc.Scene.extend({
 	onEnter: function() {
 		this._super();
 		this.addChild(cc.LayerColor.create(cc.c4b(150, 150, 150, 255)));
-		this.setupGame();
+		this.initGame();
+		this.initKeyboard();
 	},
 
-	setupGame: function(){
+	initGame: function(){
 		this.game = new GameLogic.Game();
 		this.schedule(this.gameStep.bind(this), this.game.state.updateRate / 1000, Infinity, 0);
 		this.game.on("step", this.onGameStepped.bind(this));
@@ -23,6 +25,12 @@ window.GameScene = cc.Scene.extend({
 
 		// draw initial
 		this.onGameStepped();
+	},
+
+	initKeyboard: function(){
+		var kbd = new KeyboardControlLayer();
+		this.addChild(kbd, 1000000);
+		kbd.init();
 	},
 
 	gameStep: function(){

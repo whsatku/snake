@@ -7,7 +7,9 @@ var Snake = function Snake(){
 	this.maxLength = 4;
 };
 
-require("util").inherits(Snake, require("./movingworldobject"));
+var MovingWorldObject = require("./movingworldobject");
+
+require("util").inherits(Snake, MovingWorldObject);
 
 Snake.prototype.update = function(){
 	if(this.positions.length === 0){
@@ -44,6 +46,23 @@ Snake.prototype._wrapAround = function(){
 	}
 	if(this.y >= this.world.state.height){
 		this.y = 0;
+	}
+};
+
+Snake.prototype.input = function(input){
+	switch(input){
+		case "left": case "right": case "down": case "up":
+			var map = {
+				"left": MovingWorldObject.DIR.LEFT,
+				"right": MovingWorldObject.DIR.RIGHT,
+				"down": MovingWorldObject.DIR.DOWN,
+				"up": MovingWorldObject.DIR.UP
+			};
+			if(this.isOpposite(map[input])){
+				break;
+			}
+			this.direction = map[input];
+			break;
 	}
 };
 

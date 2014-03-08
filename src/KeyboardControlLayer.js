@@ -3,34 +3,35 @@
 "use strict";
 
 window.KeyboardControlLayer = cc.Layer.extend({
-	canCollideWithPlayer: true,
-	onHitGameOver: false,
+	getScene: function(){
+		if(this._scene){
+			return this._scene;
+		}
 
-	ctor: function(main){
-		this._super();
-		this.main = main;
+		var search = this.getParent();
+		while(!(search instanceof GameScene)){
+			search = search.getParent();
+		}
+		this._scene = search;
+		return search;
 	},
 
 	init: function() {
 		this.setKeyboardEnabled(true);
-		this.setMouseEnabled(true);
 	},
 
 	onKeyDown: function(e){
-		if(e == cc.KEY.space){
-			this.main.onAction();
+		var key;
+
+		var map = {};
+		map[cc.KEY.up] = "up";
+		map[cc.KEY.down] = "down";
+		map[cc.KEY.left] = "left";
+		map[cc.KEY.right] = "right";
+
+		if(map[e]){
+			var scene = this.getScene();
+			scene.game.input(scene.player, map[e]);
 		}
 	},
-
-	bb: cc.p(0,0),
-	cursorWidth: 16,
-	cursorHeight: 18,
-
-	onMouseMoved: function(e){
-		this.bb = e._point;
-	},
-
-	getBoundingBox: function(){
-		return new cc.Rect(this.bb.x, this.bb.y - this.cursorHeight, this.cursorWidth, this.cursorHeight);
-	}
 });
