@@ -1,0 +1,9 @@
+{
+	"libs":	[
+		"browser"
+	],
+	"loadEagerly": [
+		"build/*",
+		"cocos2d/**.js"
+	]
+}

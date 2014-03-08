@@ -24,6 +24,7 @@ Game.prototype.state = {
 	powerUp: [],
 	width: 30,
 	height: 20,
+	updateRate: 500
 };
 
 Game.prototype.objects = [];

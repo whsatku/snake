@@ -3,7 +3,7 @@
 	var c = {
 		box2d: false,
 		chipmunk: false,
-		showFPS: true,
+		showFPS: window.location.protocol == "file:",
 		loadExtension: false,
 		frameRate: 60,
 		renderMode: 1,       //Choose of RenderMode: 0(default), 1(Canvas only), 2(WebGL only)
@@ -11,27 +11,12 @@
 		engineDir: 'cocos2d/',
 		//SingleEngineFile:'',
 		appFiles:[
-			'src/SpriteCreator.js',
+			'build/index.js',
 			'src/GameScene.js',
-			'src/GameMainLayer.js',
-			'src/GroundSprite.js',
-			'src/GroundNode.js',
-			'src/GroundDecorationNode.js',
-			'src/GroundDecorationSprite.js',
-			'src/PipeBaseSprite.js',
-			'src/PipeTopSprite.js',
-			'src/PipeNode.js',
-			'src/Player.js',
-			'src/KeyboardControlLayer.js'
+			'src/ObstacleNode.js',
+			'src/SnakeNode.js'
 		],
 		resourceFiles: [
-			{'src': 'res/ground.png'},
-			{'src': 'res/mountain-1.png'},
-			{'src': 'res/mountain-2.png'},
-			{'src': 'res/mountain-3.png'},
-			{'src': 'res/pipe-base.png'},
-			{'src': 'res/pipe-top.png'},
-			{'src': 'res/player.png'},
 		]
 	};
 
