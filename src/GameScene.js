@@ -43,22 +43,13 @@ window.GameScene = cc.Scene.extend({
 			var node;
 
 			if(typeof obj.$id == "undefined"){
-				// new object
-				obj.$id = self._generateId();
-				var ObjectClass = ObstacleNode;
-				if(obj instanceof GameLogic.Snake){
-					ObjectClass = SnakeNode;
-				}
-				node = new ObjectClass();
-				self.addChild(node);
-				node.init();
-				self.objectsMap[obj.$id] = node;
+				node = self._createChildObject(obj);
 			}
 
 			foundObjects.push(obj.$id);
 
 			node = self.objectsMap[obj.$id];
-			node.setPosition(self.toUIPosition(obj.x, obj.y));
+			node.syncFromEngine(obj);
 		});
 
 		// delete removed objects
@@ -68,6 +59,20 @@ window.GameScene = cc.Scene.extend({
 				self.objectsMap[objId] = undefined;
 			}
 		});
+	},
+
+	_createChildObject: function(obj){
+		obj.$id = this._generateId();
+		var ObjectClass = WorldObjectNode;
+		if(obj instanceof GameLogic.Snake){
+			ObjectClass = SnakeNode;
+		}
+		var node = new ObjectClass();
+		this.addChild(node);
+		node.init();
+		this.objectsMap[obj.$id] = node;
+
+		return node;
 	},
 
 	_lastId: 1000,

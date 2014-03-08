@@ -71,6 +71,14 @@ describe("Game", function(){
 			expect(Game).to.respondTo("step");
 		});
 
+		it("should make snake move", function(done){
+			var MockWorldObject = new GameLogic.WorldObject(game);
+			MockWorldObject.update = done;
+
+			game.objects.push(MockWorldObject);
+			game.step();
+		});
+
 		it("should make snake move", function(){
 			var snakePos = game.objects[0].x;
 			game.step();

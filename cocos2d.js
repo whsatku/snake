@@ -13,8 +13,9 @@
 		appFiles:[
 			'build/index.js',
 			'src/GameScene.js',
-			'src/ObstacleNode.js',
-			'src/SnakeNode.js'
+			'src/WorldObjectNode.js',
+			'src/SnakeNode.js',
+			'src/SnakeBitsNode.js'
 		],
 		resourceFiles: [
 		]
