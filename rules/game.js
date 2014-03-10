@@ -43,7 +43,21 @@ Game.prototype.step = function(){
 	for(var index in this.objects){
 		this.objects[index].update();
 	}
+	this.checkCollision();
 	this.emit("step");
+};
+
+Game.prototype.checkCollision = function(){
+	for(var index in this.objects){
+		for(var otherIndex in this.objects){
+			if(index === otherIndex){
+				continue;
+			}
+			if(this.objects[index].isCollideWith(this.objects[otherIndex])){
+				this.objects[index].emit("collision", this.objects[otherIndex]);
+			}
+		}
+	}
 };
 
 Game.prototype.getSnake = function(id){

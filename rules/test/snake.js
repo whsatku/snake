@@ -183,4 +183,110 @@ describe("Snake", function(){
 
 	});
 
+	describe("#isCollideWith", function(){
+		it("should return true when colliding head to head", function(){
+			var a = new Snake(this.game);
+			a.x = 5;
+			a.y = 5;
+
+			var b = new Snake(this.game);
+			b.x = 5;
+			b.y = 5;
+
+			expect(a.isCollideWith(b)).to.be.true;
+			expect(b.isCollideWith(a)).to.be.true;
+		});
+		it("should return false when not colliding head to head", function(){
+			var a = new Snake(this.game);
+			a.x = 5;
+			a.y = 3;
+
+			var b = new Snake(this.game);
+			b.x = 7;
+			b.y = 8;
+
+			expect(a.isCollideWith(b)).to.be.false;
+			expect(b.isCollideWith(a)).to.be.false;
+		});
+
+		it("should return true when colliding head on body", function(){
+			var a = new Snake(this.game);
+			a.positions = [[5, 5], [5, 4], [5, 3], [5, 2]];
+			a.x = 5;
+			a.y = 5;
+
+			var b = new Snake(this.game);
+			b.positions = [[5, 3], [4, 3], [3, 3], [2, 3]];
+			b.x = 5;
+			b.y = 3;
+
+			expect(a.isCollideWith(b)).to.be.true;
+			expect(b.isCollideWith(a)).to.be.true;
+		});
+	});
+
+	describe("#setStartingPosition", function(){
+		it("should move the snake to the location", function(){
+			this.snake.x = 0;
+			this.snake.y = 0;
+			this.snake.setStartingPosition(5, 5);
+
+			expect(this.snake.x).to.eql(5);
+			expect(this.snake.y).to.eql(5);
+		})
+	});
+
+	describe("#reset", function(){
+		it("should reset x, y", function(){
+			this.snake.setStartingPosition(5, 5);
+			this.snake.x = 0;
+			this.snake.y = 0;
+			this.snake.reset();
+
+			expect(this.snake.x).to.eql(5);
+			expect(this.snake.y).to.eql(5);
+		});
+
+		it("should reset maxLength", function(){
+			this.snake.maxLength = 1;
+			this.snake.reset();
+
+			expect(this.snake.maxLength).to.eql(Snake.DEFAULT_MAX_LENGTH);
+		});
+
+		it("should reset tails", function(){
+			this.snake.update();
+			this.snake.update();
+			this.snake.update();
+			this.snake.reset();
+
+			expect(this.snake.positions).to.have.length(0);
+		});
+
+		it("should emit reset action", function(done){
+			var snake = this.game.addSnake();
+			snake.on("reset", done);
+			snake.reset();
+		});
+	});
+
+	describe("#onCollide", function(){
+		it("should reset if the target is deadly", function(done){
+			var object = new GameLogic.WorldObject(this.game);
+			object.deadly = true;
+			this.snake.once("reset", done);
+			this.snake.onCollide(object);
+		});
+
+		it("should not reset if the target is not deadly", function(done){
+			var snake = this.game.addSnake();
+			var object = new GameLogic.WorldObject(this.game);
+			object.deadly = false;
+			snake.once("reset", done);
+			snake.onCollide(object);
+			// done will be double fired if reset is emitted
+			done();
+		});
+	});
+
 });

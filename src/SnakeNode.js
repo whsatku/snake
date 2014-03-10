@@ -21,11 +21,12 @@ window.SnakeNode = WorldObjectNode.extend({
 
 	_cutTails: function(obj){
 		var scene = this.getScene();
-		var remove = this._tails.slice(obj.positions.length - 1);
+		var pos = Math.max(0, obj.positions.length - 1);
+		var remove = this._tails.slice(pos);
 		for(var i = 0; i < remove.length; i++){
 			scene.removeChild(remove[i]);
 		}
-		this._tails = this._tails.slice(0, obj.positions.length - 1);
+		this._tails = this._tails.slice(0, pos);
 	},
 
 	_createTails: function(obj){

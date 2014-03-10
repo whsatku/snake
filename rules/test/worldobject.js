@@ -22,6 +22,12 @@ describe("WorldObject", function(){
 		expect(new WorldObject(this.game)).to.be.an.instanceOf(WorldObject);
 	});
 
+	it("should be an EventEmitter", function(){
+		["emit", "once", "on"].forEach(function(item){
+			expect(new WorldObject(this.game)).to.respondTo(item);
+		}, this);
+	});
+
 	it("should have x, y position", function(){
 		expect((new WorldObject(this.game)).x).to.be.a("Number");
 		expect((new WorldObject(this.game)).y).to.be.a("Number");
@@ -83,6 +89,57 @@ describe("WorldObject", function(){
 			this.object.x = 0;
 			this.object.y = this.game.state.height - 1;
 			expect(this.object.isOffScreen()).to.be.false;
+		});
+	});
+
+	describe("#isCollideWith", function(){
+		it("should return true when two object collide in same position", function(){
+			var a = new WorldObject(this.game);
+			a.x = 5;
+			a.y = 5;
+
+			var b = new WorldObject(this.game);
+			b.x = 5;
+			b.y = 5;
+
+			expect(a.isCollideWith(b)).to.be.true;
+			expect(b.isCollideWith(a)).to.be.true;
+		});
+		it("should return false when two object are not in the same x position", function(){
+			var a = new WorldObject(this.game);
+			a.x = 3;
+			a.y = 5;
+
+			var b = new WorldObject(this.game);
+			b.x = 5;
+			b.y = 5;
+
+			expect(a.isCollideWith(b)).to.be.false;
+			expect(b.isCollideWith(a)).to.be.false;
+		});
+		it("should return false when two object are not in the same y position", function(){
+			var a = new WorldObject(this.game);
+			a.x = 5;
+			a.y = 3;
+
+			var b = new WorldObject(this.game);
+			b.x = 5;
+			b.y = 5;
+
+			expect(a.isCollideWith(b)).to.be.false;
+			expect(b.isCollideWith(a)).to.be.false;
+		});
+		it("should return false when two object are not in the same position", function(){
+			var a = new WorldObject(this.game);
+			a.x = 5;
+			a.y = 3;
+
+			var b = new WorldObject(this.game);
+			b.x = 7;
+			b.y = 8;
+
+			expect(a.isCollideWith(b)).to.be.false;
+			expect(b.isCollideWith(a)).to.be.false;
 		});
 	});
 

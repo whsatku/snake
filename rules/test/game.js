@@ -110,6 +110,36 @@ describe("Game", function(){
 			this.game.once("step", next);
 			this.game.step();
 		});
+
+		it("should check collision between objects and fire collision event", function(done){
+			var game = new Game();
+
+			var a = new GameLogic.WorldObject(game);
+			a.x = 0;
+			a.y = 0;
+			game.objects.push(a);
+
+			var b = new GameLogic.WorldObject(game);
+			b.x = 0;
+			b.y = 0;
+			game.objects.push(b);
+
+			var c = new GameLogic.WorldObject(game);
+			c.x = 0;
+			c.y = 1;
+			game.objects.push(c);
+
+			a.once("collision", function(obj){
+				expect(obj).to.equal(b);
+				done();
+			});
+			// c should not be called
+			c.once("collision", function(){
+				done(new Error("c was errornously collided"));
+			});
+
+			game.step();
+		});
 	});
 
 	describe("#input", function(){

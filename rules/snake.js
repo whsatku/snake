@@ -4,8 +4,13 @@ var Snake = function Snake(){
 	Snake.super_.apply(this, arguments);
 
 	this.positions = [];
-	this.maxLength = 4;
+	this.maxLength = Snake.DEFAULT_MAX_LENGTH;
+	this.startingPosition = [0, 0];
+
+	this.on("collision", this.onCollide.bind(this));
 };
+
+Snake.DEFAULT_MAX_LENGTH = 4;
 
 var MovingWorldObject = require("./movingworldobject");
 
@@ -23,6 +28,15 @@ Snake.prototype.update = function(){
 	this.positions.unshift([this.x, this.y]);
 
 	this._trimPositionToLength();
+};
+
+/**
+ * Set starting position and move the snake to starting position
+ */
+Snake.prototype.setStartingPosition = function(x, y){
+	this.startingPosition = [x, y];
+	this.x = x;
+	this.y = y;
 };
 
 Snake.prototype._trimPositionToLength = function(){
@@ -63,6 +77,40 @@ Snake.prototype.input = function(input){
 			}
 			this.direction = map[input];
 			break;
+	}
+};
+
+Snake.prototype.isCollideWith = function(b){
+	if(b instanceof Snake){
+		var bodyCollision = false;
+		for(var snake1=0; snake1<this.positions.length; snake1++){
+			for(var snake2=0; snake2<b.positions.length; snake2++){
+				bodyCollision = this.positions[snake1][0] === b.positions[snake2][0] &&
+					this.positions[snake1][1] === b.positions[snake2][1];
+				if(bodyCollision){
+					break;
+				}
+			}
+			if(bodyCollision){
+				break;
+			}
+		}
+		return bodyCollision || Snake.super_.prototype.isCollideWith.call(this, b);
+	}
+	return Snake.super_.prototype.isCollideWith.call(this, b);
+};
+
+Snake.prototype.reset = function(){
+	this.x = this.startingPosition[0];
+	this.y = this.startingPosition[1];
+	this.maxLength = Snake.DEFAULT_MAX_LENGTH;
+	this.positions = [];
+	this.emit("reset");
+};
+
+Snake.prototype.onCollide = function(target){
+	if(target.deadly){
+		this.reset();
 	}
 };
 
