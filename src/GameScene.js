@@ -23,8 +23,19 @@ window.GameScene = cc.Scene.extend({
 		this.game.on("step", this.onGameStepped.bind(this));
 		this.game.addSnake();
 
+		for(var y=0; y<this.game.state.width; y++){
+			this._makeObstacle(y, 0);
+		}
+
 		// draw initial
 		this.onGameStepped();
+	},
+
+	_makeObstacle: function(x, y){
+		var obstacle = new GameLogic.Obstacle(this.game);
+		obstacle.x = x;
+		obstacle.y = y;
+		this.game.objects.push(obstacle);
 	},
 
 	initKeyboard: function(){
