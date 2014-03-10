@@ -18,7 +18,9 @@ describe("Game", function(){
 	});
 
 	it("should be an EventEmitter", function(){
-		expect(new Game()).to.be.an.instanceOf(require("events").EventEmitter);
+		["emit", "once", "on"].forEach(function(item){
+			expect(new Game()).to.respondTo(item);
+		});
 	});
 
 	describe(".objects", function(){
@@ -130,6 +132,10 @@ describe("Game", function(){
 				done();
 			};
 			this.game.input(0, "command");
+		});
+
+		it("should ignore if snake does not exists", function(){
+			this.game.input(9999, "command");
 		});
 
 	});
