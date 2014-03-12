@@ -61,9 +61,6 @@ Game.prototype.checkCollision = function(){
 	for(var index in objects){
 		var currentObject = objects[index];
 		for(var otherIndex in objects){
-			if(index === otherIndex){
-				continue;
-			}
 			var otherObject = objects[otherIndex];
 			if(currentObject.isCollideWith(otherObject)){
 				currentObject.emit("collision", otherObject);

@@ -186,10 +186,12 @@ describe("Snake", function(){
 	describe("#isCollideWith", function(){
 		it("should return true when colliding head to head", function(){
 			var a = new Snake(this.game);
+			a.positions = [[5, 5]];
 			a.x = 5;
 			a.y = 5;
 
 			var b = new Snake(this.game);
+			b.positions = [[5, 5]];
 			b.x = 5;
 			b.y = 5;
 
@@ -198,10 +200,12 @@ describe("Snake", function(){
 		});
 		it("should return false when not colliding head to head", function(){
 			var a = new Snake(this.game);
+			a.positions = [[5, 3]];
 			a.x = 5;
 			a.y = 3;
 
 			var b = new Snake(this.game);
+			b.positions = [[7, 8]];
 			b.x = 7;
 			b.y = 8;
 
@@ -240,6 +244,23 @@ describe("Snake", function(){
 			object.x = 0;
 			object.y = 1;
 			expect(snake.isCollideWith(object)).to.be.false;
+		});
+		it("should return true when self colliding", function(){
+			var a = new Snake(this.game);
+			a.positions = [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]];
+			a.x = 0;
+			a.y = 0;
+
+			expect(a.isCollideWith(a)).to.be.true;
+		});
+		it("should return false when moving and not self colliding", function(){
+			var a = new Snake(this.game);
+			a.x = 0;
+			a.y = 0;
+			a.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
+			a.update();
+
+			expect(a.isCollideWith(a)).to.be.false;
 		});
 	});
 

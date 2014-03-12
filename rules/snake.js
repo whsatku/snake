@@ -72,22 +72,21 @@ Snake.prototype.input = function(input){
 	}
 };
 
-Snake.prototype.isCollideWith = function(b){
+Snake.prototype.isCollideWith = function(b, _crosscheck){
 	if(b instanceof Snake){
-		var bodyCollision = false;
-		for(var snake1=0; snake1<this.positions.length; snake1++){
-			for(var snake2=0; snake2<b.positions.length; snake2++){
-				bodyCollision = this.positions[snake1][0] === b.positions[snake2][0] &&
-					this.positions[snake1][1] === b.positions[snake2][1];
-				if(bodyCollision){
-					break;
-				}
-			}
-			if(bodyCollision){
-				break;
+		var target = b.positions;
+		if(this === b){
+			target = this.positions.slice(1);
+		}
+		for(var position in target){
+			if(target[position][0] === this.x && target[position][1] === this.y){
+				return true;
 			}
 		}
-		return bodyCollision || Snake.super_.prototype.isCollideWith.call(this, b);
+		if(_crosscheck === false){
+			return false;
+		}
+		return b.isCollideWith(this, false);
 	}
 	return Snake.super_.prototype.isCollideWith.call(this, b);
 };

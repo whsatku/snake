@@ -41,6 +41,9 @@ WorldObject.prototype.isOffScreen = function(){
 };
 
 WorldObject.prototype.isCollideWith = function(b){
+	if(b === this){
+		return false;
+	}
 	if(!(b instanceof WorldObject)){
 		throw new Error("isCollideWith called with object not type of WorldObject");
 	}
