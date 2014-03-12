@@ -1,12 +1,24 @@
 "use strict";
 
 var EventEmitter = require("events").EventEmitter;
+var randy = require("randy");
 var MovingWorldObject = require("./movingworldobject");
 var Snake = require("./snake");
 
 var Game = function SnakeGame(){
 	this.objects = [];
 	this._snakes = [];
+	this.state = {
+		state: Game.STATES.PREPARE,
+		powerUpCollected: 0,
+		powerUpToEnd: 5,
+		snakes: [],
+		powerUp: [],
+		width: 30,
+		height: 20,
+		updateRate: 500
+	};
+	this._seedRng();
 };
 Game.STATES = {
 	PREPARE: 0,
@@ -16,23 +28,14 @@ Game.STATES = {
 
 require("util").inherits(Game, EventEmitter);
 
-/**
- * Everything other clients need to sync up
- */
-Game.prototype.state = {
-	state: Game.STATES.PREPARE,
-	powerUpCollected: 0,
-	powerUpToEnd: 5,
-	snakes: [],
-	powerUp: [],
-	width: 30,
-	height: 20,
-	updateRate: 500
+Game.prototype._seedRng = function(){
+	this.random = randy.instance();
 };
 
 Game.prototype.addSnake = function(snake){
 	if(snake === undefined){
 		snake = new Snake(this);
+		snake.randomStartingPosition();
 	}
 	this.objects.push(snake);
 	this._snakes.push(snake);

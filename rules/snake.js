@@ -40,6 +40,13 @@ Snake.prototype.setStartingPosition = function(x, y){
 	this.y = y;
 };
 
+Snake.prototype.randomStartingPosition = function(){
+	this.setStartingPosition(
+		this.world.random.randInt(0, this.world.state.width),
+		this.world.random.randInt(0, this.world.state.height)
+	);
+};
+
 Snake.prototype._trimPositionToLength = function(){
 	if(this.positions.length > this.maxLength){
 		this.positions = this.positions.slice(0, this.maxLength);
@@ -102,8 +109,7 @@ Snake.prototype.isCollideWith = function(b){
 };
 
 Snake.prototype.reset = function(){
-	this.x = this.startingPosition[0];
-	this.y = this.startingPosition[1];
+	this.randomStartingPosition();
 	this.maxLength = Snake.DEFAULT_MAX_LENGTH;
 	this.positions = [];
 	this.emit("reset");

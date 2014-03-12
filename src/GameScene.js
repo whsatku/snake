@@ -21,7 +21,7 @@ window.GameScene = cc.Scene.extend({
 		this.game = new GameLogic.Game();
 		this.schedule(this.gameStep.bind(this), this.game.state.updateRate / 1000, Infinity, 0);
 		this.game.on("step", this.onGameStepped.bind(this));
-		this.game.addSnake().setStartingPosition(5, 5);
+		this.game.addSnake();
 
 		for(var y=0; y<this.game.state.width; y++){
 			this._makeObstacle(y, 0);

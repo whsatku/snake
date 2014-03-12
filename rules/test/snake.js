@@ -239,12 +239,12 @@ describe("Snake", function(){
 	describe("#reset", function(){
 		it("should reset x, y", function(){
 			this.snake.setStartingPosition(5, 5);
-			this.snake.x = 0;
-			this.snake.y = 0;
+			this.snake.x = -1;
+			this.snake.y = -1;
 			this.snake.reset();
 
-			expect(this.snake.x).to.eql(5);
-			expect(this.snake.y).to.eql(5);
+			expect(this.snake.x).to.not.eql(-1);
+			expect(this.snake.y).to.not.eql(-1);
 		});
 
 		it("should reset maxLength", function(){

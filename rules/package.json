@@ -10,5 +10,8 @@
     "gulp": "^3.5.5",
     "gulp-uglify": "^0.2.1",
     "browserify": "^3.32.0"
+  },
+  "dependencies": {
+    "randy": "^1.4.2"
   }
 }
