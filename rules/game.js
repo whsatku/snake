@@ -16,7 +16,7 @@ var Game = function SnakeGame(){
 		powerUp: [],
 		width: 30,
 		height: 20,
-		updateRate: 500
+		updateRate: 100
 	};
 	this._seedRng();
 };
