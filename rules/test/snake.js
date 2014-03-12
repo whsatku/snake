@@ -223,22 +223,28 @@ describe("Snake", function(){
 			expect(a.isCollideWith(b)).to.be.true;
 			expect(b.isCollideWith(a)).to.be.true;
 		});
-	});
-
-	describe("#setStartingPosition", function(){
-		it("should move the snake to the location", function(){
-			this.snake.x = 0;
-			this.snake.y = 0;
-			this.snake.setStartingPosition(5, 5);
-
-			expect(this.snake.x).to.eql(5);
-			expect(this.snake.y).to.eql(5);
-		})
+		it("should return true on colliding head on with other object", function(){
+			var snake = new Snake(this.game);
+			snake.x = 0;
+			snake.y = 0;
+			var object = new GameLogic.WorldObject(this.game);
+			object.x = 0;
+			object.y = 0;
+			expect(snake.isCollideWith(object)).to.be.true;
+		});
+		it("should return false on not colliding head on with other object", function(){
+			var snake = new Snake(this.game);
+			snake.x = 0;
+			snake.y = 0;
+			var object = new GameLogic.WorldObject(this.game);
+			object.x = 0;
+			object.y = 1;
+			expect(snake.isCollideWith(object)).to.be.false;
+		});
 	});
 
 	describe("#reset", function(){
 		it("should reset x, y", function(){
-			this.snake.setStartingPosition(5, 5);
 			this.snake.x = -1;
 			this.snake.y = -1;
 			this.snake.reset();

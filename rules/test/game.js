@@ -80,6 +80,18 @@ describe("Game", function(){
 		});
 	});
 
+	describe("#hasActivePowerup", function(){
+		it("should be able to ask for any powerup");
+		it("should be able to ask for only plain powerup", function(){
+			var game = new Game();
+			expect(game.hasActivePowerup(true)).to.be.false;
+
+			var item = new GameLogic.Powerup(game);
+			game.objects.push(item);
+			expect(game.hasActivePowerup(true)).to.be.true;
+		});
+	});
+
 	describe("#step", function(){
 
 		before(function(){
@@ -139,6 +151,34 @@ describe("Game", function(){
 			});
 
 			game.step();
+		});
+
+		it("should still run collision check if the object is removed during processing", function(){
+			var game = new Game();
+
+			var snake = game.addSnake();
+			snake.x = 1;
+			snake.y = 0;
+			snake.direction = GameLogic.MovingWorldObject.DIR.LEFT;
+
+			game.addSnake();
+
+			var powerup = new GameLogic.Powerup(game);
+			powerup.x = 0;
+			powerup.y = 0;
+			game.objects.push(powerup);
+
+			expect(game.objects).to.include.members([powerup]);
+
+			game.step();
+
+			expect(game.objects).not.to.include.members([powerup]);
+		});
+
+		it("should generate powerup is one is not active", function(){
+			var game = new Game();
+			game.step();
+			expect(game.objects[game.objects.length - 1]).to.be.instanceOf(GameLogic.Powerup);
 		});
 	});
 

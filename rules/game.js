@@ -2,8 +2,8 @@
 
 var EventEmitter = require("events").EventEmitter;
 var randy = require("randy");
-var MovingWorldObject = require("./movingworldobject");
 var Snake = require("./snake");
+var Powerup = require("./powerup");
 
 var Game = function SnakeGame(){
 	this.objects = [];
@@ -34,11 +34,16 @@ Game.prototype._seedRng = function(){
 
 Game.prototype.addSnake = function(snake){
 	if(snake === undefined){
-		snake = new Snake(this);
-		snake.randomStartingPosition();
+		snake = this._createSnake();
 	}
 	this.objects.push(snake);
 	this._snakes.push(snake);
+	return snake;
+};
+
+Game.prototype._createSnake = function(){
+	var snake = new Snake(this);
+	snake.randomPosition();
 	return snake;
 };
 
@@ -47,20 +52,51 @@ Game.prototype.step = function(){
 		this.objects[index].update();
 	}
 	this.checkCollision();
+	this.generatePowerup();
 	this.emit("step");
 };
 
 Game.prototype.checkCollision = function(){
-	for(var index in this.objects){
-		for(var otherIndex in this.objects){
+	var objects = this.objects.slice(0);
+	for(var index in objects){
+		var currentObject = objects[index];
+		for(var otherIndex in objects){
 			if(index === otherIndex){
 				continue;
 			}
-			if(this.objects[index].isCollideWith(this.objects[otherIndex])){
-				this.objects[index].emit("collision", this.objects[otherIndex]);
+			var otherObject = objects[otherIndex];
+			if(currentObject.isCollideWith(otherObject)){
+				currentObject.emit("collision", otherObject);
 			}
 		}
 	}
+};
+
+Game.prototype.generatePowerup = function(){
+	if(this.hasActivePowerup(true)){
+		return;
+	}
+
+	var powerup = new Powerup(this);
+	powerup.randomPosition();
+
+	this.objects.push(powerup);
+	return powerup;
+};
+
+Game.prototype.hasActivePowerup = function(onlyNormal){
+	for(var index in this.objects){
+		if(
+			this.objects[index] instanceof Powerup &&
+			(
+				(onlyNormal === true && this.objects[index].constructor == Powerup) ||
+				onlyNormal !== true
+			)
+		){
+			return true;
+		}
+	}
+	return false;
 };
 
 Game.prototype.getSnake = function(id){
@@ -89,6 +125,6 @@ var arrayRemove = function(array, from, to){
 	var rest = array.slice((to || from) + 1 || array.length);
 	array.length = from < 0 ? array.length + from : from;
 	return array.push.apply(array, rest);
-}
+};
 
 module.exports = Game;

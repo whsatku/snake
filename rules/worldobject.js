@@ -44,7 +44,12 @@ WorldObject.prototype.isCollideWith = function(b){
 	if(!(b instanceof WorldObject)){
 		throw new Error("isCollideWith called with object not type of WorldObject");
 	}
-	return this.x == b.x && this.y == b.y;
+	return this.x === b.x && this.y === b.y;
+};
+
+WorldObject.prototype.randomPosition = function(){
+	this.x = this.world.random.randInt(0, this.world.state.width);
+	this.y = this.world.random.randInt(0, this.world.state.height);
 };
 
 module.exports = WorldObject;
