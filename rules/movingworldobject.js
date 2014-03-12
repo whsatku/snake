@@ -7,7 +7,7 @@ MovingWorldObject.DIR = {
 	RIGHT: 1,
 	DOWN: 2,
 	LEFT: 3
-}
+};
 
 require("util").inherits(MovingWorldObject, require("./worldobject"));
 

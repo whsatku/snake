@@ -7,6 +7,6 @@ gulp.task('default', function() {
 		.pipe(browserify({
 			standalone: 'GameLogic'
 		}))
-		//.pipe(uglify())
+		.pipe(uglify())
 		.pipe(gulp.dest('../build/'))
 });

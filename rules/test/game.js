@@ -170,4 +170,20 @@ describe("Game", function(){
 
 	});
 
+	describe("#removeChild", function(){
+		it("should remove a child", function(){
+			var game = new Game();
+			var snake = game.addSnake();
+			game.removeChild(snake);
+			expect(game.objects).to.have.length(0);
+		});
+
+		it("should do nothing when child is not existing", function(){
+			var game = new Game();
+			game.addSnake();
+			game.removeChild(new GameLogic.WorldObject(game));
+			expect(game.objects).to.have.length(1);
+		});
+	});
+
 });

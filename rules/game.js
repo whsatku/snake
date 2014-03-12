@@ -73,4 +73,19 @@ Game.prototype.input = function(player, input){
 	snake.input(input);
 };
 
+Game.prototype.removeChild = function(child){
+	var index = this.objects.indexOf(child);
+	if(index === -1){
+		return;
+	}
+	arrayRemove(this.objects, index);
+};
+
+// http://ejohn.org/blog/javascript-array-remove/
+var arrayRemove = function(array, from, to){
+	var rest = array.slice((to || from) + 1 || array.length);
+	array.length = from < 0 ? array.length + from : from;
+	return array.push.apply(array, rest);
+}
+
 module.exports = Game;

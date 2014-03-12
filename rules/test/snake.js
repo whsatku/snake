@@ -271,11 +271,12 @@ describe("Snake", function(){
 	});
 
 	describe("#onCollide", function(){
+
 		it("should reset if the target is deadly", function(done){
 			var object = new GameLogic.WorldObject(this.game);
 			object.deadly = true;
 			this.snake.once("reset", done);
-			this.snake.onCollide(object);
+			this.snake.emit("collision", object);
 		});
 
 		it("should not reset if the target is not deadly", function(done){
@@ -283,9 +284,26 @@ describe("Snake", function(){
 			var object = new GameLogic.WorldObject(this.game);
 			object.deadly = false;
 			snake.once("reset", done);
-			snake.onCollide(object);
+			snake.emit("collision", object);
 			// done will be double fired if reset is emitted
 			done();
+		});
+
+		it("should make the snake goes longer when collecting a powerup", function(){
+			var snake = this.game.addSnake();
+			var object = new GameLogic.Powerup(this.game);
+			var initialLength = snake.maxLength;
+			snake.emit("collision", object);
+			expect(snake.maxLength).to.eql(initialLength + object.growth);
+		});
+
+		it("should make the snake goes longer by specified size when collecting a powerup", function(){
+			var snake = this.game.addSnake();
+			var object = new GameLogic.Powerup(this.game);
+			object.growth = 5;
+			var initialLength = snake.maxLength;
+			snake.emit("collision", object);
+			expect(snake.maxLength).to.eql(initialLength + 5);
 		});
 	});
 

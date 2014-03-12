@@ -13,6 +13,7 @@ var Snake = function Snake(){
 Snake.DEFAULT_MAX_LENGTH = 4;
 
 var MovingWorldObject = require("./movingworldobject");
+var Powerup = require("./powerup");
 
 require("util").inherits(Snake, MovingWorldObject);
 
@@ -111,6 +112,9 @@ Snake.prototype.reset = function(){
 Snake.prototype.onCollide = function(target){
 	if(target.deadly){
 		this.reset();
+	}
+	if(target instanceof Powerup){
+		this.maxLength += target.growth;
 	}
 };
 

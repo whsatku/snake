@@ -3,5 +3,6 @@ module.exports = {
 	"WorldObject": require("./worldobject"),
 	"MovingWorldObject": require("./movingworldobject"),
 	"Obstacle": require("./obstacle"),
-	"Snake": require("./snake")
+	"Snake": require("./snake"),
+	"Powerup": require("./powerup")
 };
