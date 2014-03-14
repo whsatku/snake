@@ -154,31 +154,45 @@ describe("Snake", function(){
 
 		it("should accept left as input", function(){
 			this.snake.input("left");
+			this.snake.update();
 			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.LEFT);
 		});
 
 		it("should accept up as input", function(){
 			this.snake.input("down");
+			this.snake.update();
 			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.DOWN);
 		});
 
 		it("should accept right as input", function(){
 			this.snake.input("right");
+			this.snake.update();
 			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.RIGHT);
 		});
 
 		it("should accept down as input", function(){
 			this.snake.input("down");
+			this.snake.update();
 			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.DOWN);
 		});
 
 		it("should not allow moving in opposite direction", function(){
 			this.snake.input("up");
+			this.snake.update();
 			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.DOWN);
+		});
+
+		it("should not allow moving in opposite direction when two keys are pressed in the same tick", function(){
+			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.DOWN);
+			this.snake.input("left");
+			this.snake.input("up");
+			this.snake.update();
+			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.LEFT);
 		});
 
 		it("should not error when invalid input is given", function(){
 			this.snake.input("nonexistingkey");
+			this.snake.update();
 		});
 
 	});

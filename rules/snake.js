@@ -6,6 +6,7 @@ var Snake = function Snake(){
 	this.positions = [];
 	this.maxLength = Snake.DEFAULT_MAX_LENGTH;
 	this.startingPosition = [0, 0];
+	this._turning = null;
 
 	this.on("collision", this.onCollide.bind(this));
 };
@@ -20,6 +21,11 @@ require("util").inherits(Snake, MovingWorldObject);
 Snake.prototype.update = function(){
 	if(this.positions.length === 0){
 		this.positions.unshift([this.x, this.y]);
+	}
+
+	if(this._turning !== null){
+		this.direction = this._turning;
+		this._turning = null;
 	}
 
 	Snake.super_.prototype.update.apply(this, arguments);
@@ -67,7 +73,7 @@ Snake.prototype.input = function(input){
 			if(this.isOpposite(map[input])){
 				break;
 			}
-			this.direction = map[input];
+			this._turning = map[input];
 			break;
 	}
 };
