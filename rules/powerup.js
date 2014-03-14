@@ -8,7 +8,7 @@ var Powerup = function Powerup(){
 require("util").inherits(Powerup, require("./worldobject"));
 
 Powerup.prototype.deadly = false;
-Powerup.prototype.growth = 1;
+Powerup.prototype.growth = 4;
 
 Powerup.prototype.onCollide = function(){
 	this.world.removeChild(this);

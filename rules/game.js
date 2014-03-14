@@ -14,8 +14,8 @@ var Game = function SnakeGame(){
 		powerUpToEnd: 5,
 		snakes: [],
 		powerUp: [],
-		width: 30,
-		height: 20,
+		width: 40,
+		height: 30,
 		updateRate: 100
 	};
 	this._seedRng();
