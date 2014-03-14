@@ -4,14 +4,7 @@
 
 window.SnakeBitsNode = WorldObjectNode.extend({
 	init: function(){
-		this._super("res/snakebody.png");
-		this.createColor();
-	},
-
-	createColor: function(){
-		this.colorSprite = cc.Sprite.create("res/snakebody_c.png");
-		this.colorSprite.setAnchorPoint(0, 0);
-		this.addChild(this.colorSprite);
+		this._super("res/snake.png", cc.rect(16, 0, 16, 16));
 	},
 
 	// sync is managed by SnakeNode

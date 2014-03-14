@@ -6,14 +6,7 @@ window.SnakeNode = WorldObjectNode.extend({
 	_tails: [],
 
 	init: function(){
-		this._super("res/snakehead.png");
-		this.createColor();
-	},
-
-	createColor: function(){
-		this.colorSprite = cc.Sprite.create("res/snakehead_c.png");
-		this.colorSprite.setAnchorPoint(0, 0);
-		this.addChild(this.colorSprite);
+		this._super("res/snake.png", cc.rect(0, 0, 16, 16));
 	},
 
 	syncFromEngine: function(obj){
@@ -61,17 +54,51 @@ window.SnakeNode = WorldObjectNode.extend({
 
 			this._tails[i].index = i;
 			this._tails[i].setPosition(scene.toUIPosition(position[0], position[1]));
+			this._tails[i].setFlippedX(false);
+			this._tails[i].setRotation(0);
 
 			var dir = this.getTailDirection(obj.positions, i+1);
-			switch(dir){
-				case GameLogic.MovingWorldObject.DIR.UP:
-				case GameLogic.MovingWorldObject.DIR.DOWN:
-					this._tails[i].setRotation(90);
-					break;
-				case GameLogic.MovingWorldObject.DIR.LEFT:
-				case GameLogic.MovingWorldObject.DIR.RIGHT:
-				default:
-					this._tails[i].setRotation(0);
+			if(dir[1] === null){
+				switch(dir[0]){
+					case GameLogic.MovingWorldObject.DIR.UP:
+						this._tails[i].setRotation(-90);
+						break;
+					case GameLogic.MovingWorldObject.DIR.DOWN:
+						this._tails[i].setRotation(90);
+						break;
+				}
+				if(dir[0] === GameLogic.MovingWorldObject.DIR.RIGHT){
+					this._tails[i].setFlippedX(true);
+				}
+			}else{
+				if(dir[0] === GameLogic.MovingWorldObject.DIR.LEFT){
+					if(dir[1] === GameLogic.MovingWorldObject.DIR.UP){
+						this._tails[i].setRotation(90);
+					}
+				}else if(dir[0] === GameLogic.MovingWorldObject.DIR.RIGHT){
+					this._tails[i].setFlippedX(true);
+					if(dir[1] === GameLogic.MovingWorldObject.DIR.UP){
+						this._tails[i].setRotation(-90);
+					}
+				}else if(dir[0] === GameLogic.MovingWorldObject.DIR.DOWN){
+					if(dir[1] === GameLogic.MovingWorldObject.DIR.LEFT){
+						this._tails[i].setRotation(90);
+					}else if(dir[1] === GameLogic.MovingWorldObject.DIR.RIGHT){
+						this._tails[i].setRotation(180);
+					}
+				}else if(dir[0] === GameLogic.MovingWorldObject.DIR.UP){
+					if(dir[1] === GameLogic.MovingWorldObject.DIR.RIGHT){
+						this._tails[i].setFlippedX(true);
+					}
+				}
+			}
+
+			if(i == this._tails.length - 1){
+				this._tails[i].setTextureRect(cc.rect(32, 0, 16, 16));
+			}else if(dir[1] !== null){
+				this._tails[i].setTextureRect(cc.rect(48, 0, 16, 16));
+			}else{
+				this._tails[i].setTextureRect(cc.rect(16, 0, 16, 16));
 			}
 		}
 	},
@@ -82,6 +109,7 @@ window.SnakeNode = WorldObjectNode.extend({
 		var nextTail = positions[i+1];
 
 		var out = null;
+		var junction = null;
 		if(lastTail[0] - thisTail[0] > 0){
 			out = GameLogic.MovingWorldObject.DIR.RIGHT;
 		}else if(lastTail[0] - thisTail[0] < 0){
@@ -92,8 +120,27 @@ window.SnakeNode = WorldObjectNode.extend({
 			out = GameLogic.MovingWorldObject.DIR.DOWN;
 		}
 
-		// TODO: Junction
-		return out;
+		if(nextTail !== undefined){
+			switch(out){
+				case GameLogic.MovingWorldObject.DIR.RIGHT:
+				case GameLogic.MovingWorldObject.DIR.LEFT:
+					if(nextTail[1] - thisTail[1] > 0){
+						junction = GameLogic.MovingWorldObject.DIR.DOWN;
+					}else if(nextTail[1] - thisTail[1] < 0){
+						junction = GameLogic.MovingWorldObject.DIR.UP;
+					}
+					break;
+				case GameLogic.MovingWorldObject.DIR.UP:
+				case GameLogic.MovingWorldObject.DIR.DOWN:
+					if(nextTail[0] - thisTail[0] > 0){
+						junction = GameLogic.MovingWorldObject.DIR.RIGHT;
+					}else if(nextTail[0] - thisTail[0] < 0){
+						junction = GameLogic.MovingWorldObject.DIR.LEFT;
+					}
+			}
+		}
+
+		return [out, junction];
 	},
 
 	_updateRotation: function(obj){
@@ -115,10 +162,5 @@ window.SnakeNode = WorldObjectNode.extend({
 				this.setFlippedX(false);
 				this.setRotation(0);
 		}
-	},
-
-	setFlippedX: function(flip){
-		this._super(flip);
-		this.colorSprite.setFlippedX(flip);
 	},
 });
