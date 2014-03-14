@@ -3,15 +3,12 @@
 "use strict";
 
 window.WorldObjectNode = cc.Sprite.extend({
-	color: cc.c3b(0, 0, 0),
-
 	init: function(){
-		this._super();
-		this.setAnchorPoint(0, 1);
-
-		var scene = this.getScene();
-		this.setContentSize(scene.gridSize[0], scene.gridSize[1]);
-		this.setColor(this.color);
+		if(arguments.length === 0){
+			this._super("res/tiles.png", cc.rect(18, 1, 16, 16));
+		}else{
+			this._super.apply(this, arguments);
+		}
 	},
 
 	syncFromEngine: function(obj){

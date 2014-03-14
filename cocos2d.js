@@ -16,9 +16,16 @@
 			'src/KeyboardControlLayer.js',
 			'src/WorldObjectNode.js',
 			'src/SnakeNode.js',
-			'src/SnakeBitsNode.js'
+			'src/SnakeBitsNode.js',
+			'src/PowerupNode.js'
 		],
 		resourceFiles: [
+			{src: 'res/snakehead.png'},
+			{src: 'res/snakehead_c.png'},
+			{src: 'res/snakebody.png'},
+			{src: 'res/snakebody_c.png'},
+			{src: 'res/food.png'},
+			{src: 'res/tiles.png'},
 		]
 	};
 

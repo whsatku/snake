@@ -3,7 +3,7 @@
 "use strict";
 
 window.GameScene = cc.Scene.extend({
-	gridSize: [20, 20],
+	gridSize: [16, 16],
 	player: 0,
 
 	objectsMap: {
@@ -25,6 +25,7 @@ window.GameScene = cc.Scene.extend({
 
 		for(var y=0; y<this.game.state.width; y++){
 			this._makeObstacle(y, 0);
+			this._makeObstacle(y, this.game.state.height - 1);
 		}
 
 		// draw initial
@@ -85,6 +86,8 @@ window.GameScene = cc.Scene.extend({
 		var ObjectClass = WorldObjectNode;
 		if(obj instanceof GameLogic.Snake){
 			ObjectClass = SnakeNode;
+		}else if(obj instanceof GameLogic.Powerup){
+			ObjectClass = PowerupNode;
 		}
 		var node = new ObjectClass();
 		this.addChild(node);
@@ -100,7 +103,10 @@ window.GameScene = cc.Scene.extend({
 	},
 
 	toUIPosition: function(x, y){
-		y = this.game.state.height - y + 1;
-		return cc.p(x * this.gridSize[0], y * this.gridSize[1]);
+		y = this.game.state.height - y - 1;
+		return cc.p(
+			x * this.gridSize[0] + this.gridSize[0]/2,
+			y * this.gridSize[1] + this.gridSize[1]/2
+		);
 	}
 });
