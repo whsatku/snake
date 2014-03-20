@@ -1,12 +1,14 @@
-var gulp = require('gulp');
-var browserify = require('gulp-browserify');
-var uglify = require('gulp-uglify');
+"use strict";
 
-gulp.task('default', function() {
-	gulp.src('index.js')
+var gulp = require("gulp");
+var browserify = require("gulp-browserify");
+var uglify = require("gulp-uglify");
+
+gulp.task("default", function() {
+	gulp.src("index.js")
 		.pipe(browserify({
-			standalone: 'GameLogic'
+			standalone: "GameLogic"
 		}))
 		.pipe(uglify())
-		.pipe(gulp.dest('../build/'))
+		.pipe(gulp.dest("../build/"));
 });

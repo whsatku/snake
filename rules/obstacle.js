@@ -1,3 +1,5 @@
+"use strict";
+
 var Obstacle = function Obstacle(){
 	Obstacle.super_.apply(this, arguments);
 };

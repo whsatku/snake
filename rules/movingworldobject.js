@@ -1,3 +1,5 @@
+"use strict";
+
 var MovingWorldObject = function MovingWorldObject(){
 	MovingWorldObject.super_.apply(this, arguments);
 };
@@ -17,7 +19,7 @@ MovingWorldObject.prototype.speed = 1;
 MovingWorldObject.prototype.update = function(){
 	MovingWorldObject.super_.prototype.update.apply(this, arguments);
 
-	if(this.speed == 0){
+	if(this.speed === 0){
 		return;
 	}
 
@@ -41,10 +43,10 @@ MovingWorldObject.prototype.isOpposite = function(dir1, dir2){
 };
 
 MovingWorldObject.isOpposite = function(dir1, dir2){
-	return (dir1 === MovingWorldObject.DIR.LEFT && dir2 === MovingWorldObject.DIR.RIGHT)
-		|| (dir1 === MovingWorldObject.DIR.UP && dir2 === MovingWorldObject.DIR.DOWN)
-		|| (dir1 === MovingWorldObject.DIR.RIGHT && dir2 === MovingWorldObject.DIR.LEFT)
-		|| (dir1 === MovingWorldObject.DIR.DOWN && dir2 === MovingWorldObject.DIR.UP)
+	return (dir1 === MovingWorldObject.DIR.LEFT && dir2 === MovingWorldObject.DIR.RIGHT) ||
+		(dir1 === MovingWorldObject.DIR.UP && dir2 === MovingWorldObject.DIR.DOWN) ||
+		(dir1 === MovingWorldObject.DIR.RIGHT && dir2 === MovingWorldObject.DIR.LEFT) ||
+		(dir1 === MovingWorldObject.DIR.DOWN && dir2 === MovingWorldObject.DIR.UP);
 };
 
 module.exports = MovingWorldObject;
