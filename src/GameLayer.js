@@ -4,7 +4,7 @@
 
 window.GameLayer = cc.Layer.extend({
 	gridSize: [16, 16],
-	map: "plain",
+	map: "dota",
 
 	objectsMap: {
 	},
