@@ -5,6 +5,7 @@
 window.GameScene = cc.Scene.extend({
 	gridSize: [16, 16],
 	player: 0,
+	map: "plain",
 
 	objectsMap: {
 
@@ -21,7 +22,7 @@ window.GameScene = cc.Scene.extend({
 		this.game = new GameLogic.Game();
 		this.schedule(this.gameStep.bind(this), this.game.state.updateRate / 1000, Infinity, 0);
 		this.game.on("step", this.onGameStepped.bind(this));
-		this.game.loadMap("plain");
+		this.game.loadMap(this.map);
 		this.game.addSnake();
 
 		// draw initial
