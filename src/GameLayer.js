@@ -9,6 +9,11 @@ window.GameLayer = cc.Layer.extend({
 	objectsMap: {
 	},
 
+	tileset: {
+		"dungeon": ["res/tiles.png", cc.rect(52, 1, 16, 16)],
+		"brick": ["res/tiles.png", cc.rect(52, 1, 16, 16)],
+	},
+
 	init: function() {
 		this.initGame();
 	},
@@ -41,7 +46,17 @@ window.GameLayer = cc.Layer.extend({
 	},
 
 	fillFloor: function(){
-
+		var mapData = GameLogic.map[this.map];
+		var tileset = this.tileset[mapData.tileset||"brick"];
+		var groundNode = cc.SpriteBatchNode.create(tileset[0], this.game.state.width * this.game.state.height);
+		for(var y=0; y<this.game.state.height; y++){
+			for(var x=0; x<this.game.state.width; x++){
+				var node = cc.Sprite.create.apply(null, tileset);
+				node.setPosition(this.toUIPosition(x, y));
+				groundNode.addChild(node);
+			}
+		}
+		this.addChild(groundNode);
 	},
 
 	syncFromEngine: function(){

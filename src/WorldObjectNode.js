@@ -5,7 +5,7 @@
 window.WorldObjectNode = cc.Sprite.extend({
 	tileset: {
 		"dungeon": ["res/tiles.png", cc.rect(18, 1, 16, 16)],
-		"brick": ["res/tiles.png", cc.rect(69, 1, 16, 16)],
+		"brick": ["res/tiles.png", cc.rect(86, 1, 16, 16)],
 	},
 
 	init: function(){

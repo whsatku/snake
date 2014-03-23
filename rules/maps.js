@@ -3,7 +3,7 @@
 
 var multiline = require("multiline");
 
-exports.plain = multiline(function(){
+exports.plain = new String(multiline(function(){
 /*!
 #########     #########     #########
 #                                   #
@@ -35,13 +35,13 @@ exports.plain = multiline(function(){
 #                                   #
 #########     #########     #########
 */
-return 0;});
+return 0;}));
 exports.plain.tileset = "brick";
 
-exports.unitTest = multiline(function(){
+exports.unitTest = new String(multiline(function(){
 /*!
 ###
 # #
 ###
 */
-return 0;});
+return 0;}));
