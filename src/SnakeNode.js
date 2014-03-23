@@ -25,11 +25,11 @@ window.SnakeNode = WorldObjectNode.extend({
 	},
 
 	_cutTails: function(obj){
-		var scene = this.getScene();
+		var root = this.getRoot();
 		var pos = Math.max(0, obj.positions.length - 1);
 		var remove = this._tails.slice(pos);
 		for(var i = 0; i < remove.length; i++){
-			scene.removeChild(remove[i]);
+			root.removeChild(remove[i]);
 		}
 		this._tails = this._tails.slice(0, pos);
 	},
@@ -37,23 +37,23 @@ window.SnakeNode = WorldObjectNode.extend({
 	_createTails: function(obj){
 		// we need to add to scene otherwise the tail will be relatively positioned
 
-		var scene = this.getScene();
+		var root = this.getRoot();
 		for(var i = this._tails.length; i < obj.positions.length - 1; i++){
 			var child = new SnakeBitsNode();
-			scene.addChild(child);
+			root.addChild(child);
 			child.init();
 			this._tails.push(child);
 		}
 	},
 
 	_updateTails: function(obj){
-		var scene = this.getScene();
+		var root = this.getRoot();
 
 		for(var i = 0; i < this._tails.length; i++){
 			var position = obj.positions[i + 1];
 
 			this._tails[i].index = i;
-			this._tails[i].setPosition(scene.toUIPosition(position[0], position[1]));
+			this._tails[i].setPosition(root.toUIPosition(position[0], position[1]));
 			this._tails[i].setFlippedX(false);
 			this._tails[i].setRotation(0);
 

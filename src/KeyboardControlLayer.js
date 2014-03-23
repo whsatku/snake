@@ -3,17 +3,10 @@
 "use strict";
 
 window.KeyboardControlLayer = cc.Layer.extend({
-	getScene: function(){
-		if(this._scene){
-			return this._scene;
-		}
-
-		var search = this.getParent();
-		while(!(search instanceof GameScene)){
-			search = search.getParent();
-		}
-		this._scene = search;
-		return search;
+	ctor: function(root, player){
+		this._super();
+		this._root = root;
+		this.player = player;
 	},
 
 	init: function() {
@@ -30,8 +23,7 @@ window.KeyboardControlLayer = cc.Layer.extend({
 		map[cc.KEY.right] = "right";
 
 		if(map[e]){
-			var scene = this.getScene();
-			scene.game.input(scene.player, map[e]);
+			this._root.game.input(this.player, map[e]);
 		}
 	},
 });

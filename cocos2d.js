@@ -13,6 +13,7 @@
 		appFiles:[
 			'build/index.js',
 			'src/GameScene.js',
+			'src/GameLayer.js',
 			'src/KeyboardControlLayer.js',
 			'src/WorldObjectNode.js',
 			'src/SnakeNode.js',

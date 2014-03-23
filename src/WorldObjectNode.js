@@ -10,7 +10,7 @@ window.WorldObjectNode = cc.Sprite.extend({
 
 	init: function(){
 		if(arguments.length === 0){
-			var mapName = this.getScene().map;
+			var mapName = this.getRoot().map;
 			var tileset = GameLogic.map[mapName].tileset || "brick";
 			this._super.apply(this, this.tileset[tileset]);
 		}else{
@@ -22,16 +22,16 @@ window.WorldObjectNode = cc.Sprite.extend({
 		this.setPosition(this.getParent().toUIPosition(obj.x, obj.y));
 	},
 
-	getScene: function(){
-		if(this._scene){
-			return this._scene;
+	getRoot: function(){
+		if(this._root){
+			return this._root;
 		}
 
 		var search = this.getParent();
-		while(!(search instanceof GameScene)){
+		while(!(search instanceof GameLayer)){
 			search = search.getParent();
 		}
-		this._scene = search;
+		this._root = search;
 		return search;
 	}
 });
