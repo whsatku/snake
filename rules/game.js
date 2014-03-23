@@ -4,6 +4,7 @@ var EventEmitter = require("events").EventEmitter;
 var randy = require("randy");
 var Snake = require("./snake");
 var Powerup = require("./powerup");
+var maps = require("./maps");
 
 var Game = function SnakeGame(){
 	this.objects = [];
@@ -16,7 +17,8 @@ var Game = function SnakeGame(){
 		powerUp: [],
 		width: 40,
 		height: 30,
-		updateRate: 100
+		updateRate: 100,
+		map: null
 	};
 	this._seedRng();
 };
@@ -132,6 +134,34 @@ var arrayRemove = function(array, from, to){
 	var rest = array.slice((to || from) + 1 || array.length);
 	array.length = from < 0 ? array.length + from : from;
 	return array.push.apply(array, rest);
+};
+
+Game.prototype.loadMap = function(mapName){
+	if(maps[mapName] === undefined){
+		throw new Error("Unknown map");
+	}
+	var map = maps[mapName].split("\n");
+	this.state.map = mapName;
+	this.state.width = map[0].length;
+	this.state.height = map.length;
+
+	this.objects = [];
+
+	var legend = {
+		"#": require("./worldobject")
+	};
+
+	for(var y = 0; y < this.state.height; y++){
+		for(var x = 0; x < this.state.width; x++){
+			var Obj = legend[map[y][x]];
+			if(Obj !== undefined){
+				var instance = new Obj(this);
+				instance.x = x;
+				instance.y = y;
+				this.objects.push(instance);
+			}
+		}
+	}
 };
 
 module.exports = Game;

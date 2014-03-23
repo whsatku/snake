@@ -226,4 +226,24 @@ describe("Game", function(){
 		});
 	});
 
+	describe("#loadMap", function(){
+		it("should throw exception when map is not defined", function(){
+			expect(function(){
+				this.game.loadMap("unitTest_nomap")
+			}).to.throw(Error);
+		});
+		it("should set game state map size and name", function(){
+			this.game.loadMap("unitTest");
+			expect(this.game.state.map).to.eql("unitTest");
+			expect(this.game.state.width).to.eql(3);
+			expect(this.game.state.height).to.eql(3);
+		});
+		it("should create obstacles", function(){
+			this.game.loadMap("unitTest");
+			expect(this.game.objects).to.have.length(8);
+			expect(this.game.objects[0].x).to.eql(0);
+			expect(this.game.objects[0].y).to.eql(0);
+		});
+	});
+
 });

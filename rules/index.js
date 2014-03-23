@@ -4,5 +4,6 @@ module.exports = {
 	"MovingWorldObject": require("./movingworldobject"),
 	"Obstacle": require("./obstacle"),
 	"Snake": require("./snake"),
-	"Powerup": require("./powerup")
+	"Powerup": require("./powerup"),
+	"map": require("./maps")
 };
