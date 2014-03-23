@@ -76,8 +76,8 @@ describe("Snake", function(){
 
 	describe("#_wrapAround", function(){
 		before(function(){
-			this.game.state.width = 5;
-			this.game.state.height = 2;
+			this.game.state.width = 20;
+			this.game.state.height = 20;
 		});
 
 		it("should wrap left", function(){
@@ -87,17 +87,17 @@ describe("Snake", function(){
 			snake.direction = GameLogic.MovingWorldObject.DIR.LEFT;
 			snake.update();
 
-			expect(snake.x).to.eql(4);
+			expect(snake.x).to.eql(19);
 			expect(snake.y).to.eql(0);
 			expect(snake.positions).to.eql([
-				[4, 0],
+				[19, 0],
 				[0, 0]
 			]);
 		});
 
 		it("should wrap right", function(){
 			var snake = this.game.addSnake();
-			snake.x = 4;
+			snake.x = 19;
 			snake.y = 0;
 			snake.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
 			snake.update();
@@ -106,7 +106,7 @@ describe("Snake", function(){
 			expect(snake.y).to.eql(0);
 			expect(snake.positions).to.eql([
 				[0, 0],
-				[4, 0]
+				[19, 0]
 			]);
 		});
 
@@ -118,9 +118,9 @@ describe("Snake", function(){
 			snake.update();
 
 			expect(snake.x).to.eql(0);
-			expect(snake.y).to.eql(1);
+			expect(snake.y).to.eql(19);
 			expect(snake.positions).to.eql([
-				[0, 1],
+				[0, 19],
 				[0, 0]
 			]);
 		});
@@ -128,7 +128,7 @@ describe("Snake", function(){
 		it("should wrap bottom", function(){
 			var snake = this.game.addSnake();
 			snake.x = 0;
-			snake.y = 1;
+			snake.y = 19;
 			snake.direction = GameLogic.MovingWorldObject.DIR.DOWN;
 			snake.update();
 
@@ -136,7 +136,7 @@ describe("Snake", function(){
 			expect(snake.y).to.eql(0);
 			expect(snake.positions).to.eql([
 				[0, 0],
-				[0, 1]
+				[0, 19]
 			]);
 		});
 

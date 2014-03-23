@@ -143,4 +143,26 @@ describe("WorldObject", function(){
 		});
 	});
 
+	describe("#randomPosition", function(){
+		it("should not random into obstacle", function(){
+			var game = new GameLogic.Game();
+			game.state.width = 2;
+			game.state.height = 2;
+
+			[[0, 0], [1, 0], [0, 1]].forEach(function(pos){
+				var object = new GameLogic.WorldObject(game);
+				object.x = pos[0];
+				object.y = pos[1];
+				game.objects.push(object);
+			});
+
+			var testObject = new GameLogic.WorldObject(game);
+			game.objects.push(testObject);
+			testObject.randomPosition();
+
+			expect(testObject.x).to.eql(1);
+			expect(testObject.y).to.eql(1);
+		});
+	});
+
 });

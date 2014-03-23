@@ -55,6 +55,10 @@ WorldObject.prototype.isCollideWith = function(b){
 WorldObject.prototype.randomPosition = function(){
 	this.x = this.world.random.randInt(0, this.world.state.width);
 	this.y = this.world.random.randInt(0, this.world.state.height);
+
+	while(this.world.checkCollision(this).length > 0){
+		this.randomPosition();
+	}
 };
 
 module.exports = WorldObject;

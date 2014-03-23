@@ -51,22 +51,32 @@ Game.prototype.step = function(){
 	for(var index in this.objects){
 		this.objects[index].update();
 	}
-	this.checkCollision();
+	this.checkAllCollision();
 	this.generatePowerup();
 	this.emit("step");
 };
 
-Game.prototype.checkCollision = function(){
+Game.prototype.checkAllCollision = function(){
 	var objects = this.objects.slice(0);
 	for(var index in objects){
 		var currentObject = objects[index];
-		for(var otherIndex in objects){
-			var otherObject = objects[otherIndex];
-			if(currentObject.isCollideWith(otherObject)){
-				currentObject.emit("collision", otherObject);
-			}
+		var collisions = this.checkCollision(currentObject);
+		for(var cIndex in collisions){
+			currentObject.emit("collision", collisions[cIndex]);
 		}
 	}
+};
+
+Game.prototype.checkCollision = function(object){
+	var objects = this.objects.slice(0);
+	var collisions = [];
+	for(var index in objects){
+		var otherObject = objects[index];
+		if(object.isCollideWith(otherObject)){
+			collisions.push(otherObject);
+		}
+	}
+	return collisions;
 };
 
 Game.prototype.generatePowerup = function(){
