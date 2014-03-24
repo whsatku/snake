@@ -42,14 +42,14 @@ WorldObject.prototype.isOffScreen = function(){
 	return false;
 };
 
-WorldObject.prototype.isCollideWith = function(b){
+WorldObject.prototype.isCollideWith = function(b, crosscheck){
 	if(b === this){
 		return false;
 	}
 	if(!(b instanceof WorldObject)){
 		throw new Error("isCollideWith called with object not type of WorldObject");
 	}
-	return this.x === b.x && this.y === b.y;
+	return (this.x === b.x && this.y === b.y) || (crosscheck === false ? false : b.isCollideWith(this, false));
 };
 
 WorldObject.prototype.randomPosition = function(){

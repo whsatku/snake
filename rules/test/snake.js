@@ -261,6 +261,7 @@ describe("Snake", function(){
 			object.x = 0;
 			object.y = 1;
 			expect(snake.isCollideWith(object)).to.be.false;
+			expect(object.isCollideWith(snake)).to.be.false;
 		});
 		it("should return true when self colliding", function(){
 			var a = new Snake(this.game);
@@ -278,6 +279,17 @@ describe("Snake", function(){
 			a.update();
 
 			expect(a.isCollideWith(a)).to.be.false;
+		});
+		// this should be in worldobject test suite
+		it("should return true for object when colliding tail to object", function(){
+			var a = new Snake(this.game);
+			a.x = 0;
+			a.y = 0;
+			a.positions = [[0, 0], [0, 1]];
+			var object = new GameLogic.WorldObject(this.game);
+			object.x = 0;
+			object.y = 1;
+			expect(object.isCollideWith(a)).to.be.true;
 		});
 	});
 

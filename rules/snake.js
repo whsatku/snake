@@ -78,23 +78,27 @@ Snake.prototype.input = function(input){
 	}
 };
 
-Snake.prototype.isCollideWith = function(b, _crosscheck){
+Snake.prototype.isCollideWith = function(b, crosscheck){
+	var target, checkObject;
 	if(b instanceof Snake){
-		var target = b.positions;
+		target = b.positions;
 		if(this === b){
 			target = this.positions.slice(1);
 		}
-		for(var position in target){
-			if(target[position][0] === this.x && target[position][1] === this.y){
-				return true;
-			}
-		}
-		if(_crosscheck === false){
-			return false;
-		}
-		return b.isCollideWith(this, false);
+		checkObject = this;
+	}else{
+		target = this.positions;
+		checkObject = b;
 	}
-	return Snake.super_.prototype.isCollideWith.call(this, b);
+	for(var position in target){
+		if(target[position][0] === checkObject.x && target[position][1] === checkObject.y){
+			return true;
+		}
+	}
+	if(crosscheck === false){
+		return false;
+	}
+	return b.isCollideWith(this, false);
 };
 
 Snake.prototype.reset = function(){
