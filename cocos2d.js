@@ -24,6 +24,7 @@
 			{src: 'res/snake.png'},
 			{src: 'res/food.png'},
 			{src: 'res/tiles.png'},
+			{src: 'res/forest.jpg'},
 		]
 	};
 

@@ -4,14 +4,14 @@
 
 window.GameLayer = cc.Layer.extend({
 	gridSize: [16, 16],
-	map: "swastika",
+	map: "plain",
 
 	objectsMap: {
 	},
 
 	tileset: {
-		"dungeon": ["res/tiles.png", cc.rect(52, 1, 16, 16)],
-		"brick": ["res/tiles.png", cc.rect(52, 1, 16, 16)],
+		"dungeon": ["res/tiles.png", cc.rect(16, 16, 16, 16)],
+		"brick": ["res/tiles.png", cc.rect(48, 0, 16, 16)],
 	},
 
 	init: function() {
