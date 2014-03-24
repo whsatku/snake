@@ -105,6 +105,13 @@ Snake.prototype.reset = function(){
 };
 
 Snake.prototype.onCollide = function(target){
+	if(target instanceof Snake){
+		// only the snake that does head-on collision
+		// die
+		if(!this.isCollideWith(target, false)){
+			return;
+		}
+	}
 	if(target.deadly){
 		this.reset();
 	}

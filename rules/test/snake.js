@@ -9,6 +9,7 @@ if(typeof chai == "undefined"){
 }else{
 	var expect = chai.expect;
 }
+var sinon = require("sinon");
 
 var Snake = GameLogic.Snake;
 
@@ -320,14 +321,15 @@ describe("Snake", function(){
 			this.snake.emit("collision", object);
 		});
 
-		it("should not reset if the target is not deadly", function(done){
+		it("should not reset if the target is not deadly", function(){
 			var snake = this.game.addSnake();
 			var object = new GameLogic.WorldObject(this.game);
 			object.deadly = false;
-			snake.once("reset", done);
+
+			var spy = sinon.spy();
+			snake.once("reset", spy);
 			snake.emit("collision", object);
-			// done will be double fired if reset is emitted
-			done();
+			expect(spy.called).to.be.false;
 		});
 
 		it("should make the snake goes longer when collecting a powerup", function(){
@@ -345,6 +347,39 @@ describe("Snake", function(){
 			var initialLength = snake.maxLength;
 			snake.emit("collision", object);
 			expect(snake.maxLength).to.eql(initialLength + 5);
+		});
+
+		it("should reset the snake who does head-on-tail collision", function(){
+			var snake1 = this.game.addSnake();
+			var snake2 = this.game.addSnake();
+			snake1.positions = [[0, 0], [0, 1], [0, 2], [0,3]];
+			snake1.x = 0; snake1.y = 0;
+			snake2.positions = [[0, 2]];
+			snake2.x = 0; snake2.y = 2;
+
+			var spy1 = sinon.spy();
+			var spy2 = sinon.spy();
+			snake1.on("reset", spy1);
+			snake2.on("reset", spy2);
+
+			this.game.checkAllCollision();
+
+			expect(spy1.called).to.be.false;
+			expect(spy2.calledOnce).to.be.true;
+		});
+		it("should reset both snakes when doing head-on-head collision", function(){
+			var snake1 = this.game.addSnake();
+			var snake2 = this.game.addSnake();
+			snake1.x = 0; snake1.y = 0;
+			snake2.x = 0; snake2.y = 0;
+
+			var spy = sinon.spy();
+			snake1.on("reset", spy);
+			snake2.on("reset", spy);
+
+			this.game.checkAllCollision();
+
+			expect(spy.calledTwice).to.be.true;
 		});
 	});
 
