@@ -9,6 +9,9 @@ if(typeof chai == "undefined"){
 }else{
 	var expect = chai.expect;
 }
+if(typeof sinon == "undefined"){
+	var sinon = require("sinon");
+}
 var Game = GameLogic.Game;
 
 describe("Game", function(){
@@ -123,7 +126,7 @@ describe("Game", function(){
 			this.game.step();
 		});
 
-		it("should check collision between objects and fire collision event", function(done){
+		it("should check collision between objects and fire collision event", function(){
 			var game = new Game();
 
 			var a = new GameLogic.WorldObject(game);
@@ -141,16 +144,18 @@ describe("Game", function(){
 			c.y = 1;
 			game.objects.push(c);
 
-			a.once("collision", function(obj){
-				expect(obj).to.equal(b);
-				done();
-			});
-			// c should not be called
-			c.once("collision", function(){
-				done(new Error("c was errornously collided"));
-			});
+			var spy = sinon.spy();
+			var spy2 = sinon.spy();
+
+			a.once("collision", spy);
+			b.once("collision", spy);
+			c.once("collision", spy);
 
 			game.step();
+
+			expect(spy.calledWith(a)).to.be.true;
+			expect(spy.calledWith(b)).to.be.true;
+			expect(spy2.called).to.be.false;
 		});
 
 		it("should still run collision check if the object is removed during processing", function(){
@@ -184,7 +189,7 @@ describe("Game", function(){
 
 	describe("#input", function(){
 
-		before(function(){
+		beforeEach(function(){
 			this.game = new Game();
 			this.snake = this.game.addSnake();
 			this.game.addSnake();
@@ -196,12 +201,10 @@ describe("Game", function(){
 			expect(Game).to.respondTo("input");
 		});
 
-		it("should give input to snake", function(done){
-			this.snake.input = function(input){
-				expect(input).to.eql("command");
-				done();
-			};
+		it("should give input to snake", function(){
+			var stub = sinon.stub(this.snake, "input");
 			this.game.input(0, "command");
+			expect(stub.calledWith("command")).to.be.true;
 		});
 
 		it("should ignore if snake does not exists", function(){

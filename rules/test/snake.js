@@ -9,7 +9,9 @@ if(typeof chai == "undefined"){
 }else{
 	var expect = chai.expect;
 }
-var sinon = require("sinon");
+if(typeof sinon == "undefined"){
+	var sinon = require("sinon");
+}
 
 var Snake = GameLogic.Snake;
 
