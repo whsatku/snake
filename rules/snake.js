@@ -98,9 +98,9 @@ Snake.prototype.isCollideWith = function(b, _crosscheck){
 };
 
 Snake.prototype.reset = function(){
-	this.randomPosition();
 	this.maxLength = Snake.DEFAULT_MAX_LENGTH;
 	this.positions = [];
+	this.randomPosition();
 	this.emit("reset");
 };
 

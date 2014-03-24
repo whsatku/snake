@@ -4,7 +4,7 @@
 
 window.GameLayer = cc.Layer.extend({
 	gridSize: [16, 16],
-	map: "dota",
+	map: "swastika",
 
 	objectsMap: {
 	},
@@ -25,6 +25,7 @@ window.GameLayer = cc.Layer.extend({
 
 		this.initMap();
 
+		this.game.addSnake();
 		this.game.addSnake();
 
 		// draw initial

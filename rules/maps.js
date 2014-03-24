@@ -75,7 +75,7 @@ exports.line.tileset = "brick";
 
 exports.swastika = new String(multiline(function(){
 /*!
-#                   ########     #######
+#######     #########                  #
 #                   #
 #                   #
 #                   #
@@ -105,7 +105,7 @@ exports.swastika = new String(multiline(function(){
                     #                  #
                     #                  #
                     #                  #
-#######     #########                  #
+#                   ########     #######
 */
 return 0;}));
 exports.swastika.tileset = "brick";
