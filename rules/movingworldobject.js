@@ -11,6 +11,13 @@ MovingWorldObject.DIR = {
 	LEFT: 3
 };
 
+MovingWorldObject.DIR_S = {};
+
+Object.keys(MovingWorldObject.DIR).forEach(function(dir){
+	var val = MovingWorldObject.DIR[dir];
+	MovingWorldObject.DIR_S[val] = dir.charAt(0);
+});
+
 require("util").inherits(MovingWorldObject, require("./worldobject"));
 
 MovingWorldObject.prototype.direction = MovingWorldObject.DIR.RIGHT;

@@ -58,44 +58,25 @@ window.SnakeNode = WorldObjectNode.extend({
 			this._tails[i].setRotation(0);
 
 			var dir = this.getTailDirection(obj.positions, i+1);
-			if(dir[1] === null){
-				switch(dir[0]){
-					case GameLogic.MovingWorldObject.DIR.UP:
-						this._tails[i].setRotation(-90);
-						break;
-					case GameLogic.MovingWorldObject.DIR.DOWN:
-						this._tails[i].setRotation(90);
-						break;
-				}
-				if(dir[0] === GameLogic.MovingWorldObject.DIR.RIGHT){
-					this._tails[i].setFlippedX(true);
-				}
-			}else{
-				if(dir[0] === GameLogic.MovingWorldObject.DIR.LEFT){
-					if(dir[1] === GameLogic.MovingWorldObject.DIR.UP){
-						this._tails[i].setRotation(90);
-					}
-				}else if(dir[0] === GameLogic.MovingWorldObject.DIR.RIGHT){
-					this._tails[i].setFlippedX(true);
-					if(dir[1] === GameLogic.MovingWorldObject.DIR.UP){
-						this._tails[i].setRotation(-90);
-					}
-				}else if(dir[0] === GameLogic.MovingWorldObject.DIR.DOWN){
-					if(dir[1] === GameLogic.MovingWorldObject.DIR.LEFT){
-						this._tails[i].setRotation(90);
-					}else if(dir[1] === GameLogic.MovingWorldObject.DIR.RIGHT){
-						this._tails[i].setRotation(180);
-					}
-				}else if(dir[0] === GameLogic.MovingWorldObject.DIR.UP){
-					if(dir[1] === GameLogic.MovingWorldObject.DIR.RIGHT){
-						this._tails[i].setFlippedX(true);
-					}
-				}
+			var map = {
+				"U": [-90, false],
+				"D": [90, false],
+				"R": [0, true],
+				"LU": [90, false],
+				"RU": [-90, true],
+				"RD": [0, true],
+				"DL": [90, false],
+				"DR": [180, false],
+				"UR": [0, true]
+			};
+			if(map[dir] !== undefined){
+				this._tails[i].setRotation(map[dir][0]);
+				this._tails[i].setFlippedX(map[dir][1]);
 			}
 
 			if(i == this._tails.length - 1){
 				this._tails[i].setTextureRect(cc.rect(32, 0, 16, 16));
-			}else if(dir[1] !== null){
+			}else if(dir.length == 2){
 				this._tails[i].setTextureRect(cc.rect(48, 0, 16, 16));
 			}else{
 				this._tails[i].setTextureRect(cc.rect(16, 0, 16, 16));
@@ -103,6 +84,11 @@ window.SnakeNode = WorldObjectNode.extend({
 		}
 	},
 
+	/**
+	 * @param {Array} Array of tail positions from latest to oldest
+	 * @param {Number} Index of array to inspect
+	 * @return {String} LeftDir+RightDir (eg. L junction to right will be UR)
+	 */
 	getTailDirection: function(positions, i){
 		var lastTail = positions[i-1];
 		var thisTail = positions[i];
@@ -140,27 +126,19 @@ window.SnakeNode = WorldObjectNode.extend({
 			}
 		}
 
-		return [out, junction];
+		out = GameLogic.MovingWorldObject.DIR_S[out] || "";
+		junction = GameLogic.MovingWorldObject.DIR_S[junction] || "";
+
+		return out + junction;
 	},
 
 	_updateRotation: function(obj){
-		switch(obj.direction){
-			case GameLogic.MovingWorldObject.DIR.UP:
-				this.setFlippedX(false);
-				this.setRotation(90);
-				break;
-			case GameLogic.MovingWorldObject.DIR.DOWN:
-				this.setFlippedX(false);
-				this.setRotation(-90);
-				break;
-			case GameLogic.MovingWorldObject.DIR.RIGHT:
-				this.setFlippedX(true);
-				this.setRotation(0);
-				break;
-			case GameLogic.MovingWorldObject.DIR.LEFT:
-			default:
-				this.setFlippedX(false);
-				this.setRotation(0);
-		}
+		var map = {};
+		map[GameLogic.MovingWorldObject.DIR.UP] = [90, false];
+		map[GameLogic.MovingWorldObject.DIR.DOWN] = [-90, false];
+		map[GameLogic.MovingWorldObject.DIR.RIGHT] = [0, true];
+		map[GameLogic.MovingWorldObject.DIR.LEFT] = [0, false];
+		this.setRotation(map[obj.direction][0]);
+		this.setFlippedX(map[obj.direction][1]);
 	},
 });

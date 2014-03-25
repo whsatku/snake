@@ -30,6 +30,13 @@ describe("MovingWorldObject", function(){
 		expect(MovingWorldObject.DIR).to.have.keys(["UP", "DOWN", "LEFT", "RIGHT"]);
 	});
 
+	it("should have direction string map", function(){
+		expect(MovingWorldObject.DIR_S[MovingWorldObject.DIR.UP]).to.eql("U");
+		expect(MovingWorldObject.DIR_S[MovingWorldObject.DIR.DOWN]).to.eql("D");
+		expect(MovingWorldObject.DIR_S[MovingWorldObject.DIR.LEFT]).to.eql("L");
+		expect(MovingWorldObject.DIR_S[MovingWorldObject.DIR.RIGHT]).to.eql("R");
+	});
+
 	it("should have direction", function(){
 		expect((new MovingWorldObject(this.game)).direction).to.exist;
 	});
