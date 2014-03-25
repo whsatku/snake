@@ -99,12 +99,9 @@ window.SnakeNode = WorldObjectNode.extend({
 			"DL": [0, true],
 			"LD": [90, false],
 		};
-		if(map[direction] === undefined){
-			obj.setRotation(0);
-			obj.setFlippedX(false);
-			return;
-		}
-		obj.setRotation(map[direction][0]);
-		obj.setFlippedX(map[direction][1]);
+		var rotation = map[direction] && map[direction][0] || 0;
+		var flip = map[direction] && map[direction][1] || false;
+		obj.setRotation(rotation);
+		obj.setFlippedX(flip);
 	},
 });
