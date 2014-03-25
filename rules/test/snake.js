@@ -364,8 +364,9 @@ describe("Snake", function(){
 		});
 
 		it("should reset the snake who does head-on-tail collision", function(){
-			var snake1 = this.game.addSnake();
-			var snake2 = this.game.addSnake();
+			var game = new GameLogic.Game();
+			var snake1 = game.addSnake();
+			var snake2 = game.addSnake();
 			snake1.positions = [[0, 0], [0, 1], [0, 2], [0,3]];
 			snake1.x = 0; snake1.y = 0;
 			snake2.positions = [[0, 2]];
@@ -376,24 +377,25 @@ describe("Snake", function(){
 			snake1.on("reset", spy1);
 			snake2.on("reset", spy2);
 
-			this.game.checkAllCollision();
+			game.checkAllCollision();
 
 			expect(spy1.called).to.be.false;
 			expect(spy2.calledOnce).to.be.true;
 		});
 		it("should reset both snakes when doing head-on-head collision", function(){
-			var snake1 = this.game.addSnake();
-			var snake2 = this.game.addSnake();
-			snake1.x = 0; snake1.y = 0;
-			snake2.x = 0; snake2.y = 0;
+			var game = new GameLogic.Game();
+			var snake1 = game.addSnake();
+			var snake2 = game.addSnake();
+			snake1.x = 0; snake1.y = 0; snake1.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
+			snake2.x = 2; snake2.y = 0; snake2.direction = GameLogic.MovingWorldObject.DIR.LEFT;
 
 			var spy = sinon.spy();
 			snake1.on("reset", spy);
 			snake2.on("reset", spy);
 
-			this.game.checkAllCollision();
+			game.step();
 
-			expect(spy.calledTwice).to.be.true;
+			expect(spy.callCount).to.eql(2);
 		});
 	});
 
