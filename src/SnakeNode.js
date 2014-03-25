@@ -21,7 +21,7 @@ window.SnakeNode = WorldObjectNode.extend({
 		this._cutTails(obj);
 		this._createTails(obj);
 		this._updateTails(obj);
-		this._updateRotation(obj);
+		this._updateRotation(this, GameLogic.MovingWorldObject.DIR_S[obj.direction]);
 	},
 
 	_cutTails: function(obj){
@@ -54,25 +54,9 @@ window.SnakeNode = WorldObjectNode.extend({
 
 			this._tails[i].index = i;
 			this._tails[i].setPosition(root.toUIPosition(position[0], position[1]));
-			this._tails[i].setFlippedX(false);
-			this._tails[i].setRotation(0);
 
 			var dir = this.getTailDirection(obj.positions, i+1);
-			var map = {
-				"U": [-90, false],
-				"D": [90, false],
-				"R": [0, true],
-				"LU": [90, false],
-				"RU": [-90, true],
-				"RD": [0, true],
-				"DL": [90, false],
-				"DR": [180, false],
-				"UR": [0, true]
-			};
-			if(map[dir] !== undefined){
-				this._tails[i].setRotation(map[dir][0]);
-				this._tails[i].setFlippedX(map[dir][1]);
-			}
+			this._updateRotation(this._tails[i], dir);
 
 			if(i == this._tails.length - 1){
 				this._tails[i].setTextureRect(cc.rect(32, 0, 16, 16));
@@ -87,44 +71,15 @@ window.SnakeNode = WorldObjectNode.extend({
 	/**
 	 * @param {Array} Array of tail positions from latest to oldest
 	 * @param {Number} Index of array to inspect
-	 * @return {String} LeftDir+RightDir (eg. L junction to right will be UR)
+	 * @return {String} LeftDir+RightDir (eg. L junction to right will be RD)
 	 */
 	getTailDirection: function(positions, i){
 		var lastTail = positions[i-1];
 		var thisTail = positions[i];
 		var nextTail = positions[i+1];
 
-		var out = null;
-		var junction = null;
-		if(lastTail[0] - thisTail[0] > 0){
-			out = GameLogic.MovingWorldObject.DIR.RIGHT;
-		}else if(lastTail[0] - thisTail[0] < 0){
-			out = GameLogic.MovingWorldObject.DIR.LEFT;
-		}else if(lastTail[1] - thisTail[1] > 0){
-			out = GameLogic.MovingWorldObject.DIR.UP;
-		}else if(lastTail[1] - thisTail[1] < 0){
-			out = GameLogic.MovingWorldObject.DIR.DOWN;
-		}
-
-		if(nextTail !== undefined){
-			switch(out){
-				case GameLogic.MovingWorldObject.DIR.RIGHT:
-				case GameLogic.MovingWorldObject.DIR.LEFT:
-					if(nextTail[1] - thisTail[1] > 0){
-						junction = GameLogic.MovingWorldObject.DIR.DOWN;
-					}else if(nextTail[1] - thisTail[1] < 0){
-						junction = GameLogic.MovingWorldObject.DIR.UP;
-					}
-					break;
-				case GameLogic.MovingWorldObject.DIR.UP:
-				case GameLogic.MovingWorldObject.DIR.DOWN:
-					if(nextTail[0] - thisTail[0] > 0){
-						junction = GameLogic.MovingWorldObject.DIR.RIGHT;
-					}else if(nextTail[0] - thisTail[0] < 0){
-						junction = GameLogic.MovingWorldObject.DIR.LEFT;
-					}
-			}
-		}
+		var out = lastTail[2];
+		var junction = nextTail === undefined || thisTail[2] == out ? null : thisTail[2];
 
 		out = GameLogic.MovingWorldObject.DIR_S[out] || "";
 		junction = GameLogic.MovingWorldObject.DIR_S[junction] || "";
@@ -132,13 +87,24 @@ window.SnakeNode = WorldObjectNode.extend({
 		return out + junction;
 	},
 
-	_updateRotation: function(obj){
-		var map = {};
-		map[GameLogic.MovingWorldObject.DIR.UP] = [90, false];
-		map[GameLogic.MovingWorldObject.DIR.DOWN] = [-90, false];
-		map[GameLogic.MovingWorldObject.DIR.RIGHT] = [0, true];
-		map[GameLogic.MovingWorldObject.DIR.LEFT] = [0, false];
-		this.setRotation(map[obj.direction][0]);
-		this.setFlippedX(map[obj.direction][1]);
+	_updateRotation: function(obj, direction){
+		var map = {
+			"U": [90, false],
+			"D": [-90, false],
+			"R": [0, true],
+			"RU": [0, true],
+			"RD": [-90, true],
+			"UR": [90, false],
+			"UL": [180, false],
+			"DL": [0, true],
+			"LD": [90, false],
+		};
+		if(map[direction] === undefined){
+			obj.setRotation(0);
+			obj.setFlippedX(false);
+			return;
+		}
+		obj.setRotation(map[direction][0]);
+		obj.setFlippedX(map[direction][1]);
 	},
 });

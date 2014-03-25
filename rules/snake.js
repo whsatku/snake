@@ -32,7 +32,7 @@ Snake.prototype.update = function(){
 
 	this._wrapAround();
 
-	this.positions.unshift([this.x, this.y]);
+	this.positions.unshift([this.x, this.y, this.direction]);
 
 	this._trimPositionToLength();
 };
