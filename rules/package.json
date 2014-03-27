@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "randy": "^1.4.3",
-    "multiline": "^0.2.0"
+    "multiline": "^0.2.0",
+    "crc32": "~0.2.2"
   }
 }

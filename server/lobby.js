@@ -91,7 +91,7 @@ Lobby.prototype.getState = function(hashed){
 		state.game = this.game.prepareState();
 	}
 	if(hashed === true){
-		state.hash = 0;
+		state.hash = this.game.hashState();
 		state.cmd = this.cmdQueue;
 		delete state.game;
 	}

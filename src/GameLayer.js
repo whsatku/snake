@@ -90,6 +90,10 @@ window.GameLayer = cc.Layer.extend({
 					self.game[cmd[0]].apply(self.game, cmd.slice(1));
 				});
 				this.game.step();
+				this.game.prepareState();
+				if(this.game.hashState() != data.hash){
+					console.error("desync");
+				}
 				this.primus.write({command: "ready"});
 			}
 		}

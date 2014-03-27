@@ -5,6 +5,7 @@ var randy = require("randy");
 var Snake = require("./snake");
 var Powerup = require("./powerup");
 var maps = require("./maps");
+var crc32 = require("crc32");
 
 var Game = function SnakeGame(){
 	this.objects = [];
@@ -179,6 +180,10 @@ Game.prototype.prepareState = function(){
 	});
 	this.state.rng = this.random.getState();
 	return this.state;
+};
+
+Game.prototype.hashState = function(){
+	return crc32(JSON.stringify(this.state));
 };
 
 Game.prototype.loadState = function(state){
