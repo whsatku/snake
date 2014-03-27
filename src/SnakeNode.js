@@ -104,4 +104,12 @@ window.SnakeNode = WorldObjectNode.extend({
 		obj.setRotation(rotation);
 		obj.setFlippedX(flip);
 	},
+
+	cleanup: function(){
+		this._super();
+		var root = this.getRoot();
+		for(var i = 0; i < this._tails.length; i++){
+			root.removeChild(this._tails[i]);
+		}
+	},
 });

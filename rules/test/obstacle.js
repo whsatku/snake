@@ -12,7 +12,7 @@ if(typeof chai == "undefined"){
 
 var Obstacle = GameLogic.Obstacle;
 
-describe("Snake", function(){
+describe("Obstacle", function(){
 
 	before(function(){
 		this.game = new GameLogic.Game();
@@ -20,6 +20,13 @@ describe("Snake", function(){
 
 	it("should be a WorldObject", function(){
 		expect(new Obstacle(this.game)).to.be.an.instanceOf(GameLogic.WorldObject);
+	});
+
+	describe("#getState", function(){
+		it("return empty object", function(){
+			var obj = new Obstacle(this.game);
+			expect(obj.getState()).to.eql({});
+		});
 	});
 
 });

@@ -5,12 +5,12 @@ var Snake = function Snake(){
 
 	this.positions = [];
 	this.maxLength = Snake.DEFAULT_MAX_LENGTH;
-	this.startingPosition = [0, 0];
 	this._turning = null;
 
 	this.on("collision", this.onCollide.bind(this));
 };
 
+Snake.cls = "Snake";
 Snake.DEFAULT_MAX_LENGTH = 4;
 
 var MovingWorldObject = require("./movingworldobject");
@@ -126,6 +126,19 @@ Snake.prototype.onCollide = function(target){
 	if(target instanceof Powerup){
 		this.maxLength += target.growth;
 	}
+};
+
+Snake.prototype.getState = function(){
+	var state = Snake.super_.prototype.getState.apply(this);
+	state.positions = this.positions.slice(0);
+	state.maxLength = this.maxLength;
+	return state;
+};
+
+Snake.prototype.loadState = function(state){
+	Snake.super_.prototype.loadState.call(this, state);
+	this.positions = state.positions;
+	this.maxLength = state.maxLength;
 };
 
 module.exports = Snake;

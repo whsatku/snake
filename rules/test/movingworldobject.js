@@ -182,4 +182,45 @@ describe("MovingWorldObject", function(){
 
 	});
 
+	describe("#getState", function(){
+		it("dump position", function(){
+			var obj = new MovingWorldObject(this.game);
+			expect(obj.getState().x).to.eql(obj.x);
+			expect(obj.getState().y).to.eql(obj.y);
+		});
+		it("dump direction", function(){
+			var obj = new MovingWorldObject(this.game);
+			expect(obj.getState().direction).to.eql(obj.direction);
+		});
+		it("dump speed", function(){
+			var obj = new MovingWorldObject(this.game);
+			expect(obj.getState().speed).to.eql(obj.speed);
+		});
+	});
+
+	describe("#loadState", function(){
+		it("load position", function(){
+			var obj = new MovingWorldObject(this.game);
+			var state = {x: 5, y: 5, deadly: false, direction: MovingWorldObject.DIR.LEFT, speed: 5};
+			obj.loadState(state);
+
+			expect(obj.x).to.eql(state.x);
+			expect(obj.y).to.eql(state.y);
+		});
+		it("load direction", function(){
+			var obj = new MovingWorldObject(this.game);
+			var state = {x: 5, y: 5, deadly: false, direction: MovingWorldObject.DIR.LEFT, speed: 5};
+			obj.loadState(state);
+
+			expect(obj.direction).to.eql(state.direction);
+		});
+		it("load speed", function(){
+			var obj = new MovingWorldObject(this.game);
+			var state = {x: 5, y: 5, deadly: false, direction: MovingWorldObject.DIR.LEFT, speed: 5};
+			obj.loadState(state);
+
+			expect(obj.speed).to.eql(state.speed);
+		});
+	});
+
 });

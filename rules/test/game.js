@@ -102,8 +102,17 @@ describe("Game", function(){
 			this.game.addSnake();
 		});
 
-		it("should be a function", function(){
-			expect(Game).to.respondTo("step");
+		it("change game state to in_progress", function(){
+			var game = new Game();
+			game.step();
+			expect(game.state.state).to.eql(Game.STATES.IN_PROGRESS);
+		});
+
+		it("change game step", function(){
+			var game = new Game();
+			var oldStep = game.state.step;
+			game.step();
+			expect(game.state.step).to.eql(oldStep+1);
 		});
 
 		it("should call child's update function", function(done){
@@ -246,6 +255,56 @@ describe("Game", function(){
 			expect(this.game.objects).to.have.length(8);
 			expect(this.game.objects[0].x).to.eql(0);
 			expect(this.game.objects[0].y).to.eql(0);
+		});
+	});
+
+	describe("#prepareState", function(){
+		it("send getState to every objects", function(){
+			var object = new GameLogic.WorldObject(this.game);
+			object.getState = function(){
+				return {success: true};
+			};
+			this.game.objects = [object];
+			this.game.prepareState();
+			expect(this.game.state.objects[0].success).to.be.true;
+			this.game.objects = [];
+		});
+		it("ignore object with empty state", function(){
+			var object = new GameLogic.WorldObject(this.game);
+			object.getState = function(){
+				return {};
+			};
+			this.game.objects = [object];
+			expect(this.game.prepareState().objects).to.eql([]);
+			this.game.objects = [];
+		});
+		it("dump object constructor name", function(){
+			this.game.addSnake();
+			this.game.prepareState();
+			expect(this.game.state.objects[0]._type).to.eql("Snake");
+		});
+		it("dump rng state", function(){
+			this.game.prepareState();
+			expect(this.game.state.rng).to.be.an("Object");
+		});
+	});
+
+	describe("#loadState", function(){
+		before(function(){
+			this.game.loadState(JSON.parse('{"state":1,"powerUpCollected":0,"powerUpToEnd":5,"width":37,"height":29,"updateRate":100,"map":"plain","step":311,"objects":[{"x":0,"y":0,"deadly":true,"direction":0,"speed":1,"_type":"Snake"},{"x":0,"y":0,"deadly":true,"direction":1,"speed":1,"_type":"Snake"},{"x":16,"y":12,"deadly":false,"_type":"Powerup"}],"rng":{"seed":[2063179164,189560361,405237180,-526820764,1415785209,-430534247,201991942,708429421,-1664203584,1045594639,1920244661,-1962565032,-653888130,263314630,1991008667,-1753323413,221423556,304154551,1036025779,213732642,-1519784725,1889442263,1252049299,-671077744,-59952572,-842041520,652992862,2104283329,-593341108,648328801,-1471756500,679219861],"idx":15}}'));
+		});
+		it("update state", function(){
+			expect(this.game.state.state).to.eql(1);
+			expect(this.game.state.width).to.eql(37);
+			expect(this.game.state.height).to.eql(29);
+			expect(this.game.state.updateRate).to.eql(100);
+			expect(this.game.state.step).to.eql(311);
+		});
+		it("load rng state", function(){
+			expect(this.game.random.randInt()).to.eql(564505729);
+		});
+		it("create objects from state", function(){
+			expect(this.game.objects[this.game.objects.length - 1]).to.be.instanceof(GameLogic.Powerup);
 		});
 	});
 

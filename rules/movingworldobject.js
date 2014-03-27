@@ -20,6 +20,7 @@ Object.keys(MovingWorldObject.DIR).forEach(function(dir){
 
 require("util").inherits(MovingWorldObject, require("./worldobject"));
 
+MovingWorldObject.cls = "MovingWorldObject";
 MovingWorldObject.prototype.direction = MovingWorldObject.DIR.RIGHT;
 MovingWorldObject.prototype.speed = 1;
 
@@ -54,6 +55,19 @@ MovingWorldObject.isOpposite = function(dir1, dir2){
 		(dir1 === MovingWorldObject.DIR.UP && dir2 === MovingWorldObject.DIR.DOWN) ||
 		(dir1 === MovingWorldObject.DIR.RIGHT && dir2 === MovingWorldObject.DIR.LEFT) ||
 		(dir1 === MovingWorldObject.DIR.DOWN && dir2 === MovingWorldObject.DIR.UP);
+};
+
+MovingWorldObject.prototype.getState = function(){
+	var state = MovingWorldObject.super_.prototype.getState.apply(this);
+	state.direction = this.direction;
+	state.speed = this.speed;
+	return state;
+};
+
+MovingWorldObject.prototype.loadState = function(state){
+	MovingWorldObject.super_.prototype.loadState.call(this, state);
+	this.direction = state.direction;
+	this.speed = state.speed;
 };
 
 module.exports = MovingWorldObject;

@@ -13,12 +13,11 @@ var Game = function SnakeGame(){
 		state: Game.STATES.PREPARE,
 		powerUpCollected: 0,
 		powerUpToEnd: 5,
-		snakes: [],
-		powerUp: [],
 		width: 40,
 		height: 30,
 		updateRate: 100,
-		map: null
+		map: null,
+		step: 0
 	};
 	this._seedRng();
 };
@@ -50,6 +49,8 @@ Game.prototype._createSnake = function(){
 };
 
 Game.prototype.step = function(){
+	this.state.state = Game.STATES.IN_PROGRESS;
+	this.state.step++;
 	for(var index in this.objects){
 		this.objects[index].update();
 	}
@@ -148,7 +149,7 @@ Game.prototype.loadMap = function(mapName){
 	this.objects = [];
 
 	var legend = {
-		"#": require("./worldobject")
+		"#": require("./obstacle")
 	};
 
 	for(var y = 0; y < this.state.height; y++){
@@ -162,6 +163,46 @@ Game.prototype.loadMap = function(mapName){
 			}
 		}
 	}
+};
+
+Game.prototype.prepareState = function(){
+	var self = this;
+	this.state.objects = [];
+	this.objects.forEach(function(item){
+		var state = item.getState();
+		if(Object.keys(state).length === 0){
+			// this object prefer not to be synced
+			return;
+		}
+		state._type = item.constructor.cls;
+		self.state.objects.push(state);
+	});
+	this.state.rng = this.random.getState();
+	return this.state;
+};
+
+Game.prototype.loadState = function(state){
+	this.state = state;
+	this.random = randy.instance(state.rng);
+
+	var index = require("./index");
+	var self = this;
+	this._snakes = [];
+	this.loadMap(state.map);
+	this.state.objects.forEach(function(item){
+		if(!index[item._type]){
+			console.error("unknown object type "+item._type);
+			return;
+		}
+		var object = new index[item._type](self);
+		object.loadState(item);
+
+		if(item._type == "Snake"){
+			self.addSnake(object);
+		}else{
+			self.objects.push(object);
+		}
+	});
 };
 
 module.exports = Game;

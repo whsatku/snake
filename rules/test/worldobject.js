@@ -165,4 +165,34 @@ describe("WorldObject", function(){
 		});
 	});
 
+	describe("#getState", function(){
+		it("dump position", function(){
+			var obj = new WorldObject(this.game);
+			expect(obj.getState().x).to.eql(obj.x);
+			expect(obj.getState().y).to.eql(obj.y);
+		});
+		it("dump deadly type", function(){
+			var obj = new WorldObject(this.game);
+			expect(obj.getState().deadly).to.eql(obj.deadly);
+		});
+	});
+
+	describe("#loadState", function(){
+		it("load position", function(){
+			var obj = new WorldObject(this.game);
+			var state = {x: 5, y: 5, deadly: false};
+			obj.loadState(state);
+
+			expect(obj.x).to.eql(state.x);
+			expect(obj.y).to.eql(state.y);
+		});
+		it("load deadly type", function(){
+			var obj = new WorldObject(this.game);
+			var state = {x: 5, y: 5, deadly: false};
+			obj.loadState(state);
+
+			expect(obj.deadly).to.eql(state.deadly);
+		});
+	});
+
 });

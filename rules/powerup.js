@@ -7,6 +7,7 @@ var Powerup = function Powerup(){
 
 require("util").inherits(Powerup, require("./worldobject"));
 
+Powerup.cls = "Powerup";
 Powerup.prototype.deadly = false;
 Powerup.prototype.growth = 4;
 

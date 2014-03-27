@@ -14,6 +14,7 @@ var WorldObject = function WorldObject(world){
 
 require("util").inherits(WorldObject, EventEmitter);
 
+WorldObject.cls = "WorldObject";
 WorldObject.prototype.x = 0;
 WorldObject.prototype.y = 0;
 
@@ -59,6 +60,20 @@ WorldObject.prototype.randomPosition = function(){
 	while(this.world.checkCollision(this).length > 0){
 		this.randomPosition();
 	}
+};
+
+WorldObject.prototype.getState = function(){
+	return {
+		x: this.x,
+		y: this.y,
+		deadly: this.deadly
+	};
+};
+
+WorldObject.prototype.loadState = function(state){
+	this.x = state.x;
+	this.y = state.y;
+	this.deadly = state.deadly;
 };
 
 module.exports = WorldObject;

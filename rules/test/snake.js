@@ -39,7 +39,7 @@ describe("Snake", function(){
 	});
 
 	describe("#update", function(){
-		it("should store past positions in speed = 1", function(){
+		it("should store past positions", function(){
 			var snake = this.game.addSnake();
 			snake.x = 0;
 			snake.y = 0;
@@ -47,14 +47,14 @@ describe("Snake", function(){
 
 			snake.update();
 			expect(snake.positions).to.eql([
-				[1, 0],
+				[1, 0, GameLogic.MovingWorldObject.DIR.RIGHT],
 				[0, 0]
 			]);
 
 			snake.update();
 			expect(snake.positions).to.eql([
-				[2, 0],
-				[1, 0],
+				[2, 0, GameLogic.MovingWorldObject.DIR.RIGHT],
+				[1, 0, GameLogic.MovingWorldObject.DIR.RIGHT],
 				[0, 0]
 			]);
 		});
@@ -71,8 +71,8 @@ describe("Snake", function(){
 			}
 
 			expect(snake.positions).to.eql([
-				[3, 0],
-				[2, 0]
+				[3, 0, GameLogic.MovingWorldObject.DIR.RIGHT],
+				[2, 0, GameLogic.MovingWorldObject.DIR.RIGHT]
 			]);
 		});
 	});
@@ -93,7 +93,7 @@ describe("Snake", function(){
 			expect(snake.x).to.eql(19);
 			expect(snake.y).to.eql(0);
 			expect(snake.positions).to.eql([
-				[19, 0],
+				[19, 0, GameLogic.MovingWorldObject.DIR.LEFT],
 				[0, 0]
 			]);
 		});
@@ -108,7 +108,7 @@ describe("Snake", function(){
 			expect(snake.x).to.eql(0);
 			expect(snake.y).to.eql(0);
 			expect(snake.positions).to.eql([
-				[0, 0],
+				[0, 0, GameLogic.MovingWorldObject.DIR.RIGHT],
 				[19, 0]
 			]);
 		});
@@ -123,7 +123,7 @@ describe("Snake", function(){
 			expect(snake.x).to.eql(0);
 			expect(snake.y).to.eql(19);
 			expect(snake.positions).to.eql([
-				[0, 19],
+				[0, 19, GameLogic.MovingWorldObject.DIR.UP],
 				[0, 0]
 			]);
 		});
@@ -138,7 +138,7 @@ describe("Snake", function(){
 			expect(snake.x).to.eql(0);
 			expect(snake.y).to.eql(0);
 			expect(snake.positions).to.eql([
-				[0, 0],
+				[0, 0, GameLogic.MovingWorldObject.DIR.DOWN],
 				[0, 19]
 			]);
 		});
@@ -396,6 +396,40 @@ describe("Snake", function(){
 			game.step();
 
 			expect(spy.callCount).to.eql(2);
+		});
+	});
+
+	describe("#getState", function(){
+		it("dump length", function(){
+			var obj = new Snake(this.game);
+			obj.maxLength = 50;
+
+			expect(obj.getState().maxLength).to.eql(obj.maxLength);
+		});
+		it("dump positions", function(){
+			var obj = new Snake(this.game);
+			obj.positions = [[0,0], [1,1]];
+
+			expect(obj.getState().positions).to.eql(obj.positions);
+		});
+	});
+
+	describe("#loadState", function(){
+		it("load position", function(){
+			var obj = new Snake(this.game);
+			var state = {x: 5, y: 5, deadly: false, maxLength: 50, positions: [[0,0]]};
+			obj.loadState(state);
+
+			expect(obj.positions).to.eql(state.positions);
+			expect(obj.x).to.eql(state.x);
+			expect(obj.y).to.eql(state.y);
+		});
+		it("load max length", function(){
+			var obj = new Snake(this.game);
+			var state = {x: 5, y: 5, deadly: false, maxLength: 50, positions: [[0,0]]};
+			obj.loadState(state);
+
+			expect(obj.maxLength).to.eql(state.maxLength);
 		});
 	});
 
