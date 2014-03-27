@@ -5,6 +5,7 @@
 window.GameLayer = cc.Layer.extend({
 	gridSize: [16, 16],
 	map: "plain",
+	server: "http://localhost:45634/primus",
 
 	objectsMap: {
 	},
@@ -15,10 +16,12 @@ window.GameLayer = cc.Layer.extend({
 	},
 
 	init: function() {
-		this.initGame();
-		this.initLocalGame();
+		// ease debugging
+		window.gamelayer = this;
 
-		this.syncFromEngine();
+		this.initGame();
+		// this.initLocalGame();
+		this.initNetworkGame();
 	},
 
 	initGame: function(){
@@ -28,12 +31,26 @@ window.GameLayer = cc.Layer.extend({
 	},
 
 	initLocalGame: function(){
+		this.mode = GameLayer.MODES.LOCAL;
 		this.schedule(this.gameStep.bind(this), this.game.state.updateRate / 1000, Infinity, 0);
 		this.game.loadMap(this.map);
 		this.initMap();
 
 		this.game.addSnake();
 		this.game.addSnake();
+
+		this.syncFromEngine();
+	},
+
+	initNetworkGame: function(){
+		var self = this;
+		this.mode = GameLayer.MODES.NETWORK;
+		this.primus = Primus.connect(this.server);
+		this.primus.on("open", function(){
+			console.log("netcode: connected");
+			self.primus.write({command: "lobbyjoin", lobby: 0});
+		});
+		this.primus.on("data", this.onData.bind(this));
 	},
 
 	initMap: function(){
@@ -53,6 +70,31 @@ window.GameLayer = cc.Layer.extend({
 
 	onGameStepped: function(){
 		this.syncFromEngine();
+	},
+
+	onData: function(data){
+		// TODO: Split to Netcode class
+		var LobbyState = {
+			"LOBBY": 0,
+			"IN_GAME": 1,
+			"FINISHED": 2
+		};
+		var self = this;
+
+		if(data.state === LobbyState.IN_GAME){
+			if(typeof data.game == "object"){
+				this.game.loadState(data.game);
+				this.initMap();
+				this.syncFromEngine();
+				this.primus.write({command: "ready"});
+			}else if(data.hash !== undefined){
+				data.cmd.forEach(function(cmd){
+					self.game[cmd[0]].apply(self.game, cmd.slice(1));
+				});
+				this.game.step();
+				this.primus.write({command: "ready"});
+			}
+		}
 	},
 
 	fillFloor: function(){
@@ -97,6 +139,17 @@ window.GameLayer = cc.Layer.extend({
 		});
 	},
 
+	input: function(key){
+		switch(this.mode){
+			case GameLayer.MODES.LOCAL:
+				this.game.input(0, player.key);
+				break;
+			case GameLayer.MODES.NETWORK:
+				this.primus.write({command: "input", key: key});
+				break;
+		}
+	},
+
 	_createChildObject: function(obj){
 		obj.$id = this._generateId();
 		var ObjectClass = WorldObjectNode;
@@ -126,3 +179,8 @@ window.GameLayer = cc.Layer.extend({
 		);
 	}
 });
+
+window.GameLayer.MODES = {
+	"LOCAL": 0,
+	"NETWORK": 1
+};

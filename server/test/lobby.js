@@ -1,6 +1,7 @@
 var expect = require("chai").expect;
 var Lobby = require("../lobby");
 var GameLogic = require("../../rules/");
+var MockSpark = require("./mockspark");
 
 describe("Lobby", function(){
 	beforeEach(function(){
@@ -11,16 +12,18 @@ describe("Lobby", function(){
 		expect(this.lobby.clients).to.be.an("Array");
 	});
 
+	it("listen to ready event");
+
 	describe("#addClient", function(){
 		it("add client to the list of clients", function(){
-			var spark = {};
+			var spark = MockSpark();
 			this.lobby.addClient(spark);
 
 			expect(this.lobby.clients).to.include(spark);
 		});
 
 		it("set spark's lobby property", function(){
-			var spark = {};
+			var spark = MockSpark();
 			this.lobby.addClient(spark);
 
 			expect(spark.lobby).to.eql(this.lobby);
@@ -29,7 +32,7 @@ describe("Lobby", function(){
 
 	describe("#removeClient", function(){
 		beforeEach(function(){
-			this.spark = {};
+			this.spark = MockSpark();
 			this.lobby.addClient(this.spark);
 		});
 
@@ -45,7 +48,7 @@ describe("Lobby", function(){
 
 		it("unset spark's lobby property only if client is in this lobby", function(){
 			var lobby = new Lobby();
-			var spark = {};
+			var spark = MockSpark();
 			lobby.addClient(spark);
 
 			this.lobby.removeClient(this.spark);
@@ -63,11 +66,139 @@ describe("Lobby", function(){
 			expect(this.lobby.game).to.be.instanceof(GameLogic.Game);
 		});
 		it("create snakes for connected players", function(){
-			this.lobby.addClient({});
-			this.lobby.addClient({});
-			this.lobby.addClient({});
+			this.lobby.addClient(MockSpark());
+			this.lobby.addClient(MockSpark());
+			this.lobby.addClient(MockSpark());
 			this.lobby.startGame();
 			expect(this.lobby.game.getSnake(2)).to.be.instanceof(GameLogic.Snake);
 		});
+		it("does nothing if game is already started", function(){
+			this.lobby.startGame();
+			var game = this.lobby.game;
+			this.lobby.startGame();
+			expect(game === this.lobby.game).to.be.true;
+		});
+	});
+
+	describe("#createSnakeForClient", function(){
+		beforeEach(function(){
+			this.lobby.startGame();
+		});
+		it("create snake", function(){
+			var spark = MockSpark();
+			this.lobby.createSnakeForClient(spark, 0);
+			expect(spark.snake).to.be.instanceof(GameLogic.Snake);
+		});
+		it("set snake index", function(){
+			var spark = MockSpark();
+			this.lobby.createSnakeForClient(spark, 5);
+			expect(spark.snakeIndex).to.eql(5);
+		});
+	});
+
+	describe("#getState", function(){
+		it("send lobby id and state", function(){
+			this.lobby.id = 50;
+			var state = this.lobby.getState();
+			expect(state.lobby).to.eql(this.lobby.id);
+			expect(state.state).to.eql(this.lobby.state);
+		});
+		it("send game state if game is in progress", function(){
+			this.lobby.startGame();
+			var state = this.lobby.getState();
+			expect(state.state).to.eql(Lobby.STATE.IN_GAME);
+			expect(state.game).to.be.an("Object");
+		});
+		it("return hashed state if argument 1 is true");
+	});
+
+	describe("#sendStateToAll", function(){
+		it("send state to all objects", function(done){
+			this.lobby.addClient(MockSpark());
+			this.lobby.addClient(MockSpark());
+			var spark = MockSpark();
+			this.lobby.addClient(spark);
+			spark.write = function(state){
+				expect(state.state).to.eql(Lobby.STATE.LOBBY);
+				done();
+			};
+			this.lobby.sendStateToAll();
+		});
+		it("send hashed game state if argument 1 is true");
+	});
+
+	describe("#setAllReady", function(){
+		it("set all clients ready state", function(){
+			var spark1 = MockSpark();
+			var spark2 = MockSpark();
+			this.lobby.addClient(spark1);
+			this.lobby.addClient(spark2);
+
+			this.lobby.setAllReady(true);
+
+			expect(spark1.ready).to.be.true;
+			expect(spark2.ready).to.be.true;
+		});
+		it("emit ready if ready is true", function(done){
+			var spark = MockSpark();
+			this.lobby.addClient(spark);
+			this.lobby.once("ready", done);
+			this.lobby.setAllReady(true);
+		});
+	});
+
+	describe("#isAllReady", function(){
+		it("return true when all client is ready", function(){
+			var spark1 = MockSpark();
+			var spark2 = MockSpark();
+			this.lobby.addClient(spark1);
+			this.lobby.addClient(spark2);
+
+			this.lobby.setAllReady(true);
+
+			expect(this.lobby.isAllReady()).to.be.true;
+		});
+		it("return false when some client is ready", function(){
+			var spark1 = MockSpark();
+			spark1.ready = true;
+			var spark2 = MockSpark();
+			spark2.ready = false;
+			this.lobby.addClient(spark1);
+			this.lobby.addClient(spark2);
+
+			expect(this.lobby.isAllReady()).to.be.false;
+		});
+		it("return false when all client is not ready", function(){
+			var spark1 = MockSpark();
+			var spark2 = MockSpark();
+			this.lobby.addClient(spark1);
+			this.lobby.addClient(spark2);
+
+			this.lobby.setAllReady(false);
+
+			expect(this.lobby.isAllReady()).to.be.false;
+		});
+		it("defaults to false if no client is connected", function(){
+			expect(this.lobby.isAllReady()).to.be.false;
+		});
+	});
+
+	describe("#setReady", function(){
+		it("set ready of spark to value given", function(){
+			var spark = MockSpark();
+			this.lobby.setReady(spark, true);
+			expect(spark.ready).to.be.true;
+		});
+		it("emit ready if all clients are ready", function(done){
+			var spark = MockSpark();
+			this.lobby.addClient(spark);
+			this.lobby.once("ready", done);
+			this.lobby.setReady(spark, true);
+		});
+	});
+
+	describe("#nextTick", function(){
+		it("run game step");
+		it("send game state");
 	});
 });

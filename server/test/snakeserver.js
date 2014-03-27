@@ -3,14 +3,7 @@ var SnakeServer = require("../snakeserver");
 var Lobby = require("../lobby");
 var GameLogic = require("../../rules/");
 var _ = require("underscore");
-
-var MockSpark = function(){
-	if(!(this instanceof MockSpark)){
-		return new MockSpark();
-	}
-};
-MockSpark.prototype.write = function(){
-};
+var MockSpark = require("./mockspark");
 
 describe("SnakeServer", function(){
 	beforeEach(function(){
@@ -147,7 +140,7 @@ describe("SnakeServer", function(){
 			this.server.startLobby({});
 		});
 		it("start game if spark is the host of lobby", function(){
-			var spark = {};
+			var spark = MockSpark();
 			var lobby = this.server.createLobby(spark);
 
 			this.server.startLobby(spark);
@@ -161,7 +154,7 @@ describe("SnakeServer", function(){
 			var spark2 = MockSpark();
 			this.server.joinLobby(spark2, lobby.id);
 
-			this.server.startLobby(spark2);
+			this.server.startLobby(spark2, lobby.id);
 
 			expect(lobby.state).to.eql(Lobby.STATE.LOBBY);
 		});

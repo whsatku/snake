@@ -6,9 +6,17 @@ var primus = new Primus(server, {
 	transformer: "socket.io"
 });
 
+var winston = new require("winston");
+winston.remove(winston.transports.Console);
+winston.add(winston.transports.Console, {
+	level: "debug",
+	colorize: true
+});
+
 var snake = new (require("./snakeserver"))();
 snake.bind(primus);
-snake.autoCleanup();
+// snake.autoCleanup();
+snake.demoServer();
 
 server.listen(45634);
 console.log("port 45634");

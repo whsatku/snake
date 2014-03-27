@@ -2,6 +2,7 @@
 
 var _ = require("underscore");
 var Lobby = require("./lobby");
+var winston = require("winston");
 
 var SnakeServer = function SnakeServer(){
 	this.lobby = {};
@@ -35,13 +36,23 @@ SnakeServer.prototype.handleMessage = function(spark, data){
 			this.startLobby(spark);
 			break;
 	}
+	if(spark.lobby){
+		switch(data.command){
+			case "ready":
+				spark.lobby.setReady(spark, true);
+				break;
+			case "input":
+				spark.lobby.input(spark, data.key);
+				break;
+		}
+	}
 };
 
 SnakeServer.prototype.createLobby = function(spark){
-	var lobby = new Lobby();
-	lobby.id = this.id();
+	var lobby = new Lobby(this.id());
 	this.lobby[lobby.id] = lobby;
 	this.joinLobby(spark, lobby.id);
+	winston.info("[Lobby %s] Created", lobby.id, {ip: spark.address.ip});
 	return lobby;
 };
 
@@ -55,6 +66,7 @@ SnakeServer.prototype.joinLobby = function(spark, lobbyid){
 	}
 	var lobby = this.lobby[lobbyid];
 	lobby.addClient(spark);
+	winston.info("[Lobby %s] %s has joined (%d clients)", lobby.id, spark.address.ip, lobby.clients.length);
 	return lobby;
 };
 
@@ -64,9 +76,11 @@ SnakeServer.prototype.startLobby = function(spark){
 	}
 	if(spark.lobby.clients[0] !== spark){
 		spark.write({error: "noperm"});
+		winston.warn("[Lobby %s] Attempted start by %s", spark.lobby.id, spark.address.ip);
 		return;
 	}
 	spark.lobby.startGame();
+	winston.info("[Lobby %s] Started by %s", spark.lobby.id, spark.address.ip);
 };
 
 SnakeServer.prototype.autoCleanup = function(){
@@ -77,6 +91,13 @@ SnakeServer.prototype.cleanup = function(){
 	this.lobby = _.filter(this.lobby, function(item){
 		return item.clients.length > 0;
 	});
+};
+
+SnakeServer.prototype.demoServer = function(){
+	winston.debug("Demo mode enabled");
+	clearInterval(this._cleanupTimer);
+	this.lobby["0"] = new Lobby(0);
+	this.lobby["0"].startGame();
 };
 
 module.exports = SnakeServer;

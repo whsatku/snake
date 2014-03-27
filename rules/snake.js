@@ -71,11 +71,12 @@ Snake.prototype.input = function(input){
 				"up": MovingWorldObject.DIR.UP
 			};
 			if(this.isOpposite(map[input])){
-				break;
+				return false;
 			}
 			this._turning = map[input];
-			break;
+			return true;
 	}
+	return false;
 };
 
 Snake.prototype.isCollideWith = function(b, crosscheck){

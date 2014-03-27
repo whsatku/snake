@@ -3,10 +3,9 @@
 "use strict";
 
 window.KeyboardControlLayer = cc.Layer.extend({
-	ctor: function(root, player){
+	ctor: function(root){
 		this._super();
 		this._root = root;
-		this.player = player;
 	},
 
 	init: function() {
@@ -23,7 +22,7 @@ window.KeyboardControlLayer = cc.Layer.extend({
 		map[cc.KEY.right] = "right";
 
 		if(map[e]){
-			this._root.game.input(this.player, map[e]);
+			this._root.input(map[e]);
 		}
 	},
 });

@@ -3,8 +3,6 @@
 "use strict";
 
 window.GameScene = cc.Scene.extend({
-	player: 0,
-
 	onEnter: function() {
 		this._super();
 
@@ -27,7 +25,7 @@ window.GameScene = cc.Scene.extend({
 	},
 
 	initKeyboard: function(){
-		var kbd = new KeyboardControlLayer(this.gameLayer, this.player);
+		var kbd = new KeyboardControlLayer(this.gameLayer);
 		this.addChild(kbd, 1000000);
 		kbd.init();
 	},

@@ -116,10 +116,10 @@ Game.prototype.getSnake = function(id){
 Game.prototype.input = function(player, input){
 	var snake = this.getSnake(player);
 	if(!snake){
-		return;
+		return false;
 	}
 
-	snake.input(input);
+	return snake.input(input);
 };
 
 Game.prototype.removeChild = function(child){
