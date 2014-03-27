@@ -1,0 +1,14 @@
+{
+  "name": "snakeserver",
+  "version": "1.0.0",
+  "description": "Server side for snake game",
+  "main": "server.js",
+  "private": true,
+  "devDependencies": {
+    "chai": "~1.9.1",
+    "mocha": "~1.18.2"
+  },
+  "dependencies": {
+    "underscore": "~1.6.0"
+  }
+}
