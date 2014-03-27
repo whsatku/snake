@@ -10,7 +10,7 @@ window.WorldObjectNode = cc.Sprite.extend({
 
 	init: function(){
 		if(arguments.length === 0){
-			var mapName = this.getRoot().map;
+			var mapName = this.getRoot().game.state.map;
 			var tileset = GameLogic.map[mapName].tileset || "brick";
 			this._super.apply(this, this.tileset[tileset]);
 		}else{

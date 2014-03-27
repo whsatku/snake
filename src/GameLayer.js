@@ -84,8 +84,6 @@ window.GameLayer = cc.Layer.extend({
 		if(data.state === LobbyState.IN_GAME){
 			if(typeof data.game == "object"){
 				this.game.loadState(data.game);
-				this.initMap();
-				this.syncFromEngine();
 				this.primus.write({command: "ready"});
 			}else if(data.hash !== undefined){
 				data.cmd.forEach(function(cmd){
@@ -98,8 +96,9 @@ window.GameLayer = cc.Layer.extend({
 	},
 
 	fillFloor: function(){
-		var mapData = GameLogic.map[this.map];
-		var tileset = this.tileset[mapData.tileset||"brick"];
+		var mapName = this.game.state.map;
+		var mapData = GameLogic.map[mapName];
+		var tileset = this.tileset[mapData.tileset || "brick"];
 		var groundNode = cc.SpriteBatchNode.create(tileset[0], this.game.state.width * this.game.state.height);
 		for(var y=0; y<this.game.state.height; y++){
 			for(var x=0; x<this.game.state.width; x++){
