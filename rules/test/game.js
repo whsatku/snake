@@ -290,8 +290,9 @@ describe("Game", function(){
 	});
 
 	describe("#loadState", function(){
+		var state = JSON.parse('{"state":1,"powerUpCollected":0,"powerUpToEnd":5,"width":37,"height":29,"updateRate":100,"map":"plain","step":311,"objects":[{"x":0,"y":0,"deadly":true,"direction":0,"speed":1,"_type":"Snake"},{"x":0,"y":0,"deadly":true,"direction":1,"speed":1,"_type":"Snake"},{"x":16,"y":12,"deadly":false,"_type":"Powerup"}],"rng":{"seed":[2063179164,189560361,405237180,-526820764,1415785209,-430534247,201991942,708429421,-1664203584,1045594639,1920244661,-1962565032,-653888130,263314630,1991008667,-1753323413,221423556,304154551,1036025779,213732642,-1519784725,1889442263,1252049299,-671077744,-59952572,-842041520,652992862,2104283329,-593341108,648328801,-1471756500,679219861],"idx":15}}');
 		before(function(){
-			this.game.loadState(JSON.parse('{"state":1,"powerUpCollected":0,"powerUpToEnd":5,"width":37,"height":29,"updateRate":100,"map":"plain","step":311,"objects":[{"x":0,"y":0,"deadly":true,"direction":0,"speed":1,"_type":"Snake"},{"x":0,"y":0,"deadly":true,"direction":1,"speed":1,"_type":"Snake"},{"x":16,"y":12,"deadly":false,"_type":"Powerup"}],"rng":{"seed":[2063179164,189560361,405237180,-526820764,1415785209,-430534247,201991942,708429421,-1664203584,1045594639,1920244661,-1962565032,-653888130,263314630,1991008667,-1753323413,221423556,304154551,1036025779,213732642,-1519784725,1889442263,1252049299,-671077744,-59952572,-842041520,652992862,2104283329,-593341108,648328801,-1471756500,679219861],"idx":15}}'));
+			this.game.loadState(state);
 		});
 		it("update state", function(){
 			expect(this.game.state.state).to.eql(1);
@@ -305,6 +306,10 @@ describe("Game", function(){
 		});
 		it("create objects from state", function(){
 			expect(this.game.objects[this.game.objects.length - 1]).to.be.instanceof(GameLogic.Powerup);
+		});
+		it("emit loadState event", function(done){
+			this.game.once("loadState", done)
+			this.game.loadState(state);
 		});
 	});
 

@@ -16,30 +16,39 @@ window.GameLayer = cc.Layer.extend({
 
 	init: function() {
 		this.initGame();
+		this.initLocalGame();
+
+		this.syncFromEngine();
 	},
 
 	initGame: function(){
 		this.game = new GameLogic.Game();
-		this.schedule(this.gameStep.bind(this), this.game.state.updateRate / 1000, Infinity, 0);
 		this.game.on("step", this.onGameStepped.bind(this));
+		this.game.on("loadState", this.onLoadState.bind(this));
+	},
 
+	initLocalGame: function(){
+		this.schedule(this.gameStep.bind(this), this.game.state.updateRate / 1000, Infinity, 0);
+		this.game.loadMap(this.map);
 		this.initMap();
 
 		this.game.addSnake();
 		this.game.addSnake();
-
-		// draw initial
-		this.onGameStepped();
 	},
 
 	initMap: function(){
-		this.game.loadMap(this.map);
 		this.setContentSize(this.game.state.width * this.gridSize[0], this.game.state.height * this.gridSize[1]);
 		this.fillFloor();
 	},
 
 	gameStep: function(){
 		this.game.step();
+	},
+
+	onLoadState: function(){
+		this.removeAllChildren();
+		this.initMap();
+		this.syncFromEngine();
 	},
 
 	onGameStepped: function(){

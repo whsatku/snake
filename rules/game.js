@@ -203,6 +203,8 @@ Game.prototype.loadState = function(state){
 			self.objects.push(object);
 		}
 	});
+
+	this.emit("loadState");
 };
 
 module.exports = Game;

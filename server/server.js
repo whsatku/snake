@@ -6,7 +6,7 @@ var primus = new Primus(server, {
 	transformer: "socket.io"
 });
 
-var snake = new require("./snakeserver")();
+var snake = new (require("./snakeserver"))();
 snake.bind(primus);
 snake.autoCleanup();
 
