@@ -12,6 +12,10 @@ describe("Lobby", function(){
 		expect(this.lobby.clients).to.be.an("Array");
 	});
 
+	it("has state lists", function(){
+		expect(Lobby.STATE).to.have.keys(["LOBBY", "IN_GAME", "FINISHED"]);
+	});
+
 	describe("#addClient", function(){
 		it("add client to the list of clients", function(){
 			var spark = MockSpark();

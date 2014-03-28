@@ -196,6 +196,20 @@ describe("Game", function(){
 		});
 	});
 
+	describe("#checkCollision", function(){
+		it("return list of colliding objects", function(){
+			var game = new Game();
+			var a = new GameLogic.WorldObject(game);
+			a.x = 0; a.y = 0;
+			this.game.objects.push(a);
+			var b = new GameLogic.WorldObject(game);
+			b.x = 0; b.y = 0;
+			this.game.objects.push(b);
+
+			expect(this.game.checkCollision(a)).to.eql([b]);
+		});
+	});
+
 	describe("#input", function(){
 
 		beforeEach(function(){
@@ -216,6 +230,12 @@ describe("Game", function(){
 			expect(stub.calledWith("command")).to.be.true;
 		});
 
+		it("should return snake output", function(){
+			var stub = sinon.stub(this.snake, "input").returns(false);
+			expect(this.game.input(0, "command")).to.be.false;
+			stub.returns(true);
+			expect(this.game.input(0, "command")).to.be.true;
+		});
 		it("should ignore if snake does not exists", function(){
 			this.game.input(9999, "command");
 		});
@@ -241,7 +261,7 @@ describe("Game", function(){
 	describe("#loadMap", function(){
 		it("should throw exception when map is not defined", function(){
 			expect(function(){
-				this.game.loadMap("unitTest_nomap")
+				this.game.loadMap("unitTest_nomap");
 			}).to.throw(Error);
 		});
 		it("should set game state map size and name", function(){
@@ -310,6 +330,14 @@ describe("Game", function(){
 		it("emit loadState event", function(done){
 			this.game.once("loadState", done)
 			this.game.loadState(state);
+		});
+	});
+
+	describe("#prepareState", function(){
+		it("return crc32 of state json", function(){
+			var state = JSON.parse('{"state":1,"powerUpCollected":0,"powerUpToEnd":5,"width":37,"height":29,"updateRate":100,"map":"plain","step":311,"objects":[{"x":0,"y":0,"deadly":true,"direction":0,"speed":1,"_type":"Snake"},{"x":0,"y":0,"deadly":true,"direction":1,"speed":1,"_type":"Snake"},{"x":16,"y":12,"deadly":false,"_type":"Powerup"}],"rng":{"seed":[2063179164,189560361,405237180,-526820764,1415785209,-430534247,201991942,708429421,-1664203584,1045594639,1920244661,-1962565032,-653888130,263314630,1991008667,-1753323413,221423556,304154551,1036025779,213732642,-1519784725,1889442263,1252049299,-671077744,-59952572,-842041520,652992862,2104283329,-593341108,648328801,-1471756500,679219861],"idx":15}}');
+			this.game.loadState(state);
+			expect(this.game.hashState()).to.eql("52b2b925");
 		});
 	});
 

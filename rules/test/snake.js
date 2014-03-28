@@ -151,30 +151,26 @@ describe("Snake", function(){
 			this.snake.direction = null;
 		});
 
-		it("should be a function", function(){
-			expect(Snake).to.respondTo("input");
-		});
-
 		it("should accept left as input", function(){
-			this.snake.input("left");
+			expect(this.snake.input("left")).to.be.true;
 			this.snake.update();
 			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.LEFT);
 		});
 
 		it("should accept up as input", function(){
-			this.snake.input("down");
+			expect(this.snake.input("down")).to.be.true;
 			this.snake.update();
 			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.DOWN);
 		});
 
 		it("should accept right as input", function(){
-			this.snake.input("right");
+			expect(this.snake.input("right")).to.be.true;
 			this.snake.update();
 			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.RIGHT);
 		});
 
 		it("should accept down as input", function(){
-			this.snake.input("down");
+			expect(this.snake.input("down")).to.be.true;
 			this.snake.update();
 			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.DOWN);
 		});
@@ -193,8 +189,8 @@ describe("Snake", function(){
 			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.LEFT);
 		});
 
-		it("should not error when invalid input is given", function(){
-			this.snake.input("nonexistingkey");
+		it("should return false on invalid input", function(){
+			expect(this.snake.input("nonexistingkey")).to.be.false;
 			this.snake.update();
 		});
 

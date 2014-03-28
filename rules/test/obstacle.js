@@ -29,4 +29,11 @@ describe("Obstacle", function(){
 		});
 	});
 
+	describe("#loadState", function(){
+		it("throw error", function(){
+			var obj = new Obstacle(this.game);
+			expect(obj.loadState).to.throw(Error);
+		});
+	});
+
 });
