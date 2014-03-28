@@ -50,6 +50,27 @@ describe("SnakeServer", function(){
 		});
 	});
 
+	describe("#handleMessage (w/lobby)", function(){
+		beforeEach(function(){
+			this.spark = MockSpark();
+			this.lobby = this.server.createLobby(this.spark);
+		});
+		it("handle ready message", function(){
+			this.server.handleMessage(this.spark, {"command": "ready"});
+			expect(this.lobby.isAllReady()).to.be.true;
+		});
+		it("handle input message", function(done){
+			this.lobby.startGame();
+			this.server.handleMessage(this.spark, {"command": "input", "key": "right"});
+			this.spark.write = function(message){
+				expect(message.cmd[0]).to.eql(["input", 0, "right"]);
+				done();
+			};
+			this.lobby.nextTick();
+		});
+	});
+
+
 	describe("#createLobby", function(){
 		it("returns a lobby", function(){
 			var spark = MockSpark();
@@ -130,6 +151,14 @@ describe("SnakeServer", function(){
 			expect(this.lobby.clients).to.include(spark);
 			expect(spark.lobby).to.eql(this.lobby);
 		});
+		it("yield nolobby error when invalid lobby is given", function(done){
+			var spark = MockSpark();
+			spark.write = function(data){
+				expect(data.error).to.eql("nolobby");
+				done();
+			};
+			this.server.joinLobby(spark, 999999);
+		});
 	});
 
 	describe("#startLobby", function(){
@@ -157,6 +186,14 @@ describe("SnakeServer", function(){
 			this.server.startLobby(spark2, lobby.id);
 
 			expect(lobby.state).to.eql(Lobby.STATE.LOBBY);
+		});
+	});
+
+	describe("#demoServer", function(){
+		it("create and start lobby 0", function(){
+			this.server.demoServer();
+			expect(this.server.lobby["0"]).to.be.an.instanceof(Lobby);
+			expect(this.server.lobby["0"].state).to.eql(Lobby.STATE.IN_GAME);
 		});
 	});
 });

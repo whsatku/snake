@@ -20,7 +20,7 @@ var Lobby = function Lobby(id){
 	this.clients = [];
 	this.state = Lobby.STATE.LOBBY;
 	this.on("ready", this.onReady.bind(this));
-	this.lastTick = new Date().getTime();
+	this.lastTick = 0;
 	this.cmdQueue = [];
 };
 
@@ -68,6 +68,8 @@ Lobby.prototype.startGame = function(){
 		this.createSnakeForClient(this.clients[i], i);
 	}
 
+	this.lastTick = new Date().getTime();
+
 	// TODO: Lobby configuration
 	this.game.loadMap("plain");
 
@@ -89,11 +91,11 @@ Lobby.prototype.getState = function(hashed){
 	};
 	if(this.game){
 		state.game = this.game.prepareState();
-	}
-	if(hashed === true){
-		state.hash = this.game.hashState();
-		state.cmd = this.cmdQueue;
-		delete state.game;
+		if(hashed === true){
+			state.hash = this.game.hashState();
+			state.cmd = this.cmdQueue;
+			delete state.game;
+		}
 	}
 	return state;
 };
