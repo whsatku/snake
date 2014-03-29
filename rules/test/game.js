@@ -54,17 +54,49 @@ describe("Game", function(){
 	});
 
 	describe("#addSnake", function(){
-		var game = new Game();
+		beforeEach(function(){
+			this.game = new Game();
+		});
 
 		it("should be able to execute", function(){
 			expect(Game).to.respondTo("addSnake");
 		});
 		it("should return a Snake object", function(){
-			expect(game.addSnake()).to.be.an.instanceOf(GameLogic.Snake);
+			expect(this.game.addSnake()).to.be.an.instanceOf(GameLogic.Snake);
 		});
 		it("should add the returned snake to objects array", function(){
-			var returned = game.addSnake();
-			expect(game.objects).to.include.members([returned]);
+			var returned = this.game.addSnake();
+			expect(this.game.objects).to.include.members([returned]);
+		});
+		it("should set snake index property", function(){
+			this.game.addSnake();
+			var snake = this.game.addSnake();
+			expect(snake.index).to.eql(1);
+		});
+	});
+
+	describe("#removeSnake", function(){
+		beforeEach(function(){
+			this.game = new Game();
+			this.snake = this.game.addSnake();
+		});
+
+		it("remove snake by object", function(){
+			this.game.removeSnake(this.snake);
+			expect(this.game.objects).to.have.length(0);
+		});
+
+		it("remove snake by index", function(){
+			this.game.removeSnake(0);
+			expect(this.game.objects).to.have.length(0);
+		});
+
+		it("return index of snake", function(){
+			expect(this.game.removeSnake(this.snake)).to.eql(0);
+		});
+
+		it("return false for non existing snake", function(){
+			expect(this.game.removeSnake(new GameLogic.Snake(this.game))).to.be.false;
 		});
 	});
 

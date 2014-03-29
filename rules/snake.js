@@ -6,6 +6,7 @@ var Snake = function Snake(){
 	this.positions = [];
 	this.maxLength = Snake.DEFAULT_MAX_LENGTH;
 	this._turning = null;
+	this.index = -1;
 
 	this.on("collision", this.onCollide.bind(this));
 };
@@ -135,6 +136,7 @@ Snake.prototype.getState = function(){
 	var state = Snake.super_.prototype.getState.apply(this);
 	state.positions = this.positions.slice(0);
 	state.maxLength = this.maxLength;
+	state.index = this.index;
 	return state;
 };
 
@@ -142,6 +144,7 @@ Snake.prototype.loadState = function(state){
 	Snake.super_.prototype.loadState.call(this, state);
 	this.positions = state.positions;
 	this.maxLength = state.maxLength;
+	this.index = state.index;
 };
 
 module.exports = Snake;

@@ -22,6 +22,12 @@ SnakeServer.prototype.bind = function(primus){
 			self.handleMessage(spark, data);
 		});
 	});
+	this.primus.on("disconnection", function(spark){
+		winston.debug("Spark %s has disconnected", spark.address.ip);
+		if(spark.lobby){
+			spark.lobby.removeClient(spark);
+		}
+	});
 };
 
 SnakeServer.prototype.handleMessage = function(spark, data){

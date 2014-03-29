@@ -413,6 +413,12 @@ describe("Snake", function(){
 
 			expect(obj.getState().positions).to.eql(obj.positions);
 		});
+		it("dump index", function(){
+			var obj = new Snake(this.game);
+			obj.index = 5;
+
+			expect(obj.getState().index).to.eql(obj.index);
+		});
 	});
 
 	describe("#loadState", function(){
@@ -431,6 +437,13 @@ describe("Snake", function(){
 			obj.loadState(state);
 
 			expect(obj.maxLength).to.eql(state.maxLength);
+		});
+		it("load index", function(){
+			var obj = new Snake(this.game);
+			var state = {x: 5, y: 5, deadly: false, maxLength: 50, positions: [[0,0]], index: 5};
+			obj.loadState(state);
+
+			expect(obj.index).to.eql(state.index);
 		});
 	});
 

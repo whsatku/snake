@@ -39,7 +39,21 @@ Game.prototype.addSnake = function(snake){
 		snake = this._createSnake();
 	}
 	this.objects.push(snake);
+	snake.index = this._snakes.length;
 	this._snakes.push(snake);
+	return snake;
+};
+
+Game.prototype.removeSnake = function(snake){
+	if(typeof snake != "number"){
+		snake = this._snakes.indexOf(snake);
+		if(snake === -1){
+			return false;
+		}
+	}
+	this.removeChild(this._snakes[snake]);
+	this._snakes[snake] = undefined;
+
 	return snake;
 };
 
@@ -179,6 +193,10 @@ Game.prototype.prepareState = function(){
 		self.state.objects.push(state);
 	});
 	this.state.rng = this.random.getState();
+	this.state.snake = [];
+	this._snakes.forEach(function(snake){
+		self.state.snake.push(snake ? snake.index : undefined);
+	});
 	return this.state;
 };
 
@@ -192,7 +210,7 @@ Game.prototype.loadState = function(state){
 
 	var index = require("./index");
 	var self = this;
-	this._snakes = [];
+	this._snakes = state.snake;
 	this.loadMap(state.map);
 	this.state.objects.forEach(function(item){
 		if(!index[item._type]){
@@ -202,10 +220,10 @@ Game.prototype.loadState = function(state){
 		var object = new index[item._type](self);
 		object.loadState(item);
 
-		if(item._type == "Snake"){
-			self.addSnake(object);
-		}else{
-			self.objects.push(object);
+		self.objects.push(object);
+
+		if(object instanceof Snake){
+			self._snakes[object.index] = object;
 		}
 	});
 

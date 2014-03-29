@@ -62,6 +62,39 @@ describe("Lobby", function(){
 			lobby.removeClient(this.spark);
 			expect(spark.lobby).to.eql(lobby);
 		});
+
+		it("remove spark's snake", function(){
+			this.lobby.startGame();
+			this.lobby.removeClient(this.spark);
+			expect(this.lobby.game.getSnake(0)).to.be.undefined;
+		});
+
+		it("replicate removeSnake command", function(){
+			this.lobby.startGame();
+			this.lobby.removeClient(this.spark);
+			var state = this.lobby.getState(true);
+			expect(state.cmd[0]).to.eql(["removeSnake", 0]);
+		});
+
+		it("broadcast disconnect to all clients", function(done){
+			var otherClient = MockSpark();
+			this.lobby.addClient(otherClient);
+			this.lobby.startGame();
+			otherClient.write = function(message){
+				expect(message.disconnect).to.eql(0);
+				done();
+			};
+			this.lobby.removeClient(this.spark);
+		});
+
+		it("broadcast disconnect to disconnected clients", function(done){
+			this.lobby.startGame();
+			this.spark.write = function(message){
+				expect(message.disconnect).to.eql(0);
+				done();
+			};
+			this.lobby.removeClient(this.spark);
+		});
 	});
 
 	describe("#startGame", function(){
@@ -103,20 +136,27 @@ describe("Lobby", function(){
 		});
 		it("create snake", function(){
 			var spark = MockSpark();
-			this.lobby.createSnakeForClient(spark, 0);
+			this.lobby.createSnakeForClient(spark);
 			expect(spark.snake).to.be.instanceof(GameLogic.Snake);
 		});
 		it("set snake index", function(){
 			var spark = MockSpark();
-			this.lobby.createSnakeForClient(spark, 5);
-			expect(spark.snakeIndex).to.eql(5);
+			this.lobby.createSnakeForClient(spark);
+			expect(spark.snakeIndex).to.eql(0);
 		});
 		it("replicate addSnake command", function(){
 			var spark = MockSpark();
-			this.lobby.createSnakeForClient(spark, 0);
+			this.lobby.createSnakeForClient(spark);
 			var state = this.lobby.getState(true);
 			expect(state.cmd[0]).to.eql(["addSnake"]);
-		})
+		});
+		it("make sequential snake index even if a snake is disconnected", function(){
+			var spark = MockSpark();
+			this.lobby.addClient(spark);
+			this.lobby.removeClient(spark);
+			this.lobby.addClient(spark);
+			expect(spark.snakeIndex).to.eql(1);
+		});
 	});
 
 	describe("#getState", function(){
@@ -141,6 +181,20 @@ describe("Lobby", function(){
 		});
 	});
 
+	describe("#broadcast", function(){
+		it("send message to all objects", function(done){
+			this.lobby.addClient(MockSpark());
+			this.lobby.addClient(MockSpark());
+			var spark = MockSpark();
+			this.lobby.addClient(spark);
+			spark.write = function(data){
+				expect(data).to.eql("hello world");
+				done();
+			};
+			this.lobby.broadcast("hello world");
+		});
+	});
+
 	describe("#sendStateToAll", function(){
 		it("send state to all objects", function(done){
 			this.lobby.addClient(MockSpark());
@@ -153,7 +207,7 @@ describe("Lobby", function(){
 			};
 			this.lobby.sendStateToAll();
 		});
-		it("send state to all objects", function(done){
+		it("send hashed state to all objects", function(done){
 			var spark = MockSpark();
 			this.lobby.addClient(spark);
 			this.lobby.startGame();

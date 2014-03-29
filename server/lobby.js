@@ -37,15 +37,15 @@ Lobby.prototype.addClient = function(spark){
 	spark.write(this.getState());
 
 	if(this.state === Lobby.STATE.IN_GAME){
-		this.createSnakeForClient(spark, this.clients.length - 1);
+		this.createSnakeForClient(spark);
 	}
 
 	spark.lobby = this;
 };
 
-Lobby.prototype.createSnakeForClient = function(spark, index){
+Lobby.prototype.createSnakeForClient = function(spark){
 	spark.snake = this.game.addSnake();
-	spark.snakeIndex = index;
+	spark.snakeIndex = spark.snake.index;
 	this.cmdQueue.push(["addSnake"]);
 };
 
@@ -53,6 +53,14 @@ Lobby.prototype.removeClient = function(spark){
 	if(spark.lobby !== this){
 		return;
 	}
+
+	if(spark.snake){
+		var removeIndex = this.game.removeSnake(spark.snakeIndex);
+		this.cmdQueue.push(["removeSnake", removeIndex]);
+	}
+
+	this.broadcast({"disconnect": spark.snakeIndex});
+
 	this.clients = _.without(this.clients, spark);
 	delete spark.lobby;
 };
@@ -65,7 +73,7 @@ Lobby.prototype.startGame = function(){
 	this.game = new GameLogic.Game();
 
 	for(var i = 0; i < this.clients.length; i++){
-		this.createSnakeForClient(this.clients[i], i);
+		this.createSnakeForClient(this.clients[i]);
 	}
 
 	this.lastTick = new Date().getTime();
@@ -76,11 +84,15 @@ Lobby.prototype.startGame = function(){
 	this.sendStateToAll();
 };
 
+Lobby.prototype.broadcast = function(data){
+	for(var i = 0; i < this.clients.length; i++){
+		this.clients[i].write(data);
+	}
+};
+
 Lobby.prototype.sendStateToAll = function(hashed){
 	var state = this.getState(hashed);
-	for(var i = 0; i < this.clients.length; i++){
-		this.clients[i].write(state);
-	}
+	this.broadcast(state);
 	this.cmdQueue = [];
 };
 
