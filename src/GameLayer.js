@@ -91,10 +91,13 @@ window.GameLayer = cc.Layer.extend({
 				});
 				this.game.step();
 				this.game.prepareState();
-				if(this.game.hashState() != data.hash){
-					console.error("desync");
+				var hash = this.game.hashState();
+				if(hash != data.hash){
+					console.error("desync", "local", hash, "server", data.hash);
+					this.primus.write({command: "desync"});
+				}else{
+					this.primus.write({command: "ready"});
 				}
-				this.primus.write({command: "ready"});
 			}
 		}
 	},

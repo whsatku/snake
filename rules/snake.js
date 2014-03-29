@@ -70,7 +70,9 @@ Snake.prototype.input = function(input){
 				"down": MovingWorldObject.DIR.DOWN,
 				"up": MovingWorldObject.DIR.UP
 			};
-			if(this.isOpposite(map[input])){
+			if(map[input] === this.direction){
+				return false;
+			}else if(this.isOpposite(map[input])){
 				return false;
 			}
 			this._turning = map[input];

@@ -16,7 +16,7 @@ var Game = function SnakeGame(){
 		powerUpToEnd: 5,
 		width: 40,
 		height: 30,
-		updateRate: 100,
+		updateRate: 150,
 		map: null,
 		step: 0
 	};

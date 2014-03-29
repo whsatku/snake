@@ -44,6 +44,10 @@ SnakeServer.prototype.handleMessage = function(spark, data){
 			case "input":
 				spark.lobby.input(spark, data.key);
 				break;
+			case "desync":
+				winston.info("[Lobby %s] Desync player %s", spark.lobby.id, spark.snakeIndex);
+				spark.lobby.sendState(spark);
+				break;
 		}
 	}
 };

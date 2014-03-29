@@ -84,6 +84,11 @@ Lobby.prototype.sendStateToAll = function(hashed){
 	this.cmdQueue = [];
 };
 
+Lobby.prototype.sendState = function(spark, hashed){
+	var state = this.getState(hashed);
+	spark.write(state);
+};
+
 Lobby.prototype.getState = function(hashed){
 	var state = {
 		lobby: this.id,

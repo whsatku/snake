@@ -194,6 +194,11 @@ describe("Snake", function(){
 			this.snake.update();
 		});
 
+		it("should return false on input in moving direction", function(){
+			this.snake.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
+			expect(this.snake.input("right")).to.be.false;
+		});
+
 	});
 
 	describe("#isCollideWith", function(){

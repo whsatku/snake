@@ -61,12 +61,20 @@ describe("SnakeServer", function(){
 		});
 		it("handle input message", function(done){
 			this.lobby.startGame();
-			this.server.handleMessage(this.spark, {"command": "input", "key": "right"});
+			this.server.handleMessage(this.spark, {"command": "input", "key": "up"});
 			this.spark.write = function(message){
-				expect(message.cmd[0]).to.eql(["input", 0, "right"]);
+				expect(message.cmd[0]).to.eql(["input", 0, "up"]);
 				done();
 			};
 			this.lobby.nextTick();
+		});
+		it("handle desync message", function(done){
+			this.lobby.startGame();
+			this.spark.write = function(message){
+				expect(message.game).to.be.an("Object");
+				done();
+			};
+			this.server.handleMessage(this.spark, {"command": "desync"});
 		});
 	});
 

@@ -165,6 +165,29 @@ describe("Lobby", function(){
 		});
 	});
 
+	describe("#sendState", function(){
+		it("send entire state to given client", function(done){
+			var spark = MockSpark();
+			this.lobby.addClient(spark);
+			this.lobby.startGame();
+			spark.write = function(state){
+				expect(state.game).to.be.an("Object");
+				done();
+			};
+			this.lobby.sendState(spark);
+		});
+		it("send hashed state to given client", function(done){
+			var spark = MockSpark();
+			this.lobby.addClient(spark);
+			this.lobby.startGame();
+			spark.write = function(state){
+				expect(state.hash).to.be.a("String");
+				done();
+			};
+			this.lobby.sendState(spark, true);
+		});
+	});
+
 	describe("#setAllReady", function(){
 		it("set all clients ready state", function(){
 			var spark1 = MockSpark();
@@ -256,6 +279,7 @@ describe("Lobby", function(){
 	describe("#onReady", function(){
 		beforeEach(function(){
 			this.lobby.startGame();
+			this.lobby.game.state.updateRate = 10;
 		});
 		it("call nextTick", function(done){
 			this.lobby.nextTick = done;
@@ -268,7 +292,6 @@ describe("Lobby", function(){
 			this.lobby.onReady();
 		});
 		it("call lobby by the game updateRate", function(done){
-			this.lobby.game.state.updateRate = 10;
 			this.lobby.game.once("step", function(){
 				this.lobby.game.once("step", function(){
 					expect(new Date().getTime() - tick).to.be.closeTo(10, 5);
@@ -292,9 +315,9 @@ describe("Lobby", function(){
 			var spark = MockSpark();
 			this.lobby.addClient(spark);
 			this.lobby.nextTick();
-			this.lobby.input(spark, "right");
+			this.lobby.input(spark, "up");
 			spark.write = function(state){
-				expect(state.cmd[0]).to.eql(["input", spark.snakeIndex, "right"]);
+				expect(state.cmd[0]).to.eql(["input", spark.snakeIndex, "up"]);
 				done();
 			};
 			this.lobby.nextTick();
