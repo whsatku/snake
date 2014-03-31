@@ -12,6 +12,7 @@
 		//SingleEngineFile:'',
 		appFiles:[
 			'build/index.js',
+			'src/Netcode.js',
 			'src/GameScene.js',
 			'src/GameLayer.js',
 			'src/KeyboardControlLayer.js',

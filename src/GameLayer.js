@@ -16,9 +16,6 @@ window.GameLayer = cc.Layer.extend({
 	},
 
 	init: function() {
-		this.server = window.location.protocol == "file:" ? "http://localhost:45634/primus" :
-			window.location.protocol + "//" + window.location.hostname + ":45634/primus";
-
 		// ease debugging
 		window.gamelayer = this;
 
@@ -48,12 +45,8 @@ window.GameLayer = cc.Layer.extend({
 	initNetworkGame: function(){
 		var self = this;
 		this.mode = GameLayer.MODES.NETWORK;
-		this.primus = Primus.connect(this.server);
-		this.primus.on("open", function(){
-			console.log("netcode: connected");
-			self.primus.write({command: "lobbyjoin", lobby: 0});
-		});
-		this.primus.on("data", this.onData.bind(this));
+		this.netcode = new Netcode(this.game);
+		this.netcode.connect();
 	},
 
 	initMap: function(){
@@ -73,36 +66,6 @@ window.GameLayer = cc.Layer.extend({
 
 	onGameStepped: function(){
 		this.syncFromEngine();
-	},
-
-	onData: function(data){
-		// TODO: Split to Netcode class
-		var LobbyState = {
-			"LOBBY": 0,
-			"IN_GAME": 1,
-			"FINISHED": 2
-		};
-		var self = this;
-
-		if(data.state === LobbyState.IN_GAME){
-			if(typeof data.game == "object"){
-				this.game.loadState(data.game);
-				this.primus.write({command: "ready"});
-			}else if(data.hash !== undefined){
-				data.cmd.forEach(function(cmd){
-					self.game[cmd[0]].apply(self.game, cmd.slice(1));
-				});
-				this.game.step();
-				this.game.prepareState();
-				var hash = this.game.hashState();
-				if(hash != data.hash){
-					console.error("desync", "local", hash, "server", data.hash);
-					this.primus.write({command: "desync"});
-				}else{
-					this.primus.write({command: "ready"});
-				}
-			}
-		}
 	},
 
 	fillFloor: function(){
@@ -154,7 +117,7 @@ window.GameLayer = cc.Layer.extend({
 				this.game.input(0, key);
 				break;
 			case GameLayer.MODES.NETWORK:
-				this.primus.write({command: "input", key: key});
+				this.netcode.input(key);
 				break;
 		}
 	},
