@@ -3,6 +3,48 @@
 
 var multiline = require("multiline");
 
+exports.empty = new String(multiline(function(){
+/*!
+#                                               #
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#                                               #
+*/
+return 0;}));
+exports.empty.tileset = "brick";
+
 exports.plain = new String(multiline(function(){
 /*!
 #########     #########     #########

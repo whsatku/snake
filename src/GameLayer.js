@@ -4,7 +4,7 @@
 
 window.GameLayer = cc.Layer.extend({
 	gridSize: [16, 16],
-	map: "plain",
+	map: "empty",
 	server: "http://localhost:45634/primus",
 
 	objectsMap: {
@@ -16,6 +16,9 @@ window.GameLayer = cc.Layer.extend({
 	},
 
 	init: function() {
+		this.server = window.location.protocol == "file:" ? "http://localhost:45634/primus" :
+			window.location.protocol + "//" + window.location.hostname + ":45634/primus";
+
 		// ease debugging
 		window.gamelayer = this;
 
@@ -148,7 +151,7 @@ window.GameLayer = cc.Layer.extend({
 	input: function(key){
 		switch(this.mode){
 			case GameLayer.MODES.LOCAL:
-				this.game.input(0, player.key);
+				this.game.input(0, key);
 				break;
 			case GameLayer.MODES.NETWORK:
 				this.primus.write({command: "input", key: key});
