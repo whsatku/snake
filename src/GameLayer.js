@@ -168,6 +168,7 @@ window.GameLayer = cc.Layer.extend({
 			ObjectClass = PowerupNode;
 		}
 		var node = new ObjectClass();
+		node.object = obj;
 		this.addChild(node);
 		node.init();
 		this.objectsMap[obj.$id] = node;

@@ -21,7 +21,12 @@
 			'src/PowerupNode.js'
 		],
 		resourceFiles: [
-			{src: 'res/snake.png'},
+			{src: 'res/snake-1.png'},
+			{src: 'res/snake-2.png'},
+			{src: 'res/snake-3.png'},
+			{src: 'res/snake-4.png'},
+			{src: 'res/snake-5.png'},
+			{src: 'res/snake-6.png'},
 			{src: 'res/food.png'},
 			{src: 'res/tiles.png'},
 			{src: 'res/forest.jpg'},

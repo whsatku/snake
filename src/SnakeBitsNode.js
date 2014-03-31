@@ -4,7 +4,7 @@
 
 window.SnakeBitsNode = WorldObjectNode.extend({
 	init: function(){
-		this._super("res/snake.png", cc.rect(16, 0, 16, 16));
+		this._super("res/snake-"+this.index+".png", cc.rect(16, 0, 16, 16));
 	},
 
 	// sync is managed by SnakeNode

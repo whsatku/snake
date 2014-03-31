@@ -6,7 +6,8 @@ window.SnakeNode = WorldObjectNode.extend({
 	_tails: [],
 
 	init: function(){
-		this._super("res/snake.png", cc.rect(0, 0, 16, 16));
+		this.index = this.object.index % 6 + 1;
+		this._super("res/snake-"+this.index+".png", cc.rect(0, 0, 16, 16));
 	},
 
 	syncFromEngine: function(obj){
@@ -40,6 +41,7 @@ window.SnakeNode = WorldObjectNode.extend({
 		var root = this.getRoot();
 		for(var i = this._tails.length; i < obj.positions.length - 1; i++){
 			var child = new SnakeBitsNode();
+			child.index = this.index;
 			root.addChild(child);
 			child.init();
 			this._tails.push(child);
