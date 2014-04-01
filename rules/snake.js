@@ -129,6 +129,11 @@ Snake.prototype.die = function(){
 };
 
 Snake.prototype._makeSpawn = function(){
+	if(this.spawn){
+		this.spawn.fromSnake(this);
+		return this.spawn;
+	}
+	
 	var spawn = new Spawn(this.world);
 	spawn.fromSnake(this);
 	return spawn;
@@ -148,6 +153,13 @@ Snake.prototype.reset = function(){
 	this.positions = [];
 	this.randomPosition();
 	this.emit("reset");
+};
+
+Snake.prototype.cleanup = function(){
+	Snake.super_.prototype.cleanup.apply(this);
+	if(this.spawn){
+		this.world.removeChild(this.spawn);
+	}
 };
 
 Snake.prototype.onCollide = function(target){

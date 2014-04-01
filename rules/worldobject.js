@@ -79,4 +79,7 @@ WorldObject.prototype.loadState = function(state){
 	this.hidden = state.hidden;
 };
 
+WorldObject.prototype.cleanup = function(){
+};
+
 module.exports = WorldObject;

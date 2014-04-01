@@ -142,6 +142,7 @@ Game.prototype.removeChild = function(child){
 	if(index === -1){
 		return;
 	}
+	child.cleanup();
 	arrayRemove(this.objects, index);
 };
 
