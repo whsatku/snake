@@ -342,7 +342,7 @@ describe("Game", function(){
 	});
 
 	describe("#loadState", function(){
-		var state = JSON.parse('{"state":1,"powerUpCollected":0,"powerUpToEnd":5,"width":37,"height":29,"updateRate":100,"map":"plain","step":311,"objects":[{"x":0,"y":0,"deadly":true,"direction":0,"speed":1,"_type":"Snake"},{"x":0,"y":0,"deadly":true,"direction":1,"speed":1,"_type":"Snake"},{"x":16,"y":12,"deadly":false,"_type":"Powerup"}],"rng":{"seed":[2063179164,189560361,405237180,-526820764,1415785209,-430534247,201991942,708429421,-1664203584,1045594639,1920244661,-1962565032,-653888130,263314630,1991008667,-1753323413,221423556,304154551,1036025779,213732642,-1519784725,1889442263,1252049299,-671077744,-59952572,-842041520,652992862,2104283329,-593341108,648328801,-1471756500,679219861],"idx":15}}');
+		var state = JSON.parse('{"state":1,"powerUpCollected":0,"powerUpToEnd":5,"width":37,"height":29,"updateRate":150,"map":"plain","step":1187,"objects":[{"x":22,"y":17,"deadly":true,"hidden":false,"direction":1,"speed":1,"positions":[[22,17,1],[21,17,1],[20,17,1],[19,17,1]],"maxLength":4,"index":0,"_type":"Snake"},{"x":2,"y":20,"deadly":true,"hidden":false,"direction":1,"speed":1,"positions":[[2,20,1],[1,20,1],[0,20,1],[36,20,1]],"maxLength":4,"index":1,"_type":"Snake"},{"x":27,"y":3,"deadly":false,"hidden":false,"_type":"Powerup"}],"rng":{"seed":[53382134,-1969390042,-157402938,-1970437036,-430692248,13994957,-105937504,-2071646456,364434566,1927284333,-573882883,-1599859988,-496542456,122684582,790803653,771424503,757039233,1892530146,-18026704,1436900270,626601444,-348180747,-1236774357,370976472,642988923,170244552,-294296117,582472710,2130458906,-437129898,-1568311299,1275592537],"idx":3},"snake":[0,1]}');
 		before(function(){
 			this.game.loadState(state);
 		});
@@ -350,11 +350,11 @@ describe("Game", function(){
 			expect(this.game.state.state).to.eql(1);
 			expect(this.game.state.width).to.eql(37);
 			expect(this.game.state.height).to.eql(29);
-			expect(this.game.state.updateRate).to.eql(100);
-			expect(this.game.state.step).to.eql(311);
+			expect(this.game.state.updateRate).to.eql(150);
+			expect(this.game.state.step).to.eql(1187);
 		});
 		it("load rng state", function(){
-			expect(this.game.random.randInt()).to.eql(564505729);
+			expect(this.game.random.randInt()).to.eql(1472122519);
 		});
 		it("create objects from state", function(){
 			expect(this.game.objects[this.game.objects.length - 1]).to.be.instanceof(GameLogic.Powerup);
@@ -367,9 +367,10 @@ describe("Game", function(){
 
 	describe("#prepareState", function(){
 		it("return crc32 of state json", function(){
-			var state = JSON.parse('{"state":1,"powerUpCollected":0,"powerUpToEnd":5,"width":37,"height":29,"updateRate":100,"map":"plain","step":311,"objects":[{"x":0,"y":0,"deadly":true,"direction":0,"speed":1,"_type":"Snake"},{"x":0,"y":0,"deadly":true,"direction":1,"speed":1,"_type":"Snake"},{"x":16,"y":12,"deadly":false,"_type":"Powerup"}],"rng":{"seed":[2063179164,189560361,405237180,-526820764,1415785209,-430534247,201991942,708429421,-1664203584,1045594639,1920244661,-1962565032,-653888130,263314630,1991008667,-1753323413,221423556,304154551,1036025779,213732642,-1519784725,1889442263,1252049299,-671077744,-59952572,-842041520,652992862,2104283329,-593341108,648328801,-1471756500,679219861],"idx":15}}');
+			var state = JSON.parse('{"state":1,"powerUpCollected":0,"powerUpToEnd":5,"width":37,"height":29,"updateRate":150,"map":"plain","step":1187,"objects":[{"x":22,"y":17,"deadly":true,"hidden":false,"direction":1,"speed":1,"positions":[[22,17,1],[21,17,1],[20,17,1],[19,17,1]],"maxLength":4,"index":0,"_type":"Snake"},{"x":2,"y":20,"deadly":true,"hidden":false,"direction":1,"speed":1,"positions":[[2,20,1],[1,20,1],[0,20,1],[36,20,1]],"maxLength":4,"index":1,"_type":"Snake"},{"x":27,"y":3,"deadly":false,"hidden":false,"_type":"Powerup"}],"rng":{"seed":[53382134,-1969390042,-157402938,-1970437036,-430692248,13994957,-105937504,-2071646456,364434566,1927284333,-573882883,-1599859988,-496542456,122684582,790803653,771424503,757039233,1892530146,-18026704,1436900270,626601444,-348180747,-1236774357,370976472,642988923,170244552,-294296117,582472710,2130458906,-437129898,-1568311299,1275592537],"idx":3},"snake":[0,1]}');
 			this.game.loadState(state);
-			expect(this.game.hashState()).to.eql("52b2b925");
+			this.game.prepareState();
+			expect(this.game.hashState()).to.eql("e677d7b0");
 		});
 	});
 

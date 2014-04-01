@@ -19,7 +19,8 @@
 			'src/WorldObjectNode.js',
 			'src/SnakeNode.js',
 			'src/SnakeBitsNode.js',
-			'src/PowerupNode.js'
+			'src/PowerupNode.js',
+			'src/SpawnNode.js',
 		],
 		resourceFiles: [
 			{src: 'res/snake-1.png'},
@@ -31,6 +32,8 @@
 			{src: 'res/food.png'},
 			{src: 'res/tiles.png'},
 			{src: 'res/forest.jpg'},
+			{src: 'res/halo.png'},
+			{src: 'res/down.png'},
 		]
 	};
 

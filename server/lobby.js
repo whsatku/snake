@@ -22,6 +22,7 @@ var Lobby = function Lobby(id){
 	this.on("ready", this.onReady.bind(this));
 	this.lastTick = 0;
 	this.cmdQueue = [];
+	this.waitClients = false;
 };
 
 Lobby.STATE = {
@@ -46,6 +47,10 @@ Lobby.prototype.addClient = function(spark){
 Lobby.prototype.createSnakeForClient = function(spark){
 	spark.snake = this.game.addSnake();
 	spark.snakeIndex = spark.snake.index;
+	spark.write({
+		lobby: this.id,
+		snakeIndex: spark.snakeIndex
+	});
 	this.cmdQueue.push(["addSnake"]);
 };
 
@@ -167,11 +172,31 @@ Lobby.prototype.onReady = function(){
 };
 
 Lobby.prototype.nextTick = function(){
-	winston.debug("Tick after "+ (new Date().getTime() - this.lastTick) +" ms");
+	winston.debug("[Lobby %s] Tick after "+ (new Date().getTime() - this.lastTick) +" ms", this.id);
+
+	if(this._autoNextTickTimer){
+		clearTimeout(this._autoNextTickTimer);
+		delete this._autoNextTickTimer;
+	}
+
 	this.lastTick = new Date().getTime();
 	this.setAllReady(false);
 	this.game.step();
 	this.sendStateToAll(true);
+	if(!this.waitClients){
+		this._autoNextTick();
+	}
+};
+
+Lobby.prototype._autoNextTick = function(){
+	var self = this;
+	if(this._autoNextTickTimer){
+		return;
+	}
+	this._autoNextTickTimer = setTimeout(function(){
+		winston.warn("[Lobby %s] Client lags too much! Doing forcefully tick.", self.id);
+		self.nextTick();
+	}, this.game.state.updateRate + 20);
 };
 
 Lobby.prototype.input = function(spark, input){

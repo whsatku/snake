@@ -6,6 +6,7 @@ window.GameLayer = cc.Layer.extend({
 	gridSize: [16, 16],
 	map: "empty",
 	server: "http://localhost:45634/primus",
+	player: 0,
 
 	objectsMap: {
 	},
@@ -20,8 +21,8 @@ window.GameLayer = cc.Layer.extend({
 		window.gamelayer = this;
 
 		this.initGame();
-		// this.initLocalGame();
-		this.initNetworkGame();
+		this.initLocalGame();
+		// this.initNetworkGame();
 	},
 
 	initGame: function(){
@@ -34,6 +35,7 @@ window.GameLayer = cc.Layer.extend({
 		this.mode = GameLayer.MODES.LOCAL;
 		this.schedule(this.gameStep.bind(this), this.game.state.updateRate / 1000, Infinity, 0);
 		this.game.loadMap(this.map);
+		this.player = 0;
 		this.initMap();
 
 		this.game.addSnake();
@@ -129,6 +131,8 @@ window.GameLayer = cc.Layer.extend({
 			ObjectClass = SnakeNode;
 		}else if(obj instanceof GameLogic.Powerup){
 			ObjectClass = PowerupNode;
+		}else if(obj instanceof GameLogic.Spawn){
+			ObjectClass = SpawnNode;
 		}
 		var node = new ObjectClass();
 		node.object = obj;

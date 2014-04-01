@@ -20,6 +20,7 @@ window.WorldObjectNode = cc.Sprite.extend({
 
 	syncFromEngine: function(obj){
 		this.setPosition(this.getParent().toUIPosition(obj.x, obj.y));
+		this.setVisible(!obj.hidden);
 	},
 
 	getRoot: function(){

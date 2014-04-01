@@ -150,6 +150,14 @@ describe("Lobby", function(){
 			var state = this.lobby.getState(true);
 			expect(state.cmd[0]).to.eql(["addSnake"]);
 		});
+		it("send snake index to client", function(done){
+			var spark = MockSpark();
+			spark.write = function(data){
+				expect(data.snakeIndex).to.eql(0);
+				done();
+			};
+			this.lobby.createSnakeForClient(spark);
+		});
 		it("make sequential snake index even if a snake is disconnected", function(){
 			var spark = MockSpark();
 			this.lobby.addClient(spark);

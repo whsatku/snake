@@ -75,6 +75,18 @@ describe("Snake", function(){
 				[2, 0, GameLogic.MovingWorldObject.DIR.RIGHT]
 			]);
 		});
+
+		it("should respawn snake", function(){
+			var snake = this.game.addSnake();
+			snake.die();
+
+			var spy = sinon.stub(snake, "respawn");
+			for(var i = 0; i < Snake.RESPAWN_DELAY; i++){
+				expect(spy.called).to.be.false;
+				snake.update();
+			}
+			expect(spy.called).to.be.true;
+		});
 	});
 
 	describe("#_wrapAround", function(){
@@ -444,6 +456,28 @@ describe("Snake", function(){
 			obj.loadState(state);
 
 			expect(obj.index).to.eql(state.index);
+		});
+	});
+
+	describe("#die", function(){
+		it("should reset", function(done){
+			this.snake.once("reset", done);
+			this.snake.die();
+		});
+		it("should hide the snake", function(){
+			this.snake.die();
+			expect(this.snake.hidden).to.be.true;
+		});
+		it("should create spawner at the location of snake", function(){
+			this.snake.die();
+			var spawner = this.game.objects[this.game.objects.length-1];
+			expect(spawner).to.be.an.instanceof(GameLogic.Spawn);
+			expect(spawner.x).to.eql(this.snake.x);
+			expect(spawner.y).to.eql(this.snake.y);
+		});
+		it("should set spawn ticks", function(){
+			this.snake.die();
+			expect(this.snake.tickToSpawn).to.eql(Snake.RESPAWN_DELAY);
 		});
 	});
 
