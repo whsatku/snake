@@ -173,7 +173,12 @@ Lobby.prototype.onReady = function(){
 
 Lobby.prototype.nextTick = function(){
 	winston.debug("[Lobby %s] Tick after "+ (new Date().getTime() - this.lastTick) +" ms", this.id);
-	clearTimeout(this._autoNextTickTimer);
+
+	if(this._autoNextTickTimer){
+		clearTimeout(this._autoNextTickTimer);
+		delete this._autoNextTickTimer;
+	}
+
 	this.lastTick = new Date().getTime();
 	this.setAllReady(false);
 	this.game.step();
