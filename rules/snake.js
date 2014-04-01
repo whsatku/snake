@@ -122,21 +122,18 @@ Snake.prototype.die = function(){
 	this.hidden = true;
 	this.direction = MovingWorldObject.DIR.STOP;
 
-	this.spawn = this._makeSpawn();
-	this.world.objects.push(this.spawn);
+	this._makeSpawn();
 
 	this.tickToSpawn = Snake.RESPAWN_DELAY;
 };
 
 Snake.prototype._makeSpawn = function(){
-	if(this.spawn){
-		this.spawn.fromSnake(this);
-		return this.spawn;
+	if(!this.spawn){
+		this.spawn = new Spawn(this.world);
+		this.world.objects.push(this.spawn);
 	}
-	
-	var spawn = new Spawn(this.world);
-	spawn.fromSnake(this);
-	return spawn;
+	this.spawn.fromSnake(this);
+	return this.spawn;
 };
 
 Snake.prototype.respawn = function(){
