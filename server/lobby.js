@@ -46,6 +46,10 @@ Lobby.prototype.addClient = function(spark){
 Lobby.prototype.createSnakeForClient = function(spark){
 	spark.snake = this.game.addSnake();
 	spark.snakeIndex = spark.snake.index;
+	spark.write({
+		lobby: this.id,
+		snakeIndex: spark.snakeIndex
+	});
 	this.cmdQueue.push(["addSnake"]);
 };
 

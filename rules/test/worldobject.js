@@ -175,6 +175,10 @@ describe("WorldObject", function(){
 			var obj = new WorldObject(this.game);
 			expect(obj.getState().deadly).to.eql(obj.deadly);
 		});
+		it("dump hidden type", function(){
+			var obj = new WorldObject(this.game);
+			expect(obj.getState().hidden).to.eql(obj.hidden);
+		});
 	});
 
 	describe("#loadState", function(){
@@ -192,6 +196,13 @@ describe("WorldObject", function(){
 			obj.loadState(state);
 
 			expect(obj.deadly).to.eql(state.deadly);
+		});
+		it("load hidden type", function(){
+			var obj = new WorldObject(this.game);
+			var state = {x: 5, y: 5, hidden: true};
+			obj.loadState(state);
+
+			expect(obj.hidden).to.eql(state.hidden);
 		});
 	});
 

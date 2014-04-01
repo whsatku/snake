@@ -17,6 +17,7 @@ require("util").inherits(WorldObject, EventEmitter);
 WorldObject.cls = "WorldObject";
 WorldObject.prototype.x = 0;
 WorldObject.prototype.y = 0;
+WorldObject.prototype.hidden = false;
 
 /**
  * Does it make snake dies when crash into?
@@ -66,7 +67,8 @@ WorldObject.prototype.getState = function(){
 	return {
 		x: this.x,
 		y: this.y,
-		deadly: this.deadly
+		deadly: this.deadly,
+		hidden: this.hidden
 	};
 };
 
@@ -74,6 +76,7 @@ WorldObject.prototype.loadState = function(state){
 	this.x = state.x;
 	this.y = state.y;
 	this.deadly = state.deadly;
+	this.hidden = state.hidden;
 };
 
 module.exports = WorldObject;

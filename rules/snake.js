@@ -1,5 +1,7 @@
 "use strict";
 
+var Spawn = require("./spawn");
+
 var Snake = function Snake(){
 	Snake.super_.apply(this, arguments);
 
@@ -7,12 +9,14 @@ var Snake = function Snake(){
 	this.maxLength = Snake.DEFAULT_MAX_LENGTH;
 	this._turning = null;
 	this.index = -1;
+	this.tickToSpawn = 0;
 
 	this.on("collision", this.onCollide.bind(this));
 };
 
 Snake.cls = "Snake";
 Snake.DEFAULT_MAX_LENGTH = 4;
+Snake.RESPAWN_DELAY = 10; // ticks
 
 var MovingWorldObject = require("./movingworldobject");
 var Powerup = require("./powerup");
@@ -20,6 +24,14 @@ var Powerup = require("./powerup");
 require("util").inherits(Snake, MovingWorldObject);
 
 Snake.prototype.update = function(){
+	if(this.tickToSpawn > 0){
+		this.tickToSpawn--;
+		if(this.tickToSpawn <= 0){
+			this.respawn();
+		}
+		return;
+	}
+
 	if(this.positions.length === 0){
 		this.positions.unshift([this.x, this.y]);
 	}
@@ -105,6 +117,32 @@ Snake.prototype.isCollideWith = function(b, crosscheck){
 	return b.isCollideWith(this, false);
 };
 
+Snake.prototype.die = function(){
+	this.reset();
+	this.hidden = true;
+	this.direction = MovingWorldObject.DIR.STOP;
+
+	this.spawn = this._makeSpawn();
+	this.world.objects.push(this.spawn);
+
+	this.tickToSpawn = Snake.RESPAWN_DELAY;
+};
+
+Snake.prototype._makeSpawn = function(){
+	var spawn = new Spawn(this.world);
+	spawn.fromSnake(this);
+	return spawn;
+};
+
+Snake.prototype.respawn = function(){
+	this.world.removeChild(this.spawn);
+	this.spawn = null;
+	this.tickToSpawn = 0;
+
+	this.hidden = false;
+	this.direction = this._turning !== null ? this._turning : MovingWorldObject.DIR.RIGHT;
+};
+
 Snake.prototype.reset = function(){
 	this.maxLength = Snake.DEFAULT_MAX_LENGTH;
 	this.positions = [];
@@ -113,11 +151,14 @@ Snake.prototype.reset = function(){
 };
 
 Snake.prototype.onCollide = function(target){
+	if(this.hidden){
+		return false;
+	}
 	if(target instanceof Snake){
 		if(this.x == target.x && this.y == target.y){
 			// head-on-head collision
-			this.reset();
-			target.reset();
+			this.die();
+			target.die();
 			return;
 		}else if(!this.isCollideWith(target, false)){
 			// head-on-tail collision
@@ -125,7 +166,7 @@ Snake.prototype.onCollide = function(target){
 		}
 	}
 	if(target.deadly){
-		this.reset();
+		this.die();
 	}
 	if(target instanceof Powerup){
 		this.maxLength += target.growth;

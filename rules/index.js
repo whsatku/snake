@@ -5,5 +5,6 @@ module.exports = {
 	"Obstacle": require("./obstacle"),
 	"Snake": require("./snake"),
 	"Powerup": require("./powerup"),
+	"Spawn": require("./spawn"),
 	"map": require("./maps")
 };

@@ -8,7 +8,8 @@ MovingWorldObject.DIR = {
 	UP: 0,
 	RIGHT: 1,
 	DOWN: 2,
-	LEFT: 3
+	LEFT: 3,
+	STOP: -1
 };
 
 MovingWorldObject.DIR_S = {};

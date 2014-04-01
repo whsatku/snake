@@ -27,7 +27,7 @@ describe("MovingWorldObject", function(){
 	});
 
 	it("should have direction definition", function(){
-		expect(MovingWorldObject.DIR).to.have.keys(["UP", "DOWN", "LEFT", "RIGHT"]);
+		expect(MovingWorldObject.DIR).to.have.keys(["UP", "DOWN", "LEFT", "RIGHT", "STOP"]);
 	});
 
 	it("should have direction string map", function(){
@@ -35,6 +35,7 @@ describe("MovingWorldObject", function(){
 		expect(MovingWorldObject.DIR_S[MovingWorldObject.DIR.DOWN]).to.eql("D");
 		expect(MovingWorldObject.DIR_S[MovingWorldObject.DIR.LEFT]).to.eql("L");
 		expect(MovingWorldObject.DIR_S[MovingWorldObject.DIR.RIGHT]).to.eql("R");
+		expect(MovingWorldObject.DIR_S[MovingWorldObject.DIR.STOP]).to.eql("S");
 	});
 
 	it("should have direction", function(){
