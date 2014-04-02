@@ -1,4 +1,5 @@
 (function(){
+"use strict";
 
 var Netcode = function(game){
 	if(!(this instanceof Netcode)){
@@ -15,6 +16,13 @@ Netcode.Const = {
 	}
 };
 
+/**
+ * Get replaced by GameLayer's log implementation
+ */
+Netcode.prototype.log = function(txt){
+	console.log(txt);
+};
+
 Netcode.prototype.getServer = function(){
 	if(window.location.protocol == "file:"){
 		return "http://localhost:45634/primus";
@@ -27,11 +35,16 @@ Netcode.prototype.connect = function(){
 	this.primus = Primus.connect(this.getServer());
 	this.primus.on("open", this.onOpen.bind(this));
 	this.primus.on("data", this.onData.bind(this));
+	this.primus.on("close", this.onClose.bind(this));
 };
 
 Netcode.prototype.onOpen = function(){
-	console.log("netcode: connected");
+	this.log("Connected to server");
 	this.send({command: "lobbyjoin", lobby: 0});
+};
+
+Netcode.prototype.onClose = function(){
+	this.log("Connection lost! Attempting to reconnect...");
 };
 
 Netcode.prototype.onData = function(data){
@@ -55,6 +68,15 @@ Netcode.prototype.onData = function(data){
 				this.send({command: "ready"});
 			}
 		}
+	}
+	if(data.snakeIndex !== undefined){
+		this.game.player = data.snakeIndex;
+	}
+	if(data.motd !== undefined){
+		this.log("Message of the Day:\n" + data.motd);
+	}
+	if(data.online !== undefined){
+		this.log("Players online: " + data.online);
 	}
 };
 

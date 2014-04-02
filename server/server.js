@@ -14,6 +14,7 @@ winston.add(winston.transports.Console, {
 });
 
 var snake = new (require("./snakeserver"))();
+snake.motd = "Welcome to Snake Run: Epic Twisted Battle";
 snake.bind(primus);
 // snake.autoCleanup();
 snake.demoServer();

@@ -9,7 +9,7 @@ window.SpawnNode = WorldObjectNode.extend({
 	syncFromEngine: function(obj){
 		this._super(obj);
 
-		if(obj.owner === this.getRoot().player){
+		if(obj.owner === this.getRoot().game.player){
 			if(!this.arrow){
 				this._createArrow();
 			}
@@ -27,6 +27,6 @@ window.SpawnNode = WorldObjectNode.extend({
 	_createArrow: function(){
 		this.arrow = cc.Sprite.create("res/down.png");
 		this.arrow.setAnchorPoint(0, 0);
-		this.getRoot().addChild(this.arrow);
+		this.getRoot().addChild(this.arrow, 10);
 	}
 });

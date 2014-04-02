@@ -34,15 +34,26 @@ Game.prototype._seedRng = function(){
 	this.random = randy.instance();
 };
 
-Game.prototype.addSnake = function(snake){
-	if(snake === undefined){
+Game.prototype.addSnake = function(snake, alive){
+	if(!snake){
 		snake = this._createSnake();
 	}
+	this._bindSnake(snake);
 	this.objects.push(snake);
 	snake.index = this._snakes.length;
 	this._snakes.push(snake);
+	if(alive !== true){
+		snake.die(true);
+	}
 	return snake;
 };
+
+Game.prototype._bindSnake = function(snake){
+	var self = this;
+	snake.on("dead", function(){
+		self.emit("snakeDie", snake);
+	});
+}
 
 Game.prototype.removeSnake = function(snake){
 	if(typeof snake != "number"){
@@ -59,7 +70,6 @@ Game.prototype.removeSnake = function(snake){
 
 Game.prototype._createSnake = function(){
 	var snake = new Snake(this);
-	snake.randomPosition();
 	return snake;
 };
 
@@ -78,15 +88,17 @@ Game.prototype.checkAllCollision = function(){
 	var objects = this.objects.slice(0);
 	for(var index in objects){
 		var currentObject = objects[index];
-		var collisions = this.checkCollision(currentObject);
+		var collisions = this.checkCollision(currentObject, objects);
 		for(var cIndex in collisions){
 			currentObject.emit("collision", collisions[cIndex]);
 		}
 	}
 };
 
-Game.prototype.checkCollision = function(object){
-	var objects = this.objects.slice(0);
+Game.prototype.checkCollision = function(object, objects){
+	if(objects === undefined){
+		objects = this.objects.slice(0);
+	}
 	var collisions = [];
 	for(var index in objects){
 		var otherObject = objects[index];
@@ -225,6 +237,7 @@ Game.prototype.loadState = function(state){
 
 		if(object instanceof Snake){
 			self._snakes[object.index] = object;
+			self._bindSnake(object);
 		}
 	});
 

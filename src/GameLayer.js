@@ -5,8 +5,6 @@
 window.GameLayer = cc.Layer.extend({
 	gridSize: [16, 16],
 	map: "empty",
-	server: "http://localhost:45634/primus",
-	player: 0,
 
 	objectsMap: {
 	},
@@ -21,21 +19,22 @@ window.GameLayer = cc.Layer.extend({
 		window.gamelayer = this;
 
 		this.initGame();
-		this.initLocalGame();
-		// this.initNetworkGame();
+		// this.initLocalGame();
+		this.initNetworkGame();
 	},
 
 	initGame: function(){
 		this.game = new GameLogic.Game();
 		this.game.on("step", this.onGameStepped.bind(this));
 		this.game.on("loadState", this.onLoadState.bind(this));
+		this.game.on("snakeDie", this.onSnakeDie.bind(this));
 	},
 
 	initLocalGame: function(){
 		this.mode = GameLayer.MODES.LOCAL;
 		this.schedule(this.gameStep.bind(this), this.game.state.updateRate / 1000, Infinity, 0);
 		this.game.loadMap(this.map);
-		this.player = 0;
+		this.game.player = 0;
 		this.initMap();
 
 		this.game.addSnake();
@@ -47,7 +46,9 @@ window.GameLayer = cc.Layer.extend({
 	initNetworkGame: function(){
 		var self = this;
 		this.mode = GameLayer.MODES.NETWORK;
+		this.log("Connecting to server...");
 		this.netcode = new Netcode(this.game);
+		this.netcode.log = this.log.bind(this);
 		this.netcode.connect();
 	},
 
@@ -68,6 +69,10 @@ window.GameLayer = cc.Layer.extend({
 
 	onGameStepped: function(){
 		this.syncFromEngine();
+	},
+
+	onSnakeDie: function(snake){
+		this.log("Player "+(snake.index+1)+" died!");
 	},
 
 	fillFloor: function(){
@@ -154,6 +159,10 @@ window.GameLayer = cc.Layer.extend({
 			x * this.gridSize[0] + this.gridSize[0]/2,
 			y * this.gridSize[1] + this.gridSize[1]/2
 		);
+	},
+
+	log: function(txt){
+		this.getParent().log(txt);
 	}
 });
 

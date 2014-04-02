@@ -26,4 +26,12 @@ Spawn.prototype.loadState = function(state){
 	this.owner = state.owner;
 };
 
+Spawn.prototype.isCollideWith = function(b, crosscheck){
+	// can't use instanceof. circular dependency.
+	if(b.constructor.cls == "Snake" && b.index === this.owner){
+		return false;
+	}
+	return Spawn.super_.prototype.isCollideWith.call(this, b, crosscheck);
+}
+
 module.exports = Spawn;
