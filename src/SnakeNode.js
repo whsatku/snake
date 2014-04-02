@@ -118,6 +118,9 @@ window.SnakeNode = WorldObjectNode.extend({
 		for(var i = 0; i < this._tails.length; i++){
 			root.removeChild(this._tails[i]);
 		}
+		if(this.playerName){
+			root.removeChild(this.playerName);
+		}
 	},
 
 	createPlayerName: function(){
