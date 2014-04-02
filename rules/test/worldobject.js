@@ -37,6 +37,12 @@ describe("WorldObject", function(){
 		expect((new WorldObject(this.game)).world).to.be.an.instanceOf(GameLogic.Game);
 	});
 
+	describe("#cleanup", function(){
+		it("is a function", function(){
+			expect(new WorldObject(this.game)).to.respondTo("cleanup");
+		});
+	})
+
 	describe("#isOffScreen", function(){
 
 		before(function(){

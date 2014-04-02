@@ -17,7 +17,7 @@ var Snake = GameLogic.Snake;
 
 describe("Snake", function(){
 
-	before(function(){
+	beforeEach(function(){
 		this.game = new GameLogic.Game();
 		this.snake = this.game.addSnake();
 	});
@@ -34,25 +34,20 @@ describe("Snake", function(){
 		expect(this.snake.positions).to.be.an("Array");
 	});
 
-	it("should respond to update", function(){
-		expect(Snake).to.respondTo("update");
-	});
-
 	describe("#update", function(){
 		it("should store past positions", function(){
-			var snake = this.game.addSnake();
-			snake.x = 0;
-			snake.y = 0;
-			snake.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
+			this.snake.x = 0;
+			this.snake.y = 0;
+			this.snake.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
 
-			snake.update();
-			expect(snake.positions).to.eql([
+			this.snake.update();
+			expect(this.snake.positions).to.eql([
 				[1, 0, GameLogic.MovingWorldObject.DIR.RIGHT],
 				[0, 0]
 			]);
 
-			snake.update();
-			expect(snake.positions).to.eql([
+			this.snake.update();
+			expect(this.snake.positions).to.eql([
 				[2, 0, GameLogic.MovingWorldObject.DIR.RIGHT],
 				[1, 0, GameLogic.MovingWorldObject.DIR.RIGHT],
 				[0, 0]
@@ -60,96 +55,90 @@ describe("Snake", function(){
 		});
 
 		it("should trim the snake to the maximum length", function(){
-			var snake = this.game.addSnake();
-			snake.x = 0;
-			snake.y = 0;
-			snake.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
-			snake.maxLength = 2;
+			this.snake.x = 0;
+			this.snake.y = 0;
+			this.snake.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
+			this.snake.maxLength = 2;
 
 			for(var i = 0; i < 3; i++){
-				snake.update();
+				this.snake.update();
 			}
 
-			expect(snake.positions).to.eql([
+			expect(this.snake.positions).to.eql([
 				[3, 0, GameLogic.MovingWorldObject.DIR.RIGHT],
 				[2, 0, GameLogic.MovingWorldObject.DIR.RIGHT]
 			]);
 		});
 
 		it("should respawn snake", function(){
-			var snake = this.game.addSnake();
-			snake.die();
+			this.snake.die();
 
-			var spy = sinon.stub(snake, "respawn");
+			var spy = sinon.stub(this.snake, "respawn");
 			for(var i = 0; i < Snake.RESPAWN_DELAY; i++){
 				expect(spy.called).to.be.false;
-				snake.update();
+				this.snake.update();
 			}
 			expect(spy.called).to.be.true;
 		});
 	});
 
 	describe("#_wrapAround", function(){
-		before(function(){
+		beforeEach(function(){
 			this.game.state.width = 20;
 			this.game.state.height = 20;
 		});
 
 		it("should wrap left", function(){
-			var snake = this.game.addSnake();
-			snake.x = 0;
-			snake.y = 0;
-			snake.direction = GameLogic.MovingWorldObject.DIR.LEFT;
-			snake.update();
+			this.snake.x = 0;
+			this.snake.y = 0;
+			this.snake.direction = GameLogic.MovingWorldObject.DIR.LEFT;
+			this.snake.update();
 
-			expect(snake.x).to.eql(19);
-			expect(snake.y).to.eql(0);
-			expect(snake.positions).to.eql([
+			expect(this.snake.x).to.eql(19);
+			expect(this.snake.y).to.eql(0);
+			expect(this.snake.positions).to.eql([
 				[19, 0, GameLogic.MovingWorldObject.DIR.LEFT],
 				[0, 0]
 			]);
 		});
 
 		it("should wrap right", function(){
-			var snake = this.game.addSnake();
-			snake.x = 19;
-			snake.y = 0;
-			snake.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
-			snake.update();
+			this.snake.x = 19;
+			this.snake.y = 0;
+			this.snake.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
+			this.snake.update();
 
-			expect(snake.x).to.eql(0);
-			expect(snake.y).to.eql(0);
-			expect(snake.positions).to.eql([
+			expect(this.snake.x).to.eql(0);
+			expect(this.snake.y).to.eql(0);
+			expect(this.snake.positions).to.eql([
 				[0, 0, GameLogic.MovingWorldObject.DIR.RIGHT],
 				[19, 0]
 			]);
 		});
 
 		it("should wrap top", function(){
-			var snake = this.game.addSnake();
-			snake.x = 0;
-			snake.y = 0;
-			snake.direction = GameLogic.MovingWorldObject.DIR.UP;
-			snake.update();
+			this.snake.x = 0;
+			this.snake.y = 0;
+			this.snake.direction = GameLogic.MovingWorldObject.DIR.UP;
+			this.snake.update();
 
-			expect(snake.x).to.eql(0);
-			expect(snake.y).to.eql(19);
-			expect(snake.positions).to.eql([
+			expect(this.snake.x).to.eql(0);
+			expect(this.snake.y).to.eql(19);
+			expect(this.snake.positions).to.eql([
 				[0, 19, GameLogic.MovingWorldObject.DIR.UP],
 				[0, 0]
 			]);
 		});
 
 		it("should wrap bottom", function(){
-			var snake = this.game.addSnake();
-			snake.x = 0;
-			snake.y = 19;
-			snake.direction = GameLogic.MovingWorldObject.DIR.DOWN;
-			snake.update();
+			this.snake.x = 0;
+			this.snake.y = 19;
+			this.snake.direction = GameLogic.MovingWorldObject.DIR.DOWN;
+			this.snake.update();
 
-			expect(snake.x).to.eql(0);
-			expect(snake.y).to.eql(0);
-			expect(snake.positions).to.eql([
+			expect(this.snake.x).to.eql(0);
+			expect(this.snake.y).to.eql(0);
+			expect(this.snake.positions).to.eql([
 				[0, 0, GameLogic.MovingWorldObject.DIR.DOWN],
 				[0, 19]
 			]);
@@ -159,7 +148,7 @@ describe("Snake", function(){
 
 	describe("#input", function(){
 
-		before(function(){
+		beforeEach(function(){
 			this.snake.direction = null;
 		});
 
@@ -188,13 +177,14 @@ describe("Snake", function(){
 		});
 
 		it("should not allow moving in opposite direction", function(){
+			this.snake.direction = GameLogic.MovingWorldObject.DIR.DOWN;
 			this.snake.input("up");
 			this.snake.update();
 			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.DOWN);
 		});
 
 		it("should not allow moving in opposite direction when two keys are pressed in the same tick", function(){
-			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.DOWN);
+			this.snake.direction = GameLogic.MovingWorldObject.DIR.DOWN;
 			this.snake.input("left");
 			this.snake.input("up");
 			this.snake.update();
@@ -333,9 +323,8 @@ describe("Snake", function(){
 		});
 
 		it("should emit reset action", function(done){
-			var snake = this.game.addSnake();
-			snake.on("reset", done);
-			snake.reset();
+			this.snake.on("reset", done);
+			this.snake.reset();
 		});
 	});
 
@@ -349,37 +338,33 @@ describe("Snake", function(){
 		});
 
 		it("should not reset if the target is not deadly", function(){
-			var snake = this.game.addSnake();
 			var object = new GameLogic.WorldObject(this.game);
 			object.deadly = false;
 
 			var spy = sinon.spy();
-			snake.once("reset", spy);
-			snake.emit("collision", object);
+			this.snake.once("reset", spy);
+			this.snake.emit("collision", object);
 			expect(spy.called).to.be.false;
 		});
 
 		it("should make the snake goes longer when collecting a powerup", function(){
-			var snake = this.game.addSnake();
 			var object = new GameLogic.Powerup(this.game);
-			var initialLength = snake.maxLength;
-			snake.emit("collision", object);
-			expect(snake.maxLength).to.eql(initialLength + object.growth);
+			var initialLength = this.snake.maxLength;
+			this.snake.emit("collision", object);
+			expect(this.snake.maxLength).to.eql(initialLength + object.growth);
 		});
 
 		it("should make the snake goes longer by specified size when collecting a powerup", function(){
-			var snake = this.game.addSnake();
 			var object = new GameLogic.Powerup(this.game);
 			object.growth = 5;
-			var initialLength = snake.maxLength;
-			snake.emit("collision", object);
-			expect(snake.maxLength).to.eql(initialLength + 5);
+			var initialLength = this.snake.maxLength;
+			this.snake.emit("collision", object);
+			expect(this.snake.maxLength).to.eql(initialLength + 5);
 		});
 
 		it("should reset the snake who does head-on-tail collision", function(){
-			var game = new GameLogic.Game();
-			var snake1 = game.addSnake();
-			var snake2 = game.addSnake();
+			var snake1 = this.snake;
+			var snake2 = this.game.addSnake();
 			snake1.positions = [[0, 0], [0, 1], [0, 2], [0,3]];
 			snake1.x = 0; snake1.y = 0;
 			snake2.positions = [[0, 2]];
@@ -390,15 +375,14 @@ describe("Snake", function(){
 			snake1.on("reset", spy1);
 			snake2.on("reset", spy2);
 
-			game.checkAllCollision();
+			this.game.checkAllCollision();
 
 			expect(spy1.called).to.be.false;
 			expect(spy2.calledOnce).to.be.true;
 		});
 		it("should reset both snakes when doing head-on-head collision", function(){
-			var game = new GameLogic.Game();
-			var snake1 = game.addSnake();
-			var snake2 = game.addSnake();
+			var snake1 = this.snake;
+			var snake2 = this.game.addSnake();
 			snake1.x = 0; snake1.y = 0; snake1.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
 			snake2.x = 2; snake2.y = 0; snake2.direction = GameLogic.MovingWorldObject.DIR.LEFT;
 
@@ -406,56 +390,63 @@ describe("Snake", function(){
 			snake1.on("reset", spy);
 			snake2.on("reset", spy);
 
-			game.step();
+			this.game.step();
 
 			expect(spy.callCount).to.eql(2);
+		});
+		it("should create one spawn when self-colliding", function(){
+			this.snake.x = 0;
+			this.snake.y = 0;
+			this.snake.positions = [
+				[0, 0],
+				[0, 1],
+				[1, 1],
+				[1, 0],
+				[0, 0]
+			];
+			this.game.checkAllCollision();
+			expect(this.game.objects).to.have.length(2);
 		});
 	});
 
 	describe("#getState", function(){
 		it("dump length", function(){
-			var obj = new Snake(this.game);
-			obj.maxLength = 50;
+			this.snake.maxLength = 50;
 
-			expect(obj.getState().maxLength).to.eql(obj.maxLength);
+			expect(this.snake.getState().maxLength).to.eql(this.snake.maxLength);
 		});
 		it("dump positions", function(){
-			var obj = new Snake(this.game);
-			obj.positions = [[0,0], [1,1]];
+			this.snake.positions = [[0,0], [1,1]];
 
-			expect(obj.getState().positions).to.eql(obj.positions);
+			expect(this.snake.getState().positions).to.eql(this.snake.positions);
 		});
 		it("dump index", function(){
-			var obj = new Snake(this.game);
-			obj.index = 5;
+			this.snake.index = 5;
 
-			expect(obj.getState().index).to.eql(obj.index);
+			expect(this.snake.getState().index).to.eql(this.snake.index);
 		});
 	});
 
 	describe("#loadState", function(){
 		it("load position", function(){
-			var obj = new Snake(this.game);
 			var state = {x: 5, y: 5, deadly: false, maxLength: 50, positions: [[0,0]]};
-			obj.loadState(state);
+			this.snake.loadState(state);
 
-			expect(obj.positions).to.eql(state.positions);
-			expect(obj.x).to.eql(state.x);
-			expect(obj.y).to.eql(state.y);
+			expect(this.snake.positions).to.eql(state.positions);
+			expect(this.snake.x).to.eql(state.x);
+			expect(this.snake.y).to.eql(state.y);
 		});
 		it("load max length", function(){
-			var obj = new Snake(this.game);
 			var state = {x: 5, y: 5, deadly: false, maxLength: 50, positions: [[0,0]]};
-			obj.loadState(state);
+			this.snake.loadState(state);
 
-			expect(obj.maxLength).to.eql(state.maxLength);
+			expect(this.snake.maxLength).to.eql(state.maxLength);
 		});
 		it("load index", function(){
-			var obj = new Snake(this.game);
 			var state = {x: 5, y: 5, deadly: false, maxLength: 50, positions: [[0,0]], index: 5};
-			obj.loadState(state);
+			this.snake.loadState(state);
 
-			expect(obj.index).to.eql(state.index);
+			expect(this.snake.index).to.eql(state.index);
 		});
 	});
 
@@ -478,6 +469,15 @@ describe("Snake", function(){
 		it("should set spawn ticks", function(){
 			this.snake.die();
 			expect(this.snake.tickToSpawn).to.eql(Snake.RESPAWN_DELAY);
+		});
+	});
+
+	describe("#cleanup", function(){
+		it("remove snake spawn", function(){
+			this.snake.die();
+			expect(this.game.objects).to.have.length(2);
+			this.snake.cleanup();
+			expect(this.game.objects).to.have.length(1);
 		});
 	});
 

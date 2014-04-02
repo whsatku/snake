@@ -98,6 +98,14 @@ describe("Game", function(){
 		it("return false for non existing snake", function(){
 			expect(this.game.removeSnake(new GameLogic.Snake(this.game))).to.be.false;
 		});
+
+		it("remove snake spawn", function(){
+			this.snake.die();
+			var spawn = this.game.objects[1];
+			expect(spawn).to.be.an.instanceof(GameLogic.Spawn);
+			this.game.removeSnake(this.snake);
+			expect(this.game.objects).to.have.length(0);
+		});
 	});
 
 	describe("#getSnake", function(){
