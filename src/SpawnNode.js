@@ -27,6 +27,6 @@ window.SpawnNode = WorldObjectNode.extend({
 	_createArrow: function(){
 		this.arrow = cc.Sprite.create("res/down.png");
 		this.arrow.setAnchorPoint(0, 0);
-		this.getRoot().addChild(this.arrow);
+		this.getRoot().addChild(this.arrow, 10);
 	}
 });

@@ -4,9 +4,11 @@
 
 window.SnakeNode = WorldObjectNode.extend({
 	_tails: [],
+	name: "",
 
 	init: function(){
 		this._super("res/snake.png", cc.rect(0, 0, 16, 16));
+		this.createPlayerName();
 	},
 
 	syncFromEngine: function(obj){
@@ -17,6 +19,9 @@ window.SnakeNode = WorldObjectNode.extend({
 		if(!(obj instanceof GameLogic.Snake)){
 			throw new Error("SnakeNode is given an unsupported object");
 		}
+
+		this.name = obj.index;
+		this.updatePlayerName();
 
 		this._cutTails(obj);
 		this._createTails(obj);
@@ -112,4 +117,20 @@ window.SnakeNode = WorldObjectNode.extend({
 			root.removeChild(this._tails[i]);
 		}
 	},
+
+	createPlayerName: function(){
+		this.playerName = cc.LabelTTF.create(this.name, "Tahoma", 18);
+		this.playerName.setAnchorPoint(0.5, 0);
+		this.playerName.setFontFillColor(cc.c3b(255, 255, 255));
+		this.playerName.enableStroke(cc.c3b(0, 0, 0), 2);
+		this.getRoot().addChild(this.playerName, 5);
+	},
+
+	updatePlayerName: function(){
+		this.playerName.setString(this.name);
+
+		var pos = this.getBoundingBox();
+
+		this.playerName.setPosition(pos.x + (pos.width/2), pos.y + pos.height+1);
+	}
 });
