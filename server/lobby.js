@@ -193,6 +193,9 @@ Lobby.prototype._autoNextTick = function(){
 	if(this._autoNextTickTimer){
 		return;
 	}
+	if(this.clients.length === 0){
+		return;
+	}
 	this._autoNextTickTimer = setTimeout(function(){
 		winston.warn("[Lobby %s] Client lags too much! Doing forcefully tick.", self.id);
 		self.nextTick();

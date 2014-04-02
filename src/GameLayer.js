@@ -21,8 +21,8 @@ window.GameLayer = cc.Layer.extend({
 		window.gamelayer = this;
 
 		this.initGame();
-		this.initLocalGame();
-		// this.initNetworkGame();
+		// this.initLocalGame();
+		this.initNetworkGame();
 	},
 
 	initGame: function(){
@@ -101,6 +101,9 @@ window.GameLayer = cc.Layer.extend({
 					this.primus.write({command: "ready"});
 				}
 			}
+		}
+		if(data.snakeIndex !== undefined){
+			this.player = data.snakeIndex;
 		}
 	},
 
