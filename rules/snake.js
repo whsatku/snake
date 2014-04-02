@@ -117,7 +117,7 @@ Snake.prototype.isCollideWith = function(b, crosscheck){
 	return b.isCollideWith(this, false);
 };
 
-Snake.prototype.die = function(){
+Snake.prototype.die = function(dontCountDead){
 	this.reset();
 	this.hidden = true;
 	this.direction = MovingWorldObject.DIR.STOP;
@@ -125,6 +125,10 @@ Snake.prototype.die = function(){
 	this._makeSpawn();
 
 	this.tickToSpawn = Snake.RESPAWN_DELAY;
+
+	if(dontCountDead !== true){
+		this.emit("dead");
+	}
 };
 
 Snake.prototype._makeSpawn = function(){
@@ -167,10 +171,12 @@ Snake.prototype.onCollide = function(target){
 		if(this.x == target.x && this.y == target.y){
 			// head-on-head collision
 			this.die();
-			target.die();
+			if(target !== this){
+				target.die();
+			}
 			return;
 		}else if(!this.isCollideWith(target, false)){
-			// head-on-tail collision
+			// other does head-on-tail collision
 			return;
 		}
 	}

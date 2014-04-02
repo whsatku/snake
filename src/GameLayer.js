@@ -29,6 +29,7 @@ window.GameLayer = cc.Layer.extend({
 		this.game = new GameLogic.Game();
 		this.game.on("step", this.onGameStepped.bind(this));
 		this.game.on("loadState", this.onLoadState.bind(this));
+		this.game.on("snakeDie", this.onSnakeDie.bind(this));
 	},
 
 	initLocalGame: function(){
@@ -76,6 +77,10 @@ window.GameLayer = cc.Layer.extend({
 
 	onGameStepped: function(){
 		this.syncFromEngine();
+	},
+
+	onSnakeDie: function(snake){
+		this.log("Player "+(snake.index+1)+" died!");
 	},
 
 	onData: function(data){

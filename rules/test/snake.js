@@ -19,7 +19,7 @@ describe("Snake", function(){
 
 	beforeEach(function(){
 		this.game = new GameLogic.Game();
-		this.snake = this.game.addSnake();
+		this.snake = this.game.addSnake(undefined, true);
 	});
 
 	it("should be a MovingWorldObject", function(){
@@ -364,7 +364,7 @@ describe("Snake", function(){
 
 		it("should reset the snake who does head-on-tail collision", function(){
 			var snake1 = this.snake;
-			var snake2 = this.game.addSnake();
+			var snake2 = this.game.addSnake(undefined, true);
 			snake1.positions = [[0, 0], [0, 1], [0, 2], [0,3]];
 			snake1.x = 0; snake1.y = 0;
 			snake2.positions = [[0, 2]];
@@ -382,7 +382,7 @@ describe("Snake", function(){
 		});
 		it("should reset both snakes when doing head-on-head collision", function(){
 			var snake1 = this.snake;
-			var snake2 = this.game.addSnake();
+			var snake2 = this.game.addSnake(undefined, true);
 			snake1.x = 0; snake1.y = 0; snake1.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
 			snake2.x = 2; snake2.y = 0; snake2.direction = GameLogic.MovingWorldObject.DIR.LEFT;
 

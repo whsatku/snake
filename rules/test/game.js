@@ -139,7 +139,7 @@ describe("Game", function(){
 
 		before(function(){
 			this.game = new Game();
-			this.game.addSnake();
+			this.game.addSnake(undefined, true);
 		});
 
 		it("change game state to in_progress", function(){
@@ -210,12 +210,12 @@ describe("Game", function(){
 		it("should still run collision check if the object is removed during processing", function(){
 			var game = new Game();
 
-			var snake = game.addSnake();
+			var snake = game.addSnake(null, true);
 			snake.x = 1;
 			snake.y = 0;
 			snake.direction = GameLogic.MovingWorldObject.DIR.LEFT;
 
-			game.addSnake();
+			game.addSnake(null, true);
 
 			var powerup = new GameLogic.Powerup(game);
 			powerup.x = 0;
@@ -234,6 +234,23 @@ describe("Game", function(){
 			game.step();
 			expect(game.objects[game.objects.length - 1]).to.be.instanceOf(GameLogic.Powerup);
 		});
+
+		it("should fire snakeDie event if snake dies", function(){
+			var game = new Game();
+			var object = new GameLogic.WorldObject(game);
+			object.x = 0;
+			object.y = 0;
+			game.objects.push(object);
+			var snake = game.addSnake(null, true);
+			snake.x = 0;
+			snake.y = 0;
+
+			var spy = sinon.spy();
+			game.once("snakeDie", spy);
+			game.step();
+
+			expect(spy.calledWith(snake)).to.be.true;
+		});
 	});
 
 	describe("#checkCollision", function(){
@@ -241,12 +258,12 @@ describe("Game", function(){
 			var game = new Game();
 			var a = new GameLogic.WorldObject(game);
 			a.x = 0; a.y = 0;
-			this.game.objects.push(a);
+			game.objects.push(a);
 			var b = new GameLogic.WorldObject(game);
 			b.x = 0; b.y = 0;
-			this.game.objects.push(b);
+			game.objects.push(b);
 
-			expect(this.game.checkCollision(a)).to.eql([b]);
+			expect(game.checkCollision(a)).to.eql([b]);
 		});
 	});
 
@@ -294,7 +311,7 @@ describe("Game", function(){
 			var game = new Game();
 			game.addSnake();
 			game.removeChild(new GameLogic.WorldObject(game));
-			expect(game.objects).to.have.length(1);
+			expect(game.objects).to.have.length(2);
 		});
 	});
 
