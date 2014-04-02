@@ -21,8 +21,8 @@ window.GameLayer = cc.Layer.extend({
 		window.gamelayer = this;
 
 		this.initGame();
-		// this.initLocalGame();
-		this.initNetworkGame();
+		this.initLocalGame();
+		// this.initNetworkGame();
 	},
 
 	initGame: function(){
