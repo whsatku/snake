@@ -47,10 +47,14 @@ window.GameLayer = cc.Layer.extend({
 	initNetworkGame: function(){
 		var self = this;
 		this.mode = GameLayer.MODES.NETWORK;
+		self.log("Connecting to server...");
 		this.primus = Primus.connect(this.server);
 		this.primus.on("open", function(){
-			console.log("netcode: connected");
+			self.log("Connected to server");
 			self.primus.write({command: "lobbyjoin", lobby: 0});
+		});
+		this.primus.on("close", function(){
+			self.log("Connection lost! Attempting to reconnect");
 		});
 		this.primus.on("data", this.onData.bind(this));
 	},
@@ -96,6 +100,7 @@ window.GameLayer = cc.Layer.extend({
 				var hash = this.game.hashState();
 				if(hash != data.hash){
 					console.error("desync", "local", hash, "server", data.hash);
+					this.log("Desync!");
 					this.primus.write({command: "desync"});
 				}else{
 					this.primus.write({command: "ready"});
@@ -104,6 +109,12 @@ window.GameLayer = cc.Layer.extend({
 		}
 		if(data.snakeIndex !== undefined){
 			this.player = data.snakeIndex;
+		}
+		if(data.motd !== undefined){
+			this.log("Message of the Day:\n" + data.motd);
+		}
+		if(data.online !== undefined){
+			this.log("Players online: " + data.online);
 		}
 	},
 
@@ -190,6 +201,10 @@ window.GameLayer = cc.Layer.extend({
 			x * this.gridSize[0] + this.gridSize[0]/2,
 			y * this.gridSize[1] + this.gridSize[1]/2
 		);
+	},
+
+	log: function(txt){
+		this.getParent().log(txt);
 	}
 });
 

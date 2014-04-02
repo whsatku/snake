@@ -6,7 +6,7 @@
 		showFPS: window.location.protocol == "file:",
 		loadExtension: false,
 		frameRate: 60,
-		renderMode: 2,       //Choose of RenderMode: 0(default), 1(Canvas only), 2(WebGL only)
+		renderMode: 0,       //Choose of RenderMode: 0(default), 1(Canvas only), 2(WebGL only)
 		tag: 'gameCanvas', //the dom element to run cocos2d on
 		engineDir: 'cocos2d/',
 		//SingleEngineFile:'',

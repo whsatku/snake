@@ -7,12 +7,13 @@ window.GameScene = cc.Scene.extend({
 		this._super();
 
 		this.createBackground();
+		this.initLog();
 
 		this.gameLayer = new GameLayer();
 		this.addChild(this.gameLayer);
-		this.gameLayer.setAnchorPoint(0.5, 0.5);
+		this.gameLayer.setAnchorPoint(0, 0);
 		var size = this.getStageSize();
-		this.gameLayer.setPosition(size.width/2, size.height/2);
+		this.gameLayer.setPosition(20, 20);
 		this.gameLayer.init();
 
 		this.initKeyboard();
@@ -33,4 +34,33 @@ window.GameScene = cc.Scene.extend({
 	getStageSize: function(){
 		return cc.Director.getInstance().getWinSizeInPixels();
 	},
+
+	logs: [],
+
+	initLog: function(){
+		this.logNode = cc.LabelTTF.create("", "Tahoma", 14, undefined, cc.TEXT_ALIGNMENT_RIGHT);
+		this.logNode.setFontFillColor(cc.c3b(255,255,255));
+		this.logNode.enableStroke(cc.c3b(0,0,0), 2);
+		this.logNode.setAnchorPoint(1, 1);
+
+		var size = this.getBoundingBox();
+		this.logNode.setPosition(size.width - 20, size.height - 20);
+
+		this.addChild(this.logNode, 1000);
+
+		this.schedule(this.updateLog.bind(this), 5, Infinity, 0);
+	},
+
+	updateLog: function(dontSlice){
+		if(dontSlice !== true){
+			this.logs.shift();
+		}
+		this.logNode.setString(this.logs.join("\n"));
+	},
+
+	log: function(msg){
+		this.logs.push(msg);
+		this.logs = this.logs.slice(-4);
+		this.updateLog(true);
+	}
 });

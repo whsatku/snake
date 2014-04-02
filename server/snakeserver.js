@@ -8,6 +8,7 @@ var SnakeServer = function SnakeServer(){
 	this.lobby = {};
 	this._id = 0;
 	this.cleanupInterval = 60000;
+	this.motd = "";
 };
 
 SnakeServer.prototype.id = function(){
@@ -18,6 +19,10 @@ SnakeServer.prototype.bind = function(primus){
 	var self = this;
 	this.primus = primus;
 	this.primus.on("connection", function(spark){
+		if(self.motd){
+			spark.write({motd: self.motd});
+		}
+		spark.write({online: Object.keys(self.primus.connections).length});
 		spark.on("data", function(data){
 			self.handleMessage(spark, data);
 		});
