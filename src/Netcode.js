@@ -40,6 +40,9 @@ Netcode.prototype.connect = function(){
 
 Netcode.prototype.onOpen = function(){
 	this.log("Connected to server");
+	if(WebRTC.isSupported()){
+		this.send({command: "rtc"});
+	}
 	this.send({command: "lobbyjoin", lobby: 0});
 };
 
@@ -78,6 +81,12 @@ Netcode.prototype.onData = function(data){
 	if(data.online !== undefined){
 		this.log("Players online: " + data.online);
 	}
+	if(data.rtcOffer !== undefined){
+		this.rtcAnswer(data);
+	}
+	if(data.rtc !== undefined){
+		this.rtcCall(data.rtc);
+	}
 };
 
 Netcode.prototype.send = function(data){
@@ -86,6 +95,14 @@ Netcode.prototype.send = function(data){
 
 Netcode.prototype.input = function(key){
 	return this.send({command: "input", key: key});
+};
+
+// Override these
+Netcode.prototype.rtcAnswer = function(){};
+Netcode.prototype.rtcCall = function(){};
+
+Netcode.prototype.rtcCall = function(){
+
 };
 
 window.Netcode = Netcode;

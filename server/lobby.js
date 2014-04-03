@@ -34,14 +34,18 @@ Lobby.STATE = {
 require("util").inherits(Lobby, EventEmitter);
 
 Lobby.prototype.addClient = function(spark){
-	this.clients.push(spark);
 	spark.write(this.getState());
 
 	if(this.state === Lobby.STATE.IN_GAME){
 		this.createSnakeForClient(spark);
 	}
 
+	if(spark.useRTC){
+		this.broadcast({"rtc": spark.id});
+	}
+
 	spark.lobby = this;
+	this.clients.push(spark);
 };
 
 Lobby.prototype.createSnakeForClient = function(spark){

@@ -12,6 +12,7 @@
 		//SingleEngineFile:'',
 		appFiles:[
 			'build/index.js',
+			'src/WebRTC.js',
 			'src/Netcode.js',
 			'src/GameScene.js',
 			'src/GameLayer.js',
