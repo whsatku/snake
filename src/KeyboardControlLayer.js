@@ -15,6 +15,14 @@ window.KeyboardControlLayer = cc.Layer.extend({
 	onKeyDown: function(e){
 		var key;
 
+		if(e === cc.KEY.v){
+			var webrtc = this._root.webrtc;
+			if(webrtc){
+				webrtc.muteMic(false);
+			}
+			return;
+		}
+
 		var map = {};
 		map[cc.KEY.up] = "up";
 		map[cc.KEY.down] = "down";
@@ -25,4 +33,14 @@ window.KeyboardControlLayer = cc.Layer.extend({
 			this._root.input(map[e]);
 		}
 	},
+
+	onKeyUp: function(e){
+		if(e === cc.KEY.v){
+			var webrtc = this._root.webrtc;
+			if(webrtc){
+				webrtc.muteMic(true);
+			}
+			return;
+		}
+	}
 });

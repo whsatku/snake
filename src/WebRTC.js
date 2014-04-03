@@ -34,7 +34,6 @@ WebRTC.prototype.bind = function(netcode){
 	var self = this;
 	this.netcode = netcode;
 	this.netcode.rtcAnswer = function(offer){
-		console.log(offer);
 		self.accept(offer.from, offer.rtcOffer);
 	};
 	this.netcode.rtcCall = function(id){
@@ -46,7 +45,7 @@ WebRTC.prototype.connect = function(netcode){
 };
 
 WebRTC.prototype.call = function(id){
-	console.log("Calling", id);
+	console.log("[WebRTC] Calling", id);
 	var self = this;
 	if(!this.stream){
 		return setTimeout(function(){
@@ -76,7 +75,7 @@ WebRTC.prototype.accept = function(from, offer){
 	}
 	var desc = new RTCSessionDescription(offer);
 	if(desc.type == "offer"){
-		console.log("Accepting offer from", from);
+		console.log("[WebRTC] Accepting offer from", from);
 		var connection = this._createPeerConnection(from);
 		connection.setRemoteDescription(desc);
 		connection.createAnswer(function(answer){
@@ -89,14 +88,15 @@ WebRTC.prototype.accept = function(from, offer){
 		}, function(err){
 			console.error(err);
 		});
+		// this.log("Call setup to "+from);
 	}else{
-		console.log("Completing call to", from);
+		console.log("[WebRTC] Completing call to", from);
 		var connection = this.connections[from];
 		if(!connection){
 			return;
 		}
 		connection.setRemoteDescription(desc);
-		this.log("Call setup to "+from);
+		// this.log("Call setup to "+from);
 	}
 };
 
@@ -127,6 +127,16 @@ WebRTC.prototype._createPeerConnection = function(id){
 
 WebRTC.prototype.onGotStream = function(stream){
 	this.stream = stream;
+	this.muteMic(true);
+	this.log("Voice enabled. Hold v to talk");
+};
+
+WebRTC.prototype.muteMic = function(val){
+	var tracks = this.stream.getAudioTracks();
+	if(tracks.length === 0){
+		return;
+	}
+	tracks[0].enabled = !val;
 };
 
 window.WebRTC = WebRTC;
