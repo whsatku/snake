@@ -76,8 +76,9 @@ Game.prototype._createSnake = function(){
 Game.prototype.step = function(){
 	this.state.state = Game.STATES.IN_PROGRESS;
 	this.state.step++;
-	for(var index in this.objects){
-		this.objects[index].update();
+	var objects = this.objects.slice(0);
+	for(var index in objects){
+		objects[index].update();
 	}
 	this.checkAllCollision();
 	this.generatePowerup();

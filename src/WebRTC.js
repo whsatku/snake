@@ -88,7 +88,6 @@ WebRTC.prototype.accept = function(from, offer){
 		}, function(err){
 			console.error(err);
 		});
-		// this.log("Call setup to "+from);
 	}else{
 		console.log("[WebRTC] Completing call to", from);
 		var connection = this.connections[from];
@@ -96,11 +95,11 @@ WebRTC.prototype.accept = function(from, offer){
 			return;
 		}
 		connection.setRemoteDescription(desc);
-		// this.log("Call setup to "+from);
 	}
 };
 
 WebRTC.prototype._createPeerConnection = function(id){
+	var self = this;
 	try{
 		var connection = new RTCPeerConnection({
 			"iceServers": [
@@ -117,6 +116,12 @@ WebRTC.prototype._createPeerConnection = function(id){
 			audio.autoplay = true;
 			audio.src = URL.createObjectURL(e.stream);
 			document.body.appendChild(audio);
+			connection.element = audio;
+		};
+		connection.onremovestream = function(){
+			if(connection.element){
+				document.removeChild(connection.element);
+			}
 		};
 		this.connections[id] = connection;
 		return connection;
