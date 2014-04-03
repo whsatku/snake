@@ -46,6 +46,9 @@ SnakeServer.prototype.handleMessage = function(spark, data){
 		case "lobbystart":
 			this.startLobby(spark);
 			break;
+		case "rtc":
+			spark.useRTC = true;
+			break;
 	}
 	if(spark.lobby){
 		switch(data.command){
@@ -58,6 +61,9 @@ SnakeServer.prototype.handleMessage = function(spark, data){
 			case "desync":
 				winston.info("[Lobby %s] Desync player %s", spark.lobby.id, spark.snakeIndex);
 				spark.lobby.sendState(spark);
+				break;
+			case "rtcOffer":
+				this.relayRTCOffer(spark, data);
 				break;
 		}
 	}
@@ -107,6 +113,18 @@ SnakeServer.prototype.cleanup = function(){
 		return item.clients.length > 0;
 	});
 };
+
+SnakeServer.prototype.relayRTCOffer = function(spark, data){
+	var target = _.filter(this.primus.connections, function(x){
+		return x.id == data.to && x.lobby === spark.lobby;
+	});
+	if(target.length === 0){
+		return;
+	}
+	target = target[0];
+	data.from = spark.id;
+	target.write(data);
+}
 
 SnakeServer.prototype.demoServer = function(){
 	winston.debug("Demo mode enabled");

@@ -47,9 +47,16 @@ window.GameLayer = cc.Layer.extend({
 		var self = this;
 		this.mode = GameLayer.MODES.NETWORK;
 		this.log("Connecting to server...");
+
 		this.netcode = new Netcode(this.game);
 		this.netcode.log = this.log.bind(this);
 		this.netcode.connect();
+
+		if(WebRTC.isSupported()){
+			this.webrtc = new WebRTC();
+			this.webrtc.log = this.netcode.log;
+			this.webrtc.bind(this.netcode);
+		}
 	},
 
 	initMap: function(){
@@ -112,6 +119,9 @@ window.GameLayer = cc.Layer.extend({
 		// delete removed objects
 		Object.keys(this.objectsMap).forEach(function(objId){
 			if(foundObjects.indexOf(parseInt(objId)) == -1){
+				if(self.objectsMap[objId] === undefined){
+					return;
+				}
 				self.removeChild(self.objectsMap[objId]);
 				self.objectsMap[objId] = undefined;
 			}
