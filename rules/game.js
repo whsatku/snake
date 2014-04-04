@@ -177,17 +177,15 @@ Game.prototype.loadMap = function(mapName){
 
 	this.objects = [];
 
-	var legend = {
-		"#": require("./obstacle")
-	};
+	var Obstacle = require("./obstacle");
 
 	for(var y = 0; y < this.state.height; y++){
 		for(var x = 0; x < this.state.width; x++){
-			var Obj = legend[map[y][x]];
-			if(Obj !== undefined){
-				var instance = new Obj(this);
+			if(map[y] && [undefined, null, " "].indexOf(map[y][x]) == -1){
+				var instance = new Obstacle(this);
 				instance.x = x;
 				instance.y = y;
+				instance.type = map[y][x];
 				this.objects.push(instance);
 			}
 		}

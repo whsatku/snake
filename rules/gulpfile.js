@@ -9,8 +9,8 @@ gulp.task("default", function() {
 		.pipe(browserify({
 			standalone: "GameLogic"
 		}))
-		// .pipe(uglify({
-		// 	preserveComments: "some"
-		// }))
+		.pipe(uglify({
+			preserveComments: "some"
+		}))
 		.pipe(gulp.dest("../build/"));
 });

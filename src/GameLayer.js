@@ -2,7 +2,7 @@
 /* jshint unused:false */
 "use strict";
 
-window.GameLayer = cc.Layer.extend({
+window.GameLayer = cc.LayerColor.extend({
 	gridSize: [16, 16],
 	map: "empty",
 
@@ -10,14 +10,17 @@ window.GameLayer = cc.Layer.extend({
 	},
 
 	tileset: {
-		"dungeon": ["res/tiles.png", cc.rect(16, 16, 16, 16)],
-		"brick": ["res/tiles.png", cc.rect(48, 0, 16, 16)],
+		"grass": cc.c3b(109, 170, 44),
+		"brick": ["res/tiles.png", cc.rect(0, 32, 16, 16), cc.c3b(210, 125, 44)],
+		"lava": ["res/tiles.png", cc.rect(96, 16, 16, 16), cc.c3b(133, 76, 48)],
+		"palace": cc.c3b(66, 81, 93),
 	},
 
 	init: function() {
+		this._super();
+
 		// ease debugging
 		window.gamelayer = this;
-
 		this.initGame();
 		// this.initLocalGame();
 		this.initNetworkGame();
@@ -60,7 +63,9 @@ window.GameLayer = cc.Layer.extend({
 	},
 
 	initMap: function(){
-		this.setContentSize(this.game.state.width * this.gridSize[0], this.game.state.height * this.gridSize[1]);
+		var w = this.game.state.width * this.gridSize[0]
+		var h = this.game.state.height * this.gridSize[1];
+		this.setContentSize(w, h);
 		this.fillFloor();
 	},
 
@@ -86,6 +91,16 @@ window.GameLayer = cc.Layer.extend({
 		var mapName = this.game.state.map;
 		var mapData = GameLogic.map[mapName];
 		var tileset = this.tileset[mapData.tileset || "brick"];
+
+		if(tileset instanceof cc.Color3B){
+			this.setColor(tileset);
+			return;
+		}
+
+		if(tileset.length > 2){
+			this.setColor(tileset[2]);
+		}
+
 		var groundNode = cc.SpriteBatchNode.create(tileset[0], this.game.state.width * this.game.state.height);
 		for(var y=0; y<this.game.state.height; y++){
 			for(var x=0; x<this.game.state.width; x++){
@@ -148,6 +163,8 @@ window.GameLayer = cc.Layer.extend({
 			ObjectClass = PowerupNode;
 		}else if(obj instanceof GameLogic.Spawn){
 			ObjectClass = SpawnNode;
+		}else if(obj instanceof GameLogic.Obstacle){
+			ObjectClass = ObstacleNode;
 		}
 		var node = new ObjectClass();
 		node.object = obj;

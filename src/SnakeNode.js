@@ -10,6 +10,15 @@ window.SnakeNode = WorldObjectNode.extend({
 		this.index = this.object.index % 6 + 1;
 		this._super("res/snake-"+this.index+".png", cc.rect(0, 0, 16, 16));
 		this.createPlayerName();
+		this.createTailLayer();
+	},
+
+	createTailLayer: function(){
+		var root = this.getRoot();
+		this.removeFromParent(false);
+		this.tailLayer = cc.SpriteBatchNode.createWithTexture(this.getTexture());
+		this.tailLayer.addChild(this);
+		root.addChild(this.tailLayer);
 	},
 
 	syncFromEngine: function(obj){
@@ -31,24 +40,20 @@ window.SnakeNode = WorldObjectNode.extend({
 	},
 
 	_cutTails: function(obj){
-		var root = this.getRoot();
 		var pos = Math.max(0, obj.positions.length - 1);
 		var remove = this._tails.slice(pos);
 		for(var i = 0; i < remove.length; i++){
-			root.removeChild(remove[i]);
+			this.tailLayer.removeChild(remove[i]);
 		}
 		this._tails = this._tails.slice(0, pos);
 	},
 
 	_createTails: function(obj){
-		// we need to add to scene otherwise the tail will be relatively positioned
-
-		var root = this.getRoot();
 		for(var i = this._tails.length; i < obj.positions.length - 1; i++){
 			var child = new SnakeBitsNode();
 			child.index = this.index;
-			root.addChild(child);
 			child.init();
+			this.tailLayer.addChild(child);
 			this._tails.push(child);
 		}
 	},
@@ -114,12 +119,9 @@ window.SnakeNode = WorldObjectNode.extend({
 
 	cleanup: function(){
 		this._super();
-		var root = this.getRoot();
-		for(var i = 0; i < this._tails.length; i++){
-			root.removeChild(this._tails[i]);
-		}
+		this.tailLayer.removeFromParent();
 		if(this.playerName){
-			root.removeChild(this.playerName);
+			this.playerName.removeFromParent();
 		}
 	},
 
@@ -128,6 +130,7 @@ window.SnakeNode = WorldObjectNode.extend({
 		this.playerName.setAnchorPoint(0.5, 0);
 		this.playerName.setFontFillColor(cc.c3b(255, 255, 255));
 		this.playerName.enableStroke(cc.c3b(0, 0, 0), 2);
+		this.playerName.setOpacity(180);
 		this.getRoot().addChild(this.playerName, 5);
 	},
 

@@ -3,23 +3,18 @@
 "use strict";
 
 window.WorldObjectNode = cc.Sprite.extend({
-	tileset: {
-		"dungeon": ["res/tiles.png", cc.rect(16, 0, 16, 16)],
-		"brick": ["res/tiles.png", cc.rect(80, 0, 16, 16)],
-	},
+	defaultTile: ["res/tiles.png", cc.rect(80, 0, 16, 16)],
 
 	init: function(){
 		if(arguments.length === 0){
-			var mapName = this.getRoot().game.state.map;
-			var tileset = GameLogic.map[mapName].tileset || "brick";
-			this._super.apply(this, this.tileset[tileset]);
+			this._super.apply(this, this.defaultTile);
 		}else{
 			this._super.apply(this, arguments);
 		}
 	},
 
 	syncFromEngine: function(obj){
-		this.setPosition(this.getParent().toUIPosition(obj.x, obj.y));
+		this.setPosition(this.getRoot().toUIPosition(obj.x, obj.y));
 		this.setVisible(!obj.hidden);
 	},
 

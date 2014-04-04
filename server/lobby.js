@@ -88,7 +88,7 @@ Lobby.prototype.startGame = function(){
 	this.lastTick = new Date().getTime();
 
 	// TODO: Lobby configuration
-	this.game.loadMap("empty");
+	this.game.loadMap("plain");
 
 	this.sendStateToAll();
 };

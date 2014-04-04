@@ -2,6 +2,7 @@
 
 var Obstacle = function Obstacle(){
 	Obstacle.super_.apply(this, arguments);
+	this.type = "#";
 };
 
 require("util").inherits(Obstacle, require("./worldobject"));

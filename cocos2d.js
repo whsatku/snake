@@ -18,6 +18,7 @@
 			'src/GameLayer.js',
 			'src/KeyboardControlLayer.js',
 			'src/WorldObjectNode.js',
+			'src/ObstacleNode.js',
 			'src/SnakeNode.js',
 			'src/SnakeBitsNode.js',
 			'src/PowerupNode.js',
