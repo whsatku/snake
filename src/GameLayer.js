@@ -137,7 +137,9 @@ window.GameLayer = cc.LayerColor.extend({
 				if(self.objectsMap[objId] === undefined){
 					return;
 				}
-				self.removeChild(self.objectsMap[objId]);
+				// SnakeNode is not a direct descendent of this node
+				// so removeChild doesn't work.
+				self.objectsMap[objId].removeFromParent();
 				self.objectsMap[objId] = undefined;
 			}
 		});

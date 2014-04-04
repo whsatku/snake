@@ -45,13 +45,13 @@ WebRTC.prototype.connect = function(netcode){
 };
 
 WebRTC.prototype.call = function(id){
-	console.log("[WebRTC] Calling", id);
 	var self = this;
 	if(!this.stream){
 		return setTimeout(function(){
 			self.call(id);
 		}, 100);
 	}
+	console.log("[WebRTC] Calling", id);
 
 	var connection = this._createPeerConnection(id);
 	connection.createOffer(function(offer){

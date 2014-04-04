@@ -119,6 +119,13 @@ window.SnakeNode = WorldObjectNode.extend({
 
 	cleanup: function(){
 		this._super();
+
+		this.cleanup = function(){
+			console.log("recursion call")
+		};
+
+		// this will call this.cleanup again so we have to
+		// stop recursion.
 		this.tailLayer.removeFromParent();
 		if(this.playerName){
 			this.playerName.removeFromParent();
