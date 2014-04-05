@@ -333,6 +333,10 @@ describe("Game", function(){
 			expect(this.game.objects[0].x).to.eql(0);
 			expect(this.game.objects[0].y).to.eql(0);
 		});
+		it("should set obstacle type", function(){
+			this.game.loadMap("unitTest");
+			expect(this.game.objects[1].type).to.eql("D");
+		});
 	});
 
 	describe("#prepareState", function(){

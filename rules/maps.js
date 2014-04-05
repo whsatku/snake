@@ -226,7 +226,7 @@ exports.dota.tileset = "grass";
 
 exports.unitTest = new String(multiline(function(){
 /*!
-###
+#D#
 # #
 ###
 */

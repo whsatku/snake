@@ -1,4 +1,5 @@
 var expect = require("chai").expect;
+var sinon = require("sinon");
 var Lobby = require("../lobby");
 var GameLogic = require("../../rules/");
 var MockSpark = require("./mockspark");
@@ -35,6 +36,19 @@ describe("Lobby", function(){
 			this.lobby.startGame();
 			this.lobby.addClient(MockSpark());
 			expect(this.lobby.game.getSnake(0)).to.be.instanceof(GameLogic.Snake);
+		});
+
+		it("broadcast rtc support if spark supports rtc", function(){
+			var testSpark = MockSpark();
+			testSpark.useRTC = true;
+			this.lobby.addClient(testSpark);
+
+			var spark = MockSpark();
+			spark.useRTC = true;
+			testSpark.write.reset();
+			this.lobby.addClient(spark);
+
+			expect(testSpark.write.firstCall.args[0].rtc).to.eql(spark.id);
 		});
 	});
 
@@ -119,14 +133,11 @@ describe("Lobby", function(){
 			this.lobby.startGame();
 			expect(game === this.lobby.game).to.be.true;
 		});
-		it("send game state", function(done){
+		it("send game state", function(){
 			var spark = MockSpark();
 			this.lobby.addClient(spark);
-			spark.write = function(state){
-				expect(state.game).to.be.an("Object");
-				done();
-			};
 			this.lobby.startGame();
+			expect(spark.write.lastCall.args[0].game).to.be.an("Object");
 		});
 	});
 
@@ -356,7 +367,7 @@ describe("Lobby", function(){
 		it("call lobby by the game updateRate", function(done){
 			this.lobby.game.once("step", function(){
 				this.lobby.game.once("step", function(){
-					expect(new Date().getTime() - tick).to.be.closeTo(10, 5);
+					expect(new Date().getTime() - tick).to.be.closeTo(10, 50);
 					done();
 				});
 				var tick = new Date().getTime();

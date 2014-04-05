@@ -203,7 +203,7 @@ Lobby.prototype._autoNextTick = function(){
 	this._autoNextTickTimer = setTimeout(function(){
 		winston.warn("[Lobby %s] Client lags too much! Doing forcefully tick.", self.id);
 		self.nextTick();
-	}, this.game.state.updateRate + 20);
+	}, this.game.state.updateRate + 50);
 };
 
 Lobby.prototype.input = function(spark, input){

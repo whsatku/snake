@@ -7,10 +7,6 @@ window.RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConne
 window.URL = window.URL || window.webkitURL || window.mozURL;
 window.RTCSessionDescription = window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription;
 
-if(typeof navigator.getUserMedia != "function"){
-	return;
-}
-
 var WebRTC = function WebRTC(){
 	if(!(this instanceof WebRTC)){
 		return new WebRTC();

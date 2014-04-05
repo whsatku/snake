@@ -48,6 +48,11 @@ describe("SnakeServer", function(){
 			};
 			this.server.handleMessage({}, {"command": "lobbystart"});
 		});
+		it("handle rtc command", function(){
+			var spark = MockSpark();
+			this.server.handleMessage(spark, {"command": "rtc"});
+			expect(spark.useRTC).to.be.true;
+		})
 	});
 
 	describe("#handleMessage (w/lobby)", function(){
@@ -75,6 +80,20 @@ describe("SnakeServer", function(){
 				done();
 			};
 			this.server.handleMessage(this.spark, {"command": "desync"});
+		});
+		it("handle rtcOffer", function(){
+			var target = MockSpark();
+			this.lobby.addClient(target);
+			this.server.primus = {
+				connections: [target]
+			};
+
+			target.write.reset();
+			this.server.handleMessage(this.spark, {"command": "rtcOffer", "to": target.id});
+
+			var call = target.write.firstCall.args[0];
+			expect(call.to).to.eql(target.id);
+			expect(call.from).to.eql(this.spark.id);
 		});
 	});
 
