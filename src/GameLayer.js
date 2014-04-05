@@ -17,7 +17,7 @@ window.GameLayer = cc.LayerColor.extend({
 	},
 
 	init: function() {
-		this._super();
+		this._super(cc.c3b(0, 0, 0), 0, 0);
 
 		// ease debugging
 		window.gamelayer = this;
@@ -101,15 +101,15 @@ window.GameLayer = cc.LayerColor.extend({
 			this.setColor(tileset[2]);
 		}
 
-		var groundNode = cc.SpriteBatchNode.create(tileset[0], this.game.state.width * this.game.state.height);
+		this.tileNode = cc.SpriteBatchNode.create(tileset[0], this.game.state.width * this.game.state.height);
 		for(var y=0; y<this.game.state.height; y++){
 			for(var x=0; x<this.game.state.width; x++){
 				var node = cc.Sprite.create.apply(null, tileset);
 				node.setPosition(this.toUIPosition(x, y));
-				groundNode.addChild(node);
+				this.tileNode.addChild(node);
 			}
 		}
-		this.addChild(groundNode);
+		this.addChild(this.tileNode);
 	},
 
 	syncFromEngine: function(){
@@ -158,7 +158,9 @@ window.GameLayer = cc.LayerColor.extend({
 
 	_createChildObject: function(obj){
 		obj.$id = this._generateId();
+
 		var ObjectClass = WorldObjectNode;
+		var addTo = this;
 		if(obj instanceof GameLogic.Snake){
 			ObjectClass = SnakeNode;
 		}else if(obj instanceof GameLogic.Powerup){
@@ -167,11 +169,13 @@ window.GameLayer = cc.LayerColor.extend({
 			ObjectClass = SpawnNode;
 		}else if(obj instanceof GameLogic.Obstacle){
 			ObjectClass = ObstacleNode;
+			addTo = this.tileNode;
 		}
+
 		var node = new ObjectClass();
 		node.object = obj;
-		this.addChild(node);
 		node.init();
+		addTo.addChild(node);
 		this.objectsMap[obj.$id] = node;
 
 		return node;

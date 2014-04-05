@@ -24,6 +24,9 @@ window.WorldObjectNode = cc.Sprite.extend({
 		}
 
 		var search = this.getParent();
+		if(!search){
+			search = window.gamelayer;
+		}
 		while(!(search instanceof GameLayer)){
 			search = search.getParent();
 		}

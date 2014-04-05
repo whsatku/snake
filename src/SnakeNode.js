@@ -33,6 +33,8 @@ window.SnakeNode = WorldObjectNode.extend({
 		this.name = obj.index + 1;
 		this.updatePlayerName();
 
+		this.tailLayer.setVisible(!obj.hidden);
+
 		this._cutTails(obj);
 		this._createTails(obj);
 		this._updateTails(obj);
@@ -121,7 +123,6 @@ window.SnakeNode = WorldObjectNode.extend({
 		this._super();
 
 		this.cleanup = function(){
-			console.log("recursion call")
 		};
 
 		// this will call this.cleanup again so we have to

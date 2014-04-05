@@ -9,9 +9,11 @@ var Snake = function Snake(){
 	this.maxLength = Snake.DEFAULT_MAX_LENGTH;
 	this._turning = null;
 	this.index = -1;
-	this.tickToSpawn = 0;
+	this.perks = [];
 
 	this.on("collision", this.onCollide.bind(this));
+	this.on("perkAdd", this.onAddPerk.bind(this));
+	this.on("perkRemove", this.onRemovePerk.bind(this));
 };
 
 Snake.cls = "Snake";
@@ -20,25 +22,24 @@ Snake.RESPAWN_DELAY = 10; // ticks
 
 var MovingWorldObject = require("./movingworldobject");
 var Powerup = require("./powerup");
+var PerkPowerup = require("./perkpowerup");
 
 require("util").inherits(Snake, MovingWorldObject);
 
 Snake.prototype.update = function(){
-	if(this.tickToSpawn > 0){
-		this.tickToSpawn--;
-		if(this.tickToSpawn <= 0){
-			this.respawn();
-		}
-		return;
-	}
+	this.expirePerk();
 
-	if(this.positions.length === 0){
-		this.positions.unshift([this.x, this.y]);
+	if(this.hasPerk("respawn")){
+		return;
 	}
 
 	if(this._turning !== null){
 		this.direction = this._turning;
 		this._turning = null;
+	}
+
+	if(this.positions.length === 0){
+		this.positions.unshift([this.x, this.y, this.direction]);
 	}
 
 	Snake.super_.prototype.update.apply(this, arguments);
@@ -119,12 +120,7 @@ Snake.prototype.isCollideWith = function(b, crosscheck){
 
 Snake.prototype.die = function(dontCountDead){
 	this.reset();
-	this.hidden = true;
-	this.direction = MovingWorldObject.DIR.STOP;
-
-	this._makeSpawn();
-
-	this.tickToSpawn = Snake.RESPAWN_DELAY;
+	this.addPerk("respawn", Snake.RESPAWN_DELAY);
 
 	if(dontCountDead !== true){
 		this.emit("dead");
@@ -143,7 +139,6 @@ Snake.prototype._makeSpawn = function(){
 Snake.prototype.respawn = function(){
 	this.world.removeChild(this.spawn);
 	this.spawn = null;
-	this.tickToSpawn = 0;
 
 	this.hidden = false;
 	this.direction = this._turning !== null ? this._turning : MovingWorldObject.DIR.RIGHT;
@@ -186,6 +181,9 @@ Snake.prototype.onCollide = function(target){
 	if(target instanceof Powerup){
 		this.maxLength += target.growth;
 	}
+	if(target instanceof PerkPowerup){
+		this.addPerk(target.perk, target.perkTime);
+	}
 };
 
 Snake.prototype.getState = function(){
@@ -193,6 +191,8 @@ Snake.prototype.getState = function(){
 	state.positions = this.positions.slice(0);
 	state.maxLength = this.maxLength;
 	state.index = this.index;
+	// FIXME: not a clone
+	state.perks = this.perks;
 	return state;
 };
 
@@ -201,6 +201,45 @@ Snake.prototype.loadState = function(state){
 	this.positions = state.positions;
 	this.maxLength = state.maxLength;
 	this.index = state.index;
+	this.perks = state.perks;
+};
+
+Snake.prototype.addPerk = function(name, duration){
+	this.perks[name] = this.world.state.step + duration;
+	this.emit("perkAdd", name);
+};
+
+Snake.prototype.expirePerk = function(){
+	var perks = Object.keys(this.perks);
+	for(var i = 0; i < perks.length; i++){
+		var expire = this.perks[perks[i]];
+		if(expire - this.world.state.step <= 0){
+			delete this.perks[perks[i]];
+			this.emit("perkRemove", perks[i]);
+		}
+	}
+};
+
+Snake.prototype.onAddPerk = function(perk){
+	switch(perk){
+		case "respawn":
+			this.hidden = true;
+			this.direction = MovingWorldObject.DIR.STOP;
+			this._makeSpawn();
+			break;
+	}
+};
+
+Snake.prototype.onRemovePerk = function(perk){
+	switch(perk){
+		case "respawn":
+			this.respawn();
+			break;
+	}
+};
+
+Snake.prototype.hasPerk = function(perk){
+	return this.perks[perk] - this.world.state.step > 0;
 };
 
 module.exports = Snake;

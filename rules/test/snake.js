@@ -34,6 +34,10 @@ describe("Snake", function(){
 		expect(this.snake.positions).to.be.an("Array");
 	});
 
+	it("should have perk list", function(){
+		expect(this.snake.perks).to.be.an("Array");
+	});
+
 	describe("#update", function(){
 		it("should store past positions", function(){
 			this.snake.x = 0;
@@ -43,14 +47,14 @@ describe("Snake", function(){
 			this.snake.update();
 			expect(this.snake.positions).to.eql([
 				[1, 0, GameLogic.MovingWorldObject.DIR.RIGHT],
-				[0, 0]
+				[0, 0, GameLogic.MovingWorldObject.DIR.RIGHT]
 			]);
 
 			this.snake.update();
 			expect(this.snake.positions).to.eql([
 				[2, 0, GameLogic.MovingWorldObject.DIR.RIGHT],
 				[1, 0, GameLogic.MovingWorldObject.DIR.RIGHT],
-				[0, 0]
+				[0, 0, GameLogic.MovingWorldObject.DIR.RIGHT]
 			]);
 		});
 
@@ -76,9 +80,25 @@ describe("Snake", function(){
 			var spy = sinon.stub(this.snake, "respawn");
 			for(var i = 0; i < Snake.RESPAWN_DELAY; i++){
 				expect(spy.called).to.be.false;
-				this.snake.update();
+				this.game.step();
 			}
 			expect(spy.called).to.be.true;
+		});
+
+		it("should expire perk", function(){
+			this.snake.perks["test"] = this.game.state.step - 1;
+
+			this.snake.update();
+
+			expect(this.snake.perks["test"]).to.be.undefined;
+		});
+
+		it("should ignore when respawning", function(){
+			this.snake.update();
+			expect(this.snake.positions).to.have.length(2);
+
+			this.snake.addPerk("respawn", 10);
+			expect(this.snake.positions).to.have.length(2);
 		});
 	});
 
@@ -98,7 +118,7 @@ describe("Snake", function(){
 			expect(this.snake.y).to.eql(0);
 			expect(this.snake.positions).to.eql([
 				[19, 0, GameLogic.MovingWorldObject.DIR.LEFT],
-				[0, 0]
+				[0, 0, GameLogic.MovingWorldObject.DIR.LEFT]
 			]);
 		});
 
@@ -112,7 +132,7 @@ describe("Snake", function(){
 			expect(this.snake.y).to.eql(0);
 			expect(this.snake.positions).to.eql([
 				[0, 0, GameLogic.MovingWorldObject.DIR.RIGHT],
-				[19, 0]
+				[19, 0, GameLogic.MovingWorldObject.DIR.RIGHT]
 			]);
 		});
 
@@ -126,7 +146,7 @@ describe("Snake", function(){
 			expect(this.snake.y).to.eql(19);
 			expect(this.snake.positions).to.eql([
 				[0, 19, GameLogic.MovingWorldObject.DIR.UP],
-				[0, 0]
+				[0, 0, GameLogic.MovingWorldObject.DIR.UP]
 			]);
 		});
 
@@ -140,7 +160,7 @@ describe("Snake", function(){
 			expect(this.snake.y).to.eql(0);
 			expect(this.snake.positions).to.eql([
 				[0, 0, GameLogic.MovingWorldObject.DIR.DOWN],
-				[0, 19]
+				[0, 19, GameLogic.MovingWorldObject.DIR.DOWN]
 			]);
 		});
 
@@ -407,6 +427,15 @@ describe("Snake", function(){
 			this.game.checkAllCollision();
 			expect(this.game.objects).to.have.length(2);
 		});
+		it("should add perk when collecting one", function(){
+			var object = new GameLogic.PerkPowerup(this.game);
+			object.perk = "bite";
+			object.perkTime = 10;
+
+			this.snake.emit("collision", object);
+
+			expect(this.snake.perks.bite).to.eql(this.game.state.step + object.perkTime);
+		});
 	});
 
 	describe("#getState", function(){
@@ -424,6 +453,12 @@ describe("Snake", function(){
 			this.snake.index = 5;
 
 			expect(this.snake.getState().index).to.eql(this.snake.index);
+		});
+		it("dump perks list", function(){
+			this.snake.perks = {
+				"bite": 100
+			};
+			expect(this.snake.getState().perks).to.eql(this.snake.perks);
 		});
 	});
 
@@ -448,6 +483,14 @@ describe("Snake", function(){
 
 			expect(this.snake.index).to.eql(state.index);
 		});
+		it("load perks list", function(){
+			var state = {x: 5, y: 5, deadly: false, maxLength: 50, positions: [[0,0]], index: 5, perks: {
+				"bite": 100
+			}};
+			this.snake.loadState(state);
+
+			expect(this.snake.perks).to.eql(state.perks);
+		});
 	});
 
 	describe("#die", function(){
@@ -466,9 +509,9 @@ describe("Snake", function(){
 			expect(spawner.x).to.eql(this.snake.x);
 			expect(spawner.y).to.eql(this.snake.y);
 		});
-		it("should set spawn ticks", function(){
+		it("should add respawn perk", function(){
 			this.snake.die();
-			expect(this.snake.tickToSpawn).to.eql(Snake.RESPAWN_DELAY);
+			expect(this.snake.perks.respawn).to.eql(this.game.state.step + Snake.RESPAWN_DELAY);
 		});
 	});
 
@@ -478,6 +521,54 @@ describe("Snake", function(){
 			expect(this.game.objects).to.have.length(2);
 			this.snake.cleanup();
 			expect(this.game.objects).to.have.length(1);
+		});
+	});
+
+	describe("#addPerk", function(){
+		it("should add perk", function(){
+			this.snake.addPerk("test", 10);
+			expect(this.snake.perks["test"]).to.eql(this.game.state.step + 10);
+		});
+		it("should emit perkAdd", function(){
+			var spy = sinon.spy();
+			this.snake.once("perkAdd", spy);
+
+			this.snake.addPerk("test", 10);
+
+			expect(spy.calledWith("test")).to.be.true;
+		});
+	});
+
+	describe("#expirePerk", function(){
+		it("should expire perk", function(){
+			this.snake.perks["test"] = this.game.state.step - 1;
+
+			this.snake.expirePerk();
+
+			expect(this.snake.perks["test"]).to.be.undefined;
+		});
+		it("should emit perkRemove", function(){
+			var spy = sinon.spy();
+			this.snake.once("perkRemove", spy);
+
+			this.snake.perks["test"] = this.game.state.step - 1;
+			this.snake.expirePerk();
+
+			expect(spy.calledWith("test")).to.be.true;
+		});
+	});
+
+	describe("#hasPerk", function(){
+		it("should return true when perk exists and not expiring", function(){
+			this.snake.addPerk("test", 1);
+			expect(this.snake.hasPerk("test")).to.be.true;
+		});
+		it("should return false when perk does note xists", function(){
+			expect(this.snake.hasPerk("test")).to.be.false;
+		});
+		it("should return false when perk is expired", function(){
+			this.snake.addPerk("test", -1);
+			expect(this.snake.hasPerk("test")).to.be.false;
 		});
 	});
 
