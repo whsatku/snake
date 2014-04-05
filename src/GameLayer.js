@@ -16,6 +16,11 @@ window.GameLayer = cc.LayerColor.extend({
 		"palace": cc.c3b(66, 81, 93),
 	},
 
+	perkName: {
+		"bite": "Bite",
+		"respawn": "Respawning"
+	},
+
 	init: function() {
 		this._super(cc.c3b(0, 0, 0), 0, 0);
 
@@ -31,6 +36,7 @@ window.GameLayer = cc.LayerColor.extend({
 		this.game.on("step", this.onGameStepped.bind(this));
 		this.game.on("loadState", this.onLoadState.bind(this));
 		this.game.on("snakeDie", this.onSnakeDie.bind(this));
+		this.game.on("perkCollect", this.onPerkCollect.bind(this));
 	},
 
 	initLocalGame: function(){
@@ -63,7 +69,7 @@ window.GameLayer = cc.LayerColor.extend({
 	},
 
 	initMap: function(){
-		var w = this.game.state.width * this.gridSize[0]
+		var w = this.game.state.width * this.gridSize[0];
 		var h = this.game.state.height * this.gridSize[1];
 		this.setContentSize(w, h);
 		this.fillFloor();
@@ -85,6 +91,10 @@ window.GameLayer = cc.LayerColor.extend({
 
 	onSnakeDie: function(snake){
 		this.log("Player "+(snake.index+1)+" died!");
+	},
+
+	onPerkCollect: function(perk, snake){
+		this.log(this.perkName[perk] + " was collected by "+(snake.index+1));
 	},
 
 	fillFloor: function(){

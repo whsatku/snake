@@ -10,10 +10,12 @@ var Snake = function Snake(){
 	this._turning = null;
 	this.index = -1;
 	this.perks = [];
+	this.invulnerable = false;
 
 	this.on("collision", this.onCollide.bind(this));
 	this.on("perkAdd", this.onAddPerk.bind(this));
 	this.on("perkRemove", this.onRemovePerk.bind(this));
+	this.on("bitten", this.onBitten.bind(this));
 };
 
 Snake.cls = "Snake";
@@ -148,6 +150,9 @@ Snake.prototype.reset = function(){
 	this.maxLength = Snake.DEFAULT_MAX_LENGTH;
 	this.positions = [];
 	this.randomPosition();
+	for(var perk in this.perks){
+		this.removePerk(perk);
+	}
 	this.emit("reset");
 };
 
@@ -162,27 +167,33 @@ Snake.prototype.onCollide = function(target){
 	if(this.hidden){
 		return false;
 	}
-	if(target instanceof Snake){
-		if(this.x == target.x && this.y == target.y){
-			// head-on-head collision
-			this.die();
-			if(target !== this){
-				target.die();
-			}
-			return;
-		}else if(!this.isCollideWith(target, false)){
-			// other does head-on-tail collision
-			return;
-		}
-	}
-	if(target.deadly){
-		this.die();
-	}
 	if(target instanceof Powerup){
 		this.maxLength += target.growth;
 	}
 	if(target instanceof PerkPowerup){
 		this.addPerk(target.perk, target.perkTime);
+	}
+	if(target instanceof Snake){
+		if(this.x == target.x && this.y == target.y){
+			// head-on-head collision
+			if(!this.invulnerable){
+				this.die();
+			}
+			if(target !== this && !target.invulnerable){
+				target.die();
+			}
+			return;
+		}else if(this.isCollideWith(target, false)){
+			// head-on-body collision
+			if(!this.invulnerable){
+				this.die();
+			}
+			if(this.hasPerk("bite")){
+				target.emit("bitten", this);
+			}
+		}
+	}else if(target.deadly){
+		this.die();
 	}
 };
 
@@ -193,6 +204,7 @@ Snake.prototype.getState = function(){
 	state.index = this.index;
 	// FIXME: not a clone
 	state.perks = this.perks;
+	state.invulnerable = this.invulnerable;
 	return state;
 };
 
@@ -202,6 +214,7 @@ Snake.prototype.loadState = function(state){
 	this.maxLength = state.maxLength;
 	this.index = state.index;
 	this.perks = state.perks;
+	this.invulnerable = state.invulnerable;
 };
 
 Snake.prototype.addPerk = function(name, duration){
@@ -209,13 +222,16 @@ Snake.prototype.addPerk = function(name, duration){
 	this.emit("perkAdd", name);
 };
 
+Snake.prototype.removePerk = function(name){
+	delete this.perks[name];
+	this.emit("perkRemove", name);
+};
+
 Snake.prototype.expirePerk = function(){
-	var perks = Object.keys(this.perks);
-	for(var i = 0; i < perks.length; i++){
-		var expire = this.perks[perks[i]];
+	for(var perk in this.perks){
+		var expire = this.perks[perk];
 		if(expire - this.world.state.step <= 0){
-			delete this.perks[perks[i]];
-			this.emit("perkRemove", perks[i]);
+			this.removePerk(perk);
 		}
 	}
 };
@@ -227,6 +243,9 @@ Snake.prototype.onAddPerk = function(perk){
 			this.direction = MovingWorldObject.DIR.STOP;
 			this._makeSpawn();
 			break;
+		case "bite":
+			this.invulnerable = true;
+			break;
 	}
 };
 
@@ -235,7 +254,30 @@ Snake.prototype.onRemovePerk = function(perk){
 		case "respawn":
 			this.respawn();
 			break;
+		case "bite":
+			this.invulnerable = false;
+			break;
 	}
+};
+
+Snake.prototype.onBitten = function(snake){
+	var chopIndex = false;
+	for(var i = 0; i < this.positions.length; i++){
+		if(this.positions[i][0] === snake.x && this.positions[i][1] === snake.y){
+			chopIndex = i;
+			break;
+		}
+	}
+	if(chopIndex === false){
+		return;
+	}
+	if(chopIndex == 1){
+		this.die();
+		return;
+	}
+
+	this.positions = this.positions.slice(0, chopIndex);
+	this.maxLength = chopIndex;
 };
 
 Snake.prototype.hasPerk = function(perk){

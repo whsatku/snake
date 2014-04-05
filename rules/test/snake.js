@@ -346,6 +346,12 @@ describe("Snake", function(){
 			this.snake.on("reset", done);
 			this.snake.reset();
 		});
+
+		it("should reset perk", function(){
+			this.snake.addPerk("test", 10);
+			this.snake.reset();
+			expect(this.snake.perks.test).to.be.undefined;
+		});
 	});
 
 	describe("#onCollide", function(){
@@ -436,6 +442,59 @@ describe("Snake", function(){
 
 			expect(this.snake.perks.bite).to.eql(this.game.state.step + object.perkTime);
 		});
+		it("should not kill the snake on snake head-on-snake head collision when it is invulnerable", function(){
+			var snake1 = this.snake;
+			var snake2 = this.game.addSnake(undefined, true);
+			snake1.x = 0; snake1.y = 0; snake1.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
+			snake1.invulnerable = true;
+			snake2.x = 2; snake2.y = 0; snake2.direction = GameLogic.MovingWorldObject.DIR.LEFT;
+
+			var spy = sinon.spy();
+			snake1.on("reset", spy);
+			var spy2 = sinon.spy();
+			snake2.on("reset", spy2);
+
+			this.game.step();
+
+			expect(spy.called).to.be.false;
+			expect(spy2.called).to.be.true;
+		});
+		it("should chop other snake when one have bite perk", function(){
+			var snake1 = this.snake;
+			var snake2 = this.game.addSnake(undefined, true);
+			snake1.x = 0; snake1.y = 0; snake1.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
+			snake1.addPerk("bite", 10);
+			snake2.x = 2; snake2.y = 0; snake2.direction = GameLogic.MovingWorldObject.DIR.UP;
+			snake2.positions = [
+				[2, 0],
+				[1, 0],
+				[0, 0]
+			];
+
+			this.game.step();
+
+			expect(snake2.positions).to.have.length(2);
+			expect(snake2.maxLength).to.eql(2);
+		});
+		it("should kill if chop next to the head", function(){
+			var snake1 = this.snake;
+			var snake2 = this.game.addSnake(undefined, true);
+			snake1.x = 2; snake1.y = 1; snake1.direction = GameLogic.MovingWorldObject.DIR.UP;
+			snake1.addPerk("bite", 10);
+			snake2.x = 2; snake2.y = 0; snake2.direction = GameLogic.MovingWorldObject.DIR.UP;
+			snake2.positions = [
+				[2, 0],
+				[1, 0],
+				[0, 0]
+			];
+
+			var spy = sinon.spy();
+			snake2.on("reset", spy);
+
+			this.game.step();
+
+			expect(spy.called).to.be.true;
+		});
 	});
 
 	describe("#getState", function(){
@@ -459,6 +518,10 @@ describe("Snake", function(){
 				"bite": 100
 			};
 			expect(this.snake.getState().perks).to.eql(this.snake.perks);
+		});
+		it("dump invulnerable", function(){
+			this.snake.invulnerable = true;
+			expect(this.snake.getState().invulnerable).to.be.true;
 		});
 	});
 
@@ -490,6 +553,12 @@ describe("Snake", function(){
 			this.snake.loadState(state);
 
 			expect(this.snake.perks).to.eql(state.perks);
+		});
+		it("load invulnerable", function(){
+			var state = {x: 5, y: 5, deadly: false, maxLength: 50, positions: [[0,0]], index: 5, invulnerable: true};
+			this.snake.loadState(state);
+
+			expect(this.snake.invulnerable).to.be.true;
 		});
 	});
 

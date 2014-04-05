@@ -4,6 +4,7 @@ var EventEmitter = require("events").EventEmitter;
 var randy = require("randy");
 var Snake = require("./snake");
 var Powerup = require("./powerup");
+var PerkPowerup = require("./perkpowerup");
 var maps = require("./maps");
 var crc32 = require("crc32");
 
@@ -53,7 +54,7 @@ Game.prototype._bindSnake = function(snake){
 	snake.on("dead", function(){
 		self.emit("snakeDie", snake);
 	});
-}
+};
 
 Game.prototype.removeSnake = function(snake){
 	if(typeof snake != "number"){
@@ -111,27 +112,43 @@ Game.prototype.checkCollision = function(object, objects){
 };
 
 Game.prototype.generatePowerup = function(){
-	if(this.hasActivePowerup(true)){
-		return;
+	if(!this.hasActivePowerup(true)){
+		var powerup = new Powerup(this);
+		powerup.randomPosition();
+
+		this.objects.push(powerup);
 	}
+	if(!this.hasActivePowerup(false)){
+		if(this.random.random() < 0.01){
+			// [perkName, perkTimer]
+			var perkList = [
+				["bite", 200]
+			];
+			var perk = this.random.choice(perkList);
+			var ppowerup = new PerkPowerup(this);
+			ppowerup.perk = perk[0];
+			ppowerup.perkTime = perk[1];
+			ppowerup.randomPosition();
 
-	var powerup = new Powerup(this);
-	powerup.randomPosition();
-
-	this.objects.push(powerup);
-	return powerup;
+			this.objects.push(ppowerup);
+		}
+	}
 };
 
 Game.prototype.hasActivePowerup = function(onlyNormal){
 	for(var index in this.objects){
-		if(
-			this.objects[index] instanceof Powerup &&
-			(
-				(onlyNormal === true && this.objects[index].constructor == Powerup) ||
-				onlyNormal !== true
-			)
-		){
-			return true;
+		if(onlyNormal === true){
+			if(this.objects[index].constructor.cls == "Powerup"){
+				return true;
+			}
+		}else if(onlyNormal === false){
+			if(this.objects[index] instanceof Powerup && this.objects[index].constructor.cls != "Powerup"){
+				return true;
+			}
+		}else{
+			if(this.objects[index] instanceof Powerup){
+				return true;
+			}
 		}
 	}
 	return false;

@@ -124,7 +124,18 @@ describe("Game", function(){
 	});
 
 	describe("#hasActivePowerup", function(){
-		it("should be able to ask for any powerup");
+		it("should be able to ask for any powerup", function(){
+			var game = new Game();
+			expect(game.hasActivePowerup()).to.be.false;
+
+			var item = new GameLogic.Powerup(game);
+			game.objects.push(item);
+			expect(game.hasActivePowerup()).to.be.true;
+
+			item = new GameLogic.PerkPowerup(game);
+			game.objects = [item];
+			expect(game.hasActivePowerup()).to.be.true;
+		});
 		it("should be able to ask for only plain powerup", function(){
 			var game = new Game();
 			expect(game.hasActivePowerup(true)).to.be.false;
@@ -132,6 +143,22 @@ describe("Game", function(){
 			var item = new GameLogic.Powerup(game);
 			game.objects.push(item);
 			expect(game.hasActivePowerup(true)).to.be.true;
+
+			item = new GameLogic.PerkPowerup(game);
+			game.objects = [item];
+			expect(game.hasActivePowerup(true)).to.be.false;
+		});
+		it("should be able to ask for only non-plain powerup", function(){
+			var game = new Game();
+			expect(game.hasActivePowerup(false)).to.be.false;
+
+			var item = new GameLogic.Powerup(game);
+			game.objects.push(item);
+			expect(game.hasActivePowerup(false)).to.be.false;
+
+			item = new GameLogic.PerkPowerup(game);
+			game.objects = [item];
+			expect(game.hasActivePowerup(false)).to.be.true;
 		});
 	});
 
@@ -233,6 +260,21 @@ describe("Game", function(){
 			var game = new Game();
 			game.step();
 			expect(game.objects[game.objects.length - 1]).to.be.instanceOf(GameLogic.Powerup);
+			var oldLength = game.objects.length;
+			game.step();
+			expect(game.objects).to.have.length(oldLength);
+		});
+
+		it("should sometimes generate perk powerup is one is not active", function(){
+			var game = new Game();
+			for(var i = 0; i < 1000000; i++){
+				game.step();
+				var lastItem = game.objects[game.objects.length - 1];
+				if(lastItem instanceof GameLogic.PerkPowerup){
+					return;
+				}
+			}
+			throw new Error("PerkPowerup is not generated");
 		});
 
 		it("should fire snakeDie event if snake dies", function(){

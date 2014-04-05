@@ -17,6 +17,7 @@ describe("PerkPowerup", function(){
 	beforeEach(function(){
 		this.game = new GameLogic.Game();
 		this.perk = new PerkPowerup(this.game);
+		this.perk.perk = "test";
 		this.game.objects.push(this.perk);
 	});
 
@@ -39,6 +40,16 @@ describe("PerkPowerup", function(){
 
 	it("should not provide growth", function(){
 		expect(this.perk.growth).to.eql(0);
+	});
+
+	it("should emit perkCollect", function(done){
+		var snake = this.game.addSnake();
+		this.game.once("perkCollect", function(perk, who){
+			expect(perk).to.eql("test");
+			expect(who).to.eql(snake);
+			done();
+		});
+		this.perk.emit("collision", snake);
 	});
 
 });
