@@ -267,7 +267,7 @@ describe("Game", function(){
 
 		it("should sometimes generate perk powerup is one is not active", function(){
 			var game = new Game();
-			for(var i = 0; i < 1000000; i++){
+			for(var i = 0; i < 1000; i++){
 				game.step();
 				var lastItem = game.objects[game.objects.length - 1];
 				if(lastItem instanceof GameLogic.PerkPowerup){
@@ -275,6 +275,19 @@ describe("Game", function(){
 				}
 			}
 			throw new Error("PerkPowerup is not generated");
+		});
+
+		it("should not generate same perk when it is active", function(){
+			var game = new Game();
+			var snake = game.addSnake(undefined, true);
+			for(var i = 0; i < 500; i++){
+				snake.addPerk("bite", 100);
+				game.step();
+				var lastItem = game.objects[game.objects.length - 1];
+				if(lastItem instanceof GameLogic.PerkPowerup && lastItem.perk == "bite"){
+					throw new Error("Duplicate perk generated");
+				}
+			}
 		});
 
 		it("should fire snakeDie event if snake dies", function(){
@@ -442,6 +455,22 @@ describe("Game", function(){
 			this.game.loadState(state);
 			this.game.prepareState();
 			expect(this.game.hashState()).to.eql("e677d7b0");
+		});
+	});
+
+	describe("#hasActivePerk", function(){
+		beforeEach(function(){
+			this.game = new Game();
+			this.snake = this.game.addSnake();
+		});
+
+		it("should return true when perk exists and not expiring", function(){
+			this.snake.addPerk("test", 100);
+			expect(this.game.hasActivePerk("test")).to.be.true;
+		});
+
+		it("should return false when perk is not existing", function(){
+			expect(this.game.hasActivePerk("test")).to.be.false;
 		});
 	});
 

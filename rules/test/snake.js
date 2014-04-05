@@ -35,7 +35,7 @@ describe("Snake", function(){
 	});
 
 	it("should have perk list", function(){
-		expect(this.snake.perks).to.be.an("Array");
+		expect(this.snake.perks).to.be.an("Object");
 	});
 
 	describe("#update", function(){

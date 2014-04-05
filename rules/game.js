@@ -120,19 +120,34 @@ Game.prototype.generatePowerup = function(){
 	}
 	if(!this.hasActivePowerup(false)){
 		if(this.random.random() < 0.01){
-			// [perkName, perkTimer]
-			var perkList = [
-				["bite", 200]
-			];
-			var perk = this.random.choice(perkList);
-			var ppowerup = new PerkPowerup(this);
-			ppowerup.perk = perk[0];
-			ppowerup.perkTime = perk[1];
-			ppowerup.randomPosition();
+			var perk = this.getRandomPerk();
+			if(perk !== undefined){
+				var ppowerup = new PerkPowerup(this);
+				ppowerup.perk = perk[0];
+				ppowerup.perkTime = perk[1];
+				ppowerup.randomPosition();
 
-			this.objects.push(ppowerup);
+				this.objects.push(ppowerup);
+			}
 		}
 	}
+};
+
+Game.prototype.getRandomPerk = function(){
+	// [perkName, perkTimer]
+	var perkList = [
+		["bite", 200]
+	];
+	var perk;
+	for(var i = 0; i<perkList.length * 2; i++){
+		perk = this.random.choice(perkList);
+		if(!this.hasActivePerk(perk[0])){
+			break;
+		}else{
+			perk = undefined;
+		}
+	}
+	return perk;
 };
 
 Game.prototype.hasActivePowerup = function(onlyNormal){
@@ -153,6 +168,17 @@ Game.prototype.hasActivePowerup = function(onlyNormal){
 	}
 	return false;
 };
+
+Game.prototype.hasActivePerk = function(perk){
+	for(var index in this._snakes){
+		if(!this._snakes[index]){
+			continue;
+		}else if(this._snakes[index].hasPerk(perk)){
+			return true;
+		}
+	}
+	return false;
+}
 
 Game.prototype.getSnake = function(id){
 	return this._snakes[id];

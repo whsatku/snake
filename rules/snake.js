@@ -9,7 +9,7 @@ var Snake = function Snake(){
 	this.maxLength = Snake.DEFAULT_MAX_LENGTH;
 	this._turning = null;
 	this.index = -1;
-	this.perks = [];
+	this.perks = {};
 	this.invulnerable = false;
 
 	this.on("collision", this.onCollide.bind(this));
@@ -270,8 +270,7 @@ Snake.prototype.onBitten = function(snake){
 	}
 	if(chopIndex === false){
 		return;
-	}
-	if(chopIndex == 1){
+	}else if(chopIndex == 1){
 		this.die();
 		return;
 	}
