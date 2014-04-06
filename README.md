@@ -21,3 +21,4 @@ istanbul cover _mocha -x maps.js
 - New food sprite by JL
 - [Tiles](http://opengameart.org/content/16x16-tiles) PD by Ogrebane
 - [Halo](http://opengameart.org/content/cursors-arrows-map-markers-for-ardentryst-by-jordan-trudgett) Copyright 2008 Jordan Trudgett | http://jordan.trudgett.com/ - Licensed under CC BY 3.0 http://creativecommons.org/licenses/by/3.0/
+- [Powerup](http://opengameart.org/content/141-military-icons-set) 141 Military Icons Set by AngryMeteor.com under CC-BY 3.0 license - http://opengameart.org/content/141-military-icons-set

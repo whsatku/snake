@@ -30,7 +30,7 @@ window.ObstacleNode = WorldObjectNode.extend({
 	},
 
 	syncFromEngine: function(obj){
-		this._super.call(this, obj);
+		this._super(obj);
 		if(this._setTileType){
 			return;
 		}
