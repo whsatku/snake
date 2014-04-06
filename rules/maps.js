@@ -189,37 +189,40 @@ exports.u.tileset = "palace";
 
 exports.dota = new String(multiline(function(){
 /*!
-DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
-D                                    D
-D                                    D
-D        TTTTTTTTTTTTTT              D
-D                                    D
-D                                    D
-D     TTT#          T                D
-D     TTT##         T                D
-D     TTTT##        T                D
-D     T     #                        D
-D     T      #                       D
-D     T       #     TTTTTT           D
-D     T        #                     D
-D     T         #                    D
-D                                    D
-D                                    D
-D                          TTTTT     D
-D                   #          T     D
-D                    #         T     D
-D                    ##        T     D
-D           TTTTTTTTTTT#             D
-D                       #            D
-D                        #           D
-D                        ##          D
-D                 TTTTTTTTT#         D
-D                          ##        D
-D                           ##       D
-D      TTTTTTT               ##      D
-D                                    D
-D                                    D
-DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+D                                         D
+D                                         D
+D                                         D
+D           TTTTTTTTTTTTTTTT              D
+D                                         D
+D                                         D
+D                        T                D
+D                        T                D
+D                        T                D
+D        TT######                         D
+D        TTTT   ###                       D
+D        TT      ###        TTTTTT        D
+D        TT       ###                     D
+D        TT        ####                   D
+D                                         D
+D                          TT             D
+D                          TTTT           D
+D                          T   TT         D
+D                    ##    T    TTT       D
+D              TT     ##          T   T   D
+D              TT     T###         TTT    D
+D           TTTTTTTTTTT###                D
+D                        ##               D
+D                         ##              D
+D                         #########       D
+D                  TTTTTTTT    ##         D
+D             TT                          D
+D             TT                          D
+D      TTTTTTTTTTTT      TT               D
+D                                         D
+D                                         D
+D                                         D
+DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
 */
 return 0;}));
 exports.dota.tileset = "grass";

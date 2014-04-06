@@ -22,7 +22,7 @@ window.GameLayer = cc.LayerColor.extend({
 	},
 
 	init: function() {
-		this._super(cc.c3b(0, 0, 0), 0, 0);
+		this._super(cc.c4b(0, 0, 0, 255), 0, 0);
 
 		// ease debugging
 		window.gamelayer = this;
@@ -102,6 +102,9 @@ window.GameLayer = cc.LayerColor.extend({
 		var mapData = GameLogic.map[mapName];
 		var tileset = this.tileset[mapData.tileset || "brick"];
 
+		this.tileNode = cc.SpriteBatchNode.create("res/tiles.png", this.game.state.width * this.game.state.height);
+		this.addChild(this.tileNode);
+
 		if(tileset instanceof cc.Color3B){
 			this.setColor(tileset);
 			return;
@@ -111,7 +114,6 @@ window.GameLayer = cc.LayerColor.extend({
 			this.setColor(tileset[2]);
 		}
 
-		this.tileNode = cc.SpriteBatchNode.create(tileset[0], this.game.state.width * this.game.state.height);
 		for(var y=0; y<this.game.state.height; y++){
 			for(var x=0; x<this.game.state.width; x++){
 				var node = cc.Sprite.create.apply(null, tileset);
@@ -119,7 +121,6 @@ window.GameLayer = cc.LayerColor.extend({
 				this.tileNode.addChild(node);
 			}
 		}
-		this.addChild(this.tileNode);
 	},
 
 	syncFromEngine: function(){
