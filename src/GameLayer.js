@@ -29,6 +29,7 @@ window.GameLayer = cc.LayerColor.extend({
 		this.initGame();
 		// this.initLocalGame();
 		this.initNetworkGame();
+		this.initPerkBar();
 	},
 
 	initGame: function(){
@@ -66,6 +67,16 @@ window.GameLayer = cc.LayerColor.extend({
 			this.webrtc.log = this.netcode.log;
 			this.webrtc.bind(this.netcode);
 		}
+	},
+
+	initPerkBar: function(){
+		this.perkBar = new PerkBar(this.game);
+		this.getParent().addChild(this.perkBar);
+		this.perkBar.init();
+		this.perkBar.setAnchorPoint(0, 1);
+
+		var parentBB = this.getParent().getBoundingBox();
+		this.perkBar.setPosition(10, parentBB.height - 10);
 	},
 
 	initMap: function(){
@@ -154,6 +165,8 @@ window.GameLayer = cc.LayerColor.extend({
 				self.objectsMap[objId] = undefined;
 			}
 		});
+
+		this.perkBar.syncFromEngine(this.game.getSnake(this.game.player));
 	},
 
 	input: function(key){

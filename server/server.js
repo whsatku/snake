@@ -9,7 +9,7 @@ var primus = new Primus(server, {
 var winston = new require("winston");
 winston.remove(winston.transports.Console);
 winston.add(winston.transports.Console, {
-	level: "debug",
+	level: "info",
 	colorize: true
 });
 

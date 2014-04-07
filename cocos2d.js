@@ -23,6 +23,7 @@
 			'src/SnakeBitsNode.js',
 			'src/PowerupNode.js',
 			'src/SpawnNode.js',
+			'src/PerkBar.js',
 		],
 		resourceFiles: [
 			{src: 'res/snake-1.png'},
