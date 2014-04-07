@@ -37,6 +37,7 @@
 			{src: 'res/halo.png'},
 			{src: 'res/down.png'},
 			{src: 'res/powerup.png'},
+			{src: 'res/buff.png'},
 		]
 	};
 

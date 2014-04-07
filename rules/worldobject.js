@@ -1,6 +1,6 @@
 "use strict";
 
-var EventEmitter = require("events").EventEmitter;
+var EventEmitter = require("eventemitter2").EventEmitter2;
 
 /**
  * Root of all objects in the world
@@ -10,6 +10,10 @@ var WorldObject = function WorldObject(world){
 		throw new Error("WorldObject constructor called without reference to world");
 	}
 	this.world = world;
+
+	EventEmitter.call(this, {
+		wildcard: true
+	});
 };
 
 require("util").inherits(WorldObject, EventEmitter);

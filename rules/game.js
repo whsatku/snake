@@ -1,6 +1,6 @@
 "use strict";
 
-var EventEmitter = require("events").EventEmitter;
+var EventEmitter = require("eventemitter2").EventEmitter2;
 var randy = require("randy");
 var Snake = require("./snake");
 var Powerup = require("./powerup");
@@ -9,6 +9,10 @@ var maps = require("./maps");
 var crc32 = require("crc32");
 
 var Game = function SnakeGame(){
+	EventEmitter.call(this, {
+		wildcard: true
+	});
+
 	this.objects = [];
 	this._snakes = [];
 	this.state = {
@@ -51,8 +55,11 @@ Game.prototype.addSnake = function(snake, alive){
 
 Game.prototype._bindSnake = function(snake){
 	var self = this;
-	snake.on("dead", function(){
-		self.emit("snakeDie", snake);
+	snake.onAny(function(){
+		var args = Array.prototype.slice.call(arguments, 0);
+		args.unshift(snake);
+		args.unshift(["snake", this.event]);
+		self.emit.apply(self, args);
 	});
 };
 

@@ -290,7 +290,7 @@ describe("Game", function(){
 			}
 		});
 
-		it("should fire snakeDie event if snake dies", function(){
+		it("should fire snake.dead event if snake dies", function(){
 			var game = new Game();
 			var object = new GameLogic.WorldObject(game);
 			object.x = 0;
@@ -301,10 +301,10 @@ describe("Game", function(){
 			snake.y = 0;
 
 			var spy = sinon.spy();
-			game.once("snakeDie", spy);
+			game.once("snake.dead", spy);
 			game.step();
 
-			expect(spy.calledWith(snake)).to.be.true;
+			expect(spy.firstCall.args[0]).to.eql(snake);
 		});
 	});
 
