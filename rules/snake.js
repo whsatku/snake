@@ -174,15 +174,14 @@ Snake.prototype.onCollide = function(target){
 		this.addPerk(target.perk, target.perkTime);
 	}
 	if(target instanceof Snake){
-		if(this.x == target.x && this.y == target.y){
+		if(target !== this && this.x == target.x && this.y == target.y){
 			// head-on-head collision
 			if(!this.invulnerable){
 				this.die();
 			}
-			if(target !== this && !target.invulnerable){
+			if(!target.invulnerable){
 				target.die();
 			}
-			return;
 		}else if(this.isCollideWith(target, false)){
 			// head-on-body collision
 			if(!this.invulnerable){
@@ -263,6 +262,9 @@ Snake.prototype.onRemovePerk = function(perk){
 Snake.prototype.onBitten = function(snake){
 	var chopIndex = false;
 	for(var i = 0; i < this.positions.length; i++){
+		if(i === 0 && snake === this){
+			continue;
+		}
 		if(this.positions[i][0] === snake.x && this.positions[i][1] === snake.y){
 			chopIndex = i;
 			break;
@@ -270,7 +272,7 @@ Snake.prototype.onBitten = function(snake){
 	}
 	if(chopIndex === false){
 		return;
-	}else if(chopIndex == 1){
+	}else if(chopIndex <= 1){
 		this.die();
 		return;
 	}

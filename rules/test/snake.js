@@ -495,6 +495,27 @@ describe("Snake", function(){
 
 			expect(spy.called).to.be.true;
 		});
+		it("should able to chop self when bite perk is active", function(){
+			this.snake.x = 0;
+			this.snake.y = 0;
+			this.snake.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
+			this.snake.addPerk("bite", 10);
+			this.snake.positions = [
+				[0, 0],
+				[0, 1],
+				[0, 2],
+				[1, 2],
+				[1, 1],
+				[1, 0], // chop here
+				[2, 0]
+			];
+			this.snake.maxLength = 100;
+
+			this.game.step();
+
+			expect(this.snake.positions).to.have.length(6);
+			expect(this.snake.maxLength).to.eql(6);
+		});
 	});
 
 	describe("#getState", function(){
