@@ -58,6 +58,16 @@ MovingWorldObject.isOpposite = function(dir1, dir2){
 		(dir1 === MovingWorldObject.DIR.DOWN && dir2 === MovingWorldObject.DIR.UP);
 };
 
+MovingWorldObject.getOpposite = function(dir){
+	var map = {};
+	map[MovingWorldObject.DIR.LEFT] = MovingWorldObject.DIR.RIGHT;
+	map[MovingWorldObject.DIR.RIGHT] = MovingWorldObject.DIR.LEFT;
+	map[MovingWorldObject.DIR.UP] = MovingWorldObject.DIR.DOWN;
+	map[MovingWorldObject.DIR.DOWN] = MovingWorldObject.DIR.UP;
+
+	return map[dir] !== undefined ? map[dir] : MovingWorldObject.DIR.STOP;
+};
+
 MovingWorldObject.prototype.getState = function(){
 	var state = MovingWorldObject.super_.prototype.getState.apply(this);
 	state.direction = this.direction;

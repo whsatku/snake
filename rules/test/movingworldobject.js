@@ -183,6 +183,28 @@ describe("MovingWorldObject", function(){
 
 	});
 
+	describe("#getOpposite", function(){
+		it("should return left when given right", function(){
+			expect(MovingWorldObject.getOpposite(MovingWorldObject.DIR.RIGHT)).to
+				.eql(MovingWorldObject.DIR.LEFT);
+		});
+		it("should return right when given left", function(){
+			expect(MovingWorldObject.getOpposite(MovingWorldObject.DIR.LEFT)).to
+				.eql(MovingWorldObject.DIR.RIGHT);
+		});
+		it("should return up when given down", function(){
+			expect(MovingWorldObject.getOpposite(MovingWorldObject.DIR.DOWN)).to
+				.eql(MovingWorldObject.DIR.UP);
+		});
+		it("should return down when given up", function(){
+			expect(MovingWorldObject.getOpposite(MovingWorldObject.DIR.UP)).to
+				.eql(MovingWorldObject.DIR.DOWN);
+		});
+		it("should return stop when given unknown value", function(){
+			expect(MovingWorldObject.getOpposite(9999)).to.eql(MovingWorldObject.DIR.STOP);
+		})
+	});
+
 	describe("#getState", function(){
 		it("dump position", function(){
 			var obj = new MovingWorldObject(this.game);

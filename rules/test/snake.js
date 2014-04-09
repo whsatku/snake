@@ -665,6 +665,18 @@ describe("Snake", function(){
 			expect(snake2.perks.inverse).to.eql(this.game.state.step + 50);
 			expect(this.snake.perks.inverse_collect).to.be.undefined;
 		});
+		it("should reverse all snakes when reverse_collect is collected", function(){
+			var snake2 = this.game.addSnake();
+
+			var stub1 = sinon.stub(this.snake, "reverse");
+			var stub2 = sinon.stub(snake2, "reverse");
+
+			this.snake.addPerk("reverse_collect");
+
+			expect(stub1.called).to.be.true;
+			expect(stub2.called).to.be.true;
+			expect(this.snake.perks.reverse_collect).to.be.undefined;
+		});
 	});
 
 	describe("#expirePerk", function(){
@@ -697,6 +709,35 @@ describe("Snake", function(){
 		it("should return false when perk is expired", function(){
 			this.snake.addPerk("test", -1);
 			expect(this.snake.hasPerk("test")).to.be.false;
+		});
+	});
+
+	describe("#reverse", function(){
+		it("should reverse the snake tail", function(){
+			this.snake.x = 2;
+			this.snake.y = 0;
+			this.snake.direction = GameLogic.MovingWorldObject.DIR.UP;
+			this.snake.maxLength = 5;
+			this.snake.positions = [
+				[2, 0, GameLogic.MovingWorldObject.DIR.UP],
+				[2, 1, GameLogic.MovingWorldObject.DIR.RIGHT],
+				[1, 1, GameLogic.MovingWorldObject.DIR.RIGHT],
+				[0, 1, GameLogic.MovingWorldObject.DIR.DOWN],
+				[0, 0, GameLogic.MovingWorldObject.DIR.DOWN]
+			];
+
+			this.snake.reverse();
+			expect(this.snake.positions).to.eql([
+				[0, 0, GameLogic.MovingWorldObject.DIR.UP],
+				[0, 1, GameLogic.MovingWorldObject.DIR.LEFT],
+				[1, 1, GameLogic.MovingWorldObject.DIR.LEFT],
+				[2, 1, GameLogic.MovingWorldObject.DIR.DOWN],
+				[2, 0, GameLogic.MovingWorldObject.DIR.DOWN]
+			]);
+
+			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.UP);
+			expect(this.snake.x).to.eql(0);
+			expect(this.snake.y).to.eql(0);
 		});
 	});
 

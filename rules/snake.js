@@ -268,6 +268,14 @@ Snake.prototype.onAddPerk = function(perk){
 			});
 			this.removePerk("inverse_collect");
 			break;
+		case "reverse_collect":
+			this.world._snakes.forEach(function(snake){
+				if(snake instanceof Snake){
+					snake.reverse();
+				}
+			});
+			this.removePerk("reverse_collect");
+			break;
 	}
 };
 
@@ -306,6 +314,19 @@ Snake.prototype.onBitten = function(snake){
 
 Snake.prototype.hasPerk = function(perk){
 	return this.perks[perk] - this.world.state.step > 0;
+};
+
+Snake.prototype.reverse = function(){
+	this.positions.reverse();
+	for(var i = 0; i < this.positions.length; i++){
+		if(i+1 <= this.positions.length - 1 && this.positions[i+1][2] != this.positions[i][2]){
+			this.positions[i][2] = this.positions[i+1][2];
+		}
+		this.positions[i][2] = MovingWorldObject.getOpposite(this.positions[i][2]);
+	}
+	this.x = this.positions[0][0];
+	this.y = this.positions[0][1];
+	this.direction = this.positions[0][2];
 };
 
 module.exports = Snake;

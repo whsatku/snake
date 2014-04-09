@@ -19,8 +19,8 @@ window.GameLayer = cc.LayerColor.extend({
 	perkName: {
 		"bite": "Bite",
 		"respawn": "Respawning",
-		"inverse": "Inverse",
-		"inverse_collect": "Inverse"
+		"inverse_collect": "Inverse",
+		"reverse_collect": "Reverse"
 	},
 
 	init: function() {

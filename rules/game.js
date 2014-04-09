@@ -145,6 +145,7 @@ Game.prototype.getRandomPerk = function(){
 	var perkList = [
 		["bite", 100],
 		["inverse_collect", 56],
+		["reverse_collect", 1]
 	];
 	var perk;
 	for(var i = 0; i<perkList.length * 2; i++){
@@ -186,7 +187,7 @@ Game.prototype.hasActivePerk = function(perk){
 		}
 	}
 	return false;
-}
+};
 
 Game.prototype.getSnake = function(id){
 	return this._snakes[id];
