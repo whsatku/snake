@@ -3,8 +3,6 @@
 "use strict";
 
 window.PerkBar = cc.Node.extend({
-	perks: [],
-	perkMap: {},
 	progressColor: cc.c4b(255, 255, 255, 100),
 
 	iconMap: {
@@ -18,6 +16,8 @@ window.PerkBar = cc.Node.extend({
 
 	ctor: function(game){
 		this.game = game;
+		this.perks = {};
+		this.perkMap = {};
 		this._super();
 	},
 

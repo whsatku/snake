@@ -11,6 +11,7 @@ window.SnakeNode = WorldObjectNode.extend({
 		this._super("res/snake-"+this.index+".png", cc.rect(0, 0, 16, 16));
 		this.createPlayerName();
 		this.createTailLayer();
+		this.createPerkBar();
 	},
 
 	createTailLayer: function(){
@@ -31,7 +32,7 @@ window.SnakeNode = WorldObjectNode.extend({
 		}
 
 		this.name = obj.index + 1;
-		this.updatePlayerName();
+		this.updatePlayerName(obj);
 
 		this.tailLayer.setVisible(!obj.hidden);
 
@@ -39,6 +40,8 @@ window.SnakeNode = WorldObjectNode.extend({
 		this._createTails(obj);
 		this._updateTails(obj);
 		this._updateRotation(this, GameLogic.MovingWorldObject.DIR_S[obj.direction]);
+
+		this.updatePerkBar(obj);
 	},
 
 	_cutTails: function(obj){
@@ -131,6 +134,9 @@ window.SnakeNode = WorldObjectNode.extend({
 		if(this.playerName){
 			this.playerName.removeFromParent();
 		}
+		if(this.perkBar){
+			this.perkBar.removeFromParent();
+		}
 	},
 
 	createPlayerName: function(){
@@ -148,5 +154,20 @@ window.SnakeNode = WorldObjectNode.extend({
 		var pos = this.getBoundingBox();
 
 		this.playerName.setPosition(pos.x + (pos.width/2), pos.y + pos.height+1);
+	},
+
+	createPerkBar: function(){
+		this.perkBar = new PerkBar(this.getRoot().game);
+		this.perkBar.init();
+		this.perkBar.setScale(0.3);
+		this.perkBar.setAnchorPoint(0.5, 0);
+		this.getRoot().addChild(this.perkBar, 5);
+	},
+
+	updatePerkBar: function(obj){
+		this.perkBar.syncFromEngine(obj);
+
+		var pos = this.getBoundingBox();
+		this.perkBar.setPosition(pos.x + (pos.width/2), pos.y - pos.height - 5);
 	}
 });
