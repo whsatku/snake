@@ -116,7 +116,14 @@ WebRTC.prototype._createPeerConnection = function(id){
 		};
 		connection.onremovestream = function(){
 			if(connection.element){
-				document.removeChild(connection.element);
+				console.log("[WebRTC] Stream remove "+id);
+				document.body.removeChild(connection.element);
+			}
+		};
+		connection.oniceconnectionstatechange = function(){
+			if(connection.element && connection.iceConnectionState == "disconnected"){
+				console.log("[WebRTC] Closed "+id);
+				document.body.removeChild(connection.element);
 			}
 		};
 		this.connections[id] = connection;
