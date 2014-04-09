@@ -221,6 +221,27 @@ describe("Snake", function(){
 			expect(this.snake.input("right")).to.be.false;
 		});
 
+		it("should move in opposite direction when having inverse perk", function(){
+			this.snake.direction = GameLogic.MovingWorldObject.DIR.LEFT;
+			this.snake.addPerk("inverse", 100);
+
+			expect(this.snake.input("up")).to.be.true;
+			this.snake.update();
+			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.DOWN);
+
+			expect(this.snake.input("left")).to.be.true;
+			this.snake.update();
+			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.RIGHT);
+
+			expect(this.snake.input("down")).to.be.true;
+			this.snake.update();
+			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.UP);
+
+			expect(this.snake.input("right")).to.be.true;
+			this.snake.update();
+			expect(this.snake.direction).to.eql(GameLogic.MovingWorldObject.DIR.LEFT);
+		});
+
 	});
 
 	describe("#isCollideWith", function(){
@@ -351,6 +372,12 @@ describe("Snake", function(){
 			this.snake.addPerk("test", 10);
 			this.snake.reset();
 			expect(this.snake.perks.test).to.be.undefined;
+		});
+
+		it("should preseve configured perks", function(){
+			this.snake.addPerk("inverse", 10);
+			this.snake.reset();
+			expect(this.snake.perks.inverse).to.eql(this.game.state.step + 10);
 		});
 	});
 
@@ -626,6 +653,17 @@ describe("Snake", function(){
 			this.snake.addPerk("test", 10);
 
 			expect(spy.calledWith("test")).to.be.true;
+		});
+		it("should add inverse to other snakes when inverse_collect is collected", function(){
+			var snake2 = this.game.addSnake();
+			var spy = sinon.spy();
+			snake2.once("perkAdd", spy);
+
+			this.snake.addPerk("inverse_collect", 50);
+
+			expect(spy.calledWith("inverse")).to.be.true;
+			expect(snake2.perks.inverse).to.eql(this.game.state.step + 50);
+			expect(this.snake.perks.inverse_collect).to.be.undefined;
 		});
 	});
 

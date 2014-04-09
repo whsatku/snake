@@ -143,7 +143,8 @@ Game.prototype.generatePowerup = function(){
 Game.prototype.getRandomPerk = function(){
 	// [perkName, perkTimer]
 	var perkList = [
-		["bite", 200]
+		["bite", 100],
+		["inverse_collect", 56],
 	];
 	var perk;
 	for(var i = 0; i<perkList.length * 2; i++){

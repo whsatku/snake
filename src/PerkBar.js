@@ -10,7 +10,7 @@ window.PerkBar = cc.Node.extend({
 	iconMap: {
 		"bite": ["res/buff.png", cc.rect(0, 0, 52, 52)],
 		"respawn": ["res/buff.png", cc.rect(52, 0, 52, 52)],
-		"invert": ["res/buff.png", cc.rect(104, 0, 52, 52)]
+		"inverse": ["res/buff.png", cc.rect(104, 0, 52, 52)]
 	},
 
 	spriteWidth: 52,
@@ -84,7 +84,7 @@ window.PerkBar = cc.Node.extend({
 				}
 			}
 			if(found){
-				break;
+				continue;
 			}
 			var sprite = this.perkMap[perk];
 			delete this.perkMap[perk];

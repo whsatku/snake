@@ -21,6 +21,7 @@ var Snake = function Snake(){
 Snake.cls = "Snake";
 Snake.DEFAULT_MAX_LENGTH = 4;
 Snake.RESPAWN_DELAY = 10; // ticks
+Snake.PERK_PRESERVE_ON_DEATH = ["inverse"];
 
 var MovingWorldObject = require("./movingworldobject");
 var Powerup = require("./powerup");
@@ -86,6 +87,16 @@ Snake.prototype.input = function(input){
 				"down": MovingWorldObject.DIR.DOWN,
 				"up": MovingWorldObject.DIR.UP
 			};
+
+			if(this.hasPerk("inverse")){
+				map = {
+					"left": MovingWorldObject.DIR.RIGHT,
+					"right": MovingWorldObject.DIR.LEFT,
+					"down": MovingWorldObject.DIR.UP,
+					"up": MovingWorldObject.DIR.DOWN
+				};
+			}
+
 			if(map[input] === this.direction){
 				return false;
 			}else if(this.isOpposite(map[input])){
@@ -151,7 +162,9 @@ Snake.prototype.reset = function(){
 	this.positions = [];
 	this.randomPosition();
 	for(var perk in this.perks){
-		this.removePerk(perk);
+		if(Snake.PERK_PRESERVE_ON_DEATH.indexOf(perk) == -1){
+			this.removePerk(perk);
+		}
 	}
 	this.emit("reset");
 };
@@ -236,6 +249,7 @@ Snake.prototype.expirePerk = function(){
 };
 
 Snake.prototype.onAddPerk = function(perk){
+	var self = this;
 	switch(perk){
 		case "respawn":
 			this.hidden = true;
@@ -244,6 +258,15 @@ Snake.prototype.onAddPerk = function(perk){
 			break;
 		case "bite":
 			this.invulnerable = true;
+			break;
+		case "inverse_collect":
+			var duration = self.perks.inverse_collect - self.world.state.step;
+			this.world._snakes.forEach(function(snake){
+				if(snake !== self && snake instanceof Snake){
+					snake.addPerk("inverse", duration);
+				}
+			});
+			this.removePerk("inverse_collect");
 			break;
 	}
 };

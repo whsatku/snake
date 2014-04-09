@@ -4,8 +4,9 @@
 
 window.PowerupNode = WorldObjectNode.extend({
 	typeMap: {
-		"food": ["res/food.png"],
+		"food": ["res/food.png", cc.rect(0, 0, 16, 16)],
 		"bite": ["res/powerup.png", cc.rect(136, 16, 16, 16)],
+		"inverse_collect": ["res/inverse.png"],
 	},
 
 	_updatedSprite: false,
