@@ -42,17 +42,7 @@ window.PerkBar = cc.Node.extend({
 		for(var i = 0; i < this.perks.length; i++){
 			var perk = this.perks[i], sprite;
 			if(!this.perkMap[perk[0]]){
-				sprite = cc.Sprite.create.apply(null, this.iconMap[perk[0]]);
-				sprite.setAnchorPoint(0, 0);
-
-				sprite.progress = cc.LayerColor.create(this.progressColor, this.spriteWidth, this.spriteWidth);
-				sprite.progress.setAnchorPoint(0, 0);
-				sprite.progress.setPosition(0, 0);
-				sprite.addChild(sprite.progress);
-
-				sprite.initialValue = 0;
-				sprite.value = 0;
-
+				sprite = this.createPerk(perk[0]);
 				this.perkMap[perk[0]] = sprite;
 				this.addChild(sprite);
 			}
@@ -63,6 +53,8 @@ window.PerkBar = cc.Node.extend({
 			var animateDuration = this.game.state.updateRate;
 
 			if(left > sprite.value){
+				// perk is probably resettted
+				// so reset the bar
 				sprite.value = left;
 				sprite.initialValue = left;
 				animateDuration = 0;
@@ -91,5 +83,20 @@ window.PerkBar = cc.Node.extend({
 			this.removeChild(sprite);
 		}
 		this.setContentSize((this.spriteWidth + this.spritePad) * this.perks.length, this.spriteWidth);
+	},
+
+	createPerk: function(perkName){
+		var sprite = cc.Sprite.create.apply(null, this.iconMap[perkName]);
+		sprite.setAnchorPoint(0, 0);
+
+		sprite.progress = cc.LayerColor.create(this.progressColor, this.spriteWidth, this.spriteWidth);
+		sprite.progress.setAnchorPoint(0, 0);
+		sprite.progress.setPosition(0, 0);
+		sprite.addChild(sprite.progress);
+
+		sprite.initialValue = 0;
+		sprite.value = 0;
+
+		return sprite;
 	},
 });

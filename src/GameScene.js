@@ -3,6 +3,11 @@
 "use strict";
 
 window.GameScene = cc.Scene.extend({
+	ctor: function(){
+		this._super();
+		this.logs = [];
+	},
+
 	onEnter: function() {
 		this._super();
 
@@ -34,8 +39,6 @@ window.GameScene = cc.Scene.extend({
 	getStageSize: function(){
 		return cc.Director.getInstance().getWinSizeInPixels();
 	},
-
-	logs: [],
 
 	initLog: function(){
 		this.logNode = cc.LabelTTF.create("", "Tahoma", 14, undefined, cc.TEXT_ALIGNMENT_RIGHT);

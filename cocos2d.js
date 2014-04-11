@@ -15,7 +15,6 @@
 			'src/WebRTC.js',
 			'src/Netcode.js',
 			'src/GameScene.js',
-			'src/GameLayer.js',
 			'src/KeyboardControlLayer.js',
 			'src/WorldObjectNode.js',
 			'src/ObstacleNode.js',
@@ -24,6 +23,8 @@
 			'src/PowerupNode.js',
 			'src/SpawnNode.js',
 			'src/PerkBar.js',
+			'src/GameNodeFactory.js',
+			'src/GameLayer.js',
 		],
 		resourceFiles: [
 			{src: 'res/snake-1.png'},

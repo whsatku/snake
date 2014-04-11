@@ -187,20 +187,12 @@ window.GameLayer = cc.LayerColor.extend({
 
 		var ObjectClass = WorldObjectNode;
 		var addTo = this;
-		if(obj instanceof GameLogic.Snake){
-			ObjectClass = SnakeNode;
-		}else if(obj instanceof GameLogic.Powerup){
-			ObjectClass = PowerupNode;
-		}else if(obj instanceof GameLogic.Spawn){
-			ObjectClass = SpawnNode;
-		}else if(obj instanceof GameLogic.Obstacle){
-			ObjectClass = ObstacleNode;
+
+		if(obj instanceof GameLogic.Obstacle){
 			addTo = this.tileNode;
 		}
 
-		var node = new ObjectClass();
-		node.object = obj;
-		node.init();
+		var node = GameNodeFactory.create(obj);
 		addTo.addChild(node);
 		this.objectsMap[obj.$id] = node;
 
