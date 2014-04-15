@@ -13,15 +13,18 @@ window.GameScene = cc.Scene.extend({
 
 		this.createBackground();
 		this.initLog();
+		this.initGame();
+		this.initKeyboard();
+	},
 
+	initGame: function(){
 		this.gameLayer = new GameLayer();
 		this.addChild(this.gameLayer);
+
 		this.gameLayer.setAnchorPoint(0, 0);
 		var size = this.getStageSize();
 		this.gameLayer.setPosition(10, 10);
 		this.gameLayer.init();
-
-		this.initKeyboard();
 	},
 
 	createBackground: function(){
@@ -50,7 +53,6 @@ window.GameScene = cc.Scene.extend({
 		this.logNode.setPosition(size.width - 20, size.height - 20);
 
 		this.addChild(this.logNode, 1000);
-
 		this.schedule(this.updateLog.bind(this), 5, Infinity, 0);
 	},
 
