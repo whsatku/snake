@@ -190,15 +190,12 @@ Snake.prototype.onCollide = function(target){
 		if(target !== this && this.x == target.x && this.y == target.y){
 			// head-on-head collision
 			if(!this.invulnerable){
-				this.die();
-			}
-			if(!target.invulnerable){
-				target.die();
+				this.nextTick("die");
 			}
 		}else if(this.isCollideWith(target, false)){
 			// head-on-body collision
 			if(!this.invulnerable){
-				this.die();
+				this.nextTick("die");
 			}
 			if(this.hasPerk("bite")){
 				target.emit("bitten", this);

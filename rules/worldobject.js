@@ -10,6 +10,7 @@ var WorldObject = function WorldObject(world){
 		throw new Error("WorldObject constructor called without reference to world");
 	}
 	this.world = world;
+	this._nextStepQueue = [];
 
 	EventEmitter.call(this, {
 		wildcard: true
@@ -72,7 +73,8 @@ WorldObject.prototype.getState = function(){
 		x: this.x,
 		y: this.y,
 		deadly: this.deadly,
-		hidden: this.hidden
+		hidden: this.hidden,
+		nextStepQueue: this._nextStepQueue
 	};
 };
 
@@ -81,9 +83,26 @@ WorldObject.prototype.loadState = function(state){
 	this.y = state.y;
 	this.deadly = state.deadly;
 	this.hidden = state.hidden;
+	this._nextStepQueue = state.nextStepQueue;
 };
 
 WorldObject.prototype.cleanup = function(){
+};
+
+WorldObject.prototype.nextTick = function(){
+	this._nextStepQueue.push(Array.prototype.slice.call(arguments, 0));
+};
+
+WorldObject.prototype.beforeStep = function(){
+	this._applyNextStep();
+};
+
+WorldObject.prototype._applyNextStep = function(){
+	for(var i = 0; i < this._nextStepQueue.length; i++){
+		var command = this._nextStepQueue[i];
+		this[command[0]].apply(this, command.slice(1));
+	}
+	this._nextStepQueue = [];
 };
 
 module.exports = WorldObject;

@@ -182,6 +182,18 @@ describe("Game", function(){
 			expect(game.state.step).to.eql(oldStep+1);
 		});
 
+		it("should call child's beforeStep function before update", function(){
+			var game = new Game();
+			var MockWorldObject = new GameLogic.WorldObject(game);
+			var stubUpdate = sinon.stub(MockWorldObject, "update");
+			var stubBeforeStep = sinon.stub(MockWorldObject, "beforeStep");
+
+			game.objects.push(MockWorldObject);
+			game.step();
+
+			expect(stubBeforeStep.calledBefore(stubUpdate));
+		});
+
 		it("should call child's update function", function(done){
 			var game = new Game();
 			var MockWorldObject = new GameLogic.WorldObject(game);

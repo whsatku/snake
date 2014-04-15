@@ -420,15 +420,16 @@ describe("Snake", function(){
 			var snake2 = this.game.addSnake(undefined, true);
 			snake1.positions = [[0, 0], [0, 1], [0, 2], [0,3]];
 			snake1.x = 0; snake1.y = 0;
-			snake2.positions = [[0, 2]];
-			snake2.x = 0; snake2.y = 2;
+			snake2.positions = [[0, 3]];
+			snake2.x = 0; snake2.y = 3; snake2.direction = GameLogic.MovingWorldObject.DIR.UP;
 
 			var spy1 = sinon.spy();
 			var spy2 = sinon.spy();
 			snake1.on("reset", spy1);
 			snake2.on("reset", spy2);
 
-			this.game.checkAllCollision();
+			this.game.step();
+			this.game.step();
 
 			expect(spy1.called).to.be.false;
 			expect(spy2.calledOnce).to.be.true;
@@ -444,6 +445,7 @@ describe("Snake", function(){
 			snake2.on("reset", spy);
 
 			this.game.step();
+			this.game.step();
 
 			expect(spy.callCount).to.eql(2);
 		});
@@ -457,7 +459,8 @@ describe("Snake", function(){
 				[1, 0],
 				[0, 0]
 			];
-			this.game.checkAllCollision();
+			this.game.step();
+			this.game.step();
 			expect(this.game.objects).to.have.length(2);
 		});
 		it("should add perk when collecting one", function(){
@@ -481,6 +484,7 @@ describe("Snake", function(){
 			var spy2 = sinon.spy();
 			snake2.on("reset", spy2);
 
+			this.game.step();
 			this.game.step();
 
 			expect(spy.called).to.be.false;
@@ -542,6 +546,21 @@ describe("Snake", function(){
 
 			expect(this.snake.positions).to.have.length(6);
 			expect(this.snake.maxLength).to.eql(6);
+		});
+		it("should reset both snake when they are colliding next to each other", function(){
+			var snake1 = this.snake;
+			var snake2 = this.game.addSnake(undefined, true);
+			snake1.x = 0; snake1.y = 0; snake1.direction = GameLogic.MovingWorldObject.DIR.RIGHT;
+			snake2.x = 1; snake2.y = 0; snake2.direction = GameLogic.MovingWorldObject.DIR.LEFT;
+
+			var spy = sinon.spy();
+			snake1.on("reset", spy);
+			snake2.on("reset", spy);
+
+			this.game.step();
+			this.game.step();
+
+			expect(spy.callCount).to.eql(2);
 		});
 	});
 

@@ -14,7 +14,7 @@ var WorldObject = GameLogic.WorldObject;
 
 describe("WorldObject", function(){
 
-	before(function(){
+	beforeEach(function(){
 		this.game = new GameLogic.Game();
 	});
 
@@ -185,6 +185,11 @@ describe("WorldObject", function(){
 			var obj = new WorldObject(this.game);
 			expect(obj.getState().hidden).to.eql(obj.hidden);
 		});
+		it("dump nextStepQueue", function(){
+			var obj = new WorldObject(this.game);
+			obj.nextTick("reset", 5);
+			expect(obj.getState().nextStepQueue).to.eql([["reset", 5]]);
+		});
 	});
 
 	describe("#loadState", function(){
@@ -209,6 +214,28 @@ describe("WorldObject", function(){
 			obj.loadState(state);
 
 			expect(obj.hidden).to.eql(state.hidden);
+		});
+		it("load nextStepQueue", function(){
+			var obj = new WorldObject(this.game);
+			var state = {x: 5, y: 5, hidden: true, nextStepQueue: [["reset", 5]]};
+			obj.loadState(state);
+
+			expect(obj.getState().nextStepQueue).to.eql(state.nextStepQueue);
+		});
+	});
+
+	describe("#nextTick", function(){
+		it("enqueue commands to next tick", function(){
+			var obj = new WorldObject(this.game);
+			obj.nextTick("reset");
+		});
+		it("run command on next tick", function(done){
+			var obj = new GameLogic.Snake(this.game);
+			this.game.objects.push(obj);
+			obj.once("reset", done);
+			obj.nextTick("reset");
+			this.game.step();
+			this.game.step();
 		});
 	});
 

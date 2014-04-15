@@ -86,6 +86,9 @@ Game.prototype.step = function(){
 	this.state.step++;
 	var objects = this.objects.slice(0);
 	for(var index in objects){
+		objects[index].beforeStep();
+	}
+	for(var index in objects){
 		objects[index].update();
 	}
 	this.checkAllCollision();
