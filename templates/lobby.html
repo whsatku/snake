@@ -1,0 +1,66 @@
+<div class="container">
+	<div class="row">
+		<div class="col-md-8">
+			<h1 ng-bind="lobbySettings.name"></h1>
+			
+			<table class="table table-striped table-bordered">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Color</th>
+						<th>Ready</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="player in lobbySettings.players track by $index">
+						<td ng-if="!player" colspan="3">Open</td>
+						<td ng-if="player && $index != playerIndex" ng-bind="player.name"></td>
+						<td ng-if="player && $index == playerIndex">
+							<input type="text" ng-model="player.name" class="form-control">
+						</td>
+						<td ng-if="player && $index != playerIndex" ng-bind="player.color | snakeColor" class="snake-color-{{player.color}}"></td>
+						<td ng-if="player && $index == playerIndex">
+							<select ng-model="player.color" class="form-control">
+								<option ng-repeat="color in [1,2,3,4,5,6]" value="{{color}}" ng-bind="color|snakeColor" class="snake-color-{{color}}"></option>
+							</select>
+						</td>
+						<td ng-if="player && $index != playerIndex">{{player.ready | yesno}}</td>
+						<td ng-if="player && $index == playerIndex"><input type="checkbox" ng-model="player.ready"></td>
+					</tr>
+				</tbody>
+			</table>
+			<a href="#" class="btn btn-primary" ng-if="playerIndex == 0">Start game</a>
+			<a ng-if="local" ui-sref="mainmenu" class="btn btn-danger">Leave lobby</a>
+			<a ng-if="!local" ui-sref="mainmenu" class="btn btn-danger">Leave lobby</a>
+		</div>
+		<div class="col-md-4">
+			<h2>Game settings</h2>
+			<p>Map selector</p>
+			<div class="form-group" ng-if="playerIndex == 0 && !local">
+				<label for="lobbyName">Lobby name</label>
+				<input type="text" id="lobbyName" class="form-control" ng-model="lobbySettings.name">
+			</div>
+			<div class="form-group">
+				<label for="scoreLimit">Score limit</label>
+				<input type="number" id="scoreLimit" class="form-control" ng-model="lobbySettings.scoreLimit">
+				<p class="help-block">Game will wins after a snake reached this score</p>
+			</div>
+			<div class="form-group">
+				<label for="itemLimit">Item limit</label>
+				<input type="number" id="itemLimit" class="form-control" ng-model="lobbySettings.itemLimit">
+				<p class="help-block">Game will ends after this items collected</p>
+			</div>
+			<div class="form-group">
+				<label for="fragLimit">Respawn limit</label>
+				<input type="number" id="fragLimit" class="form-control" ng-model="lobbySettings.fragLimit">
+				<p class="help-block">Snake will be removed from play after being killed this times</p>
+			</div>
+			<div class="form-group">
+				<label>
+					<input type="checkbox" ng-model="lobbySettings.perk">
+					Spawn perk
+				</label>
+			</div>
+		</div>
+	</div>
+</div>

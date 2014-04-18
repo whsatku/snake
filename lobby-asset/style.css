@@ -1,0 +1,26 @@
+.logo{
+	margin-top: 100px;
+	margin-bottom: 100px;
+}
+.snake-color-1{
+	color: #429d0b;
+}
+.snake-color-2{
+	color: #9d830b;
+}
+.snake-color-3{
+	color: #9d3b0b;
+}
+.snake-color-4{
+	color: #9d0b64;
+}
+.snake-color-5{
+	color: #0b729d;
+}
+.snake-color-6{
+	color: #0b9d6f;
+}
+.form-control{
+	height: 30px;
+	padding: 0px 8px;
+}
