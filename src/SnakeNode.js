@@ -7,9 +7,13 @@ window.SnakeNode = WorldObjectNode.extend({
 	name: "",
 
 	init: function(){
-		this.index = this.object.index % 6 + 1;
-		this._super("res/snake-"+this.index+".png", cc.rect(0, 0, 16, 16));
+		this.color = this.object.color || 1;
+		this._super("res/snake-"+this.color+".png", cc.rect(0, 0, 16, 16));
+
+		this.name = this.object.name ? this.object.name.substr(0, 8) : this.object.index + 1;
 		this.createPlayerName();
+		this.updatePlayerName();
+
 		this.createTailLayer();
 		this.createPerkBar();
 	},
@@ -31,9 +35,6 @@ window.SnakeNode = WorldObjectNode.extend({
 			throw new Error("SnakeNode is given an unsupported object");
 		}
 
-		this.name = obj.index + 1;
-		this.updatePlayerName(obj);
-
 		this.tailLayer.setVisible(!obj.hidden);
 
 		this._cutTails(obj);
@@ -42,6 +43,7 @@ window.SnakeNode = WorldObjectNode.extend({
 		this._updateRotation(this, GameLogic.MovingWorldObject.DIR_S[obj.direction]);
 
 		this.updatePerkBar(obj);
+		this.updatePlayerName(obj);
 	},
 
 	_cutTails: function(obj){
@@ -56,7 +58,7 @@ window.SnakeNode = WorldObjectNode.extend({
 	_createTails: function(obj){
 		for(var i = this._tails.length; i < obj.positions.length - 1; i++){
 			var child = new SnakeBitsNode();
-			child.index = this.index;
+			child.color = this.color;
 			child.init();
 			this.tailLayer.addChild(child);
 			this._tails.push(child);
@@ -140,10 +142,10 @@ window.SnakeNode = WorldObjectNode.extend({
 	},
 
 	createPlayerName: function(){
-		this.playerName = cc.LabelTTF.create(this.name, "Tahoma", 18);
+		this.playerName = cc.LabelTTF.create(this.name, "Tahoma", 12);
 		this.playerName.setAnchorPoint(0.5, 0);
 		this.playerName.setFontFillColor(cc.c3b(255, 255, 255));
-		this.playerName.enableStroke(cc.c3b(0, 0, 0), 2);
+		this.playerName.enableStroke(cc.c3b(0, 0, 0), 1);
 		this.playerName.setOpacity(180);
 		this.getRoot().addChild(this.playerName, 5);
 	},
@@ -153,7 +155,7 @@ window.SnakeNode = WorldObjectNode.extend({
 
 		var pos = this.getBoundingBox();
 
-		this.playerName.setPosition(pos.x + (pos.width/2), pos.y + pos.height+1);
+		this.playerName.setPosition(pos.x + (pos.width/2), pos.y + pos.height+3);
 	},
 
 	createPerkBar: function(){

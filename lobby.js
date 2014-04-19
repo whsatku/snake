@@ -13,6 +13,11 @@ app.config(["$stateProvider", function($stateProvider){
 		controller: "lobby",
 		params: ["local"]
 	});
+	$stateProvider.state("game", {
+		template: " ",
+		controller: "game",
+		params: ["settings"]
+	});
 }]);
 
 app.filter("snakeColor", function(){
@@ -28,7 +33,7 @@ app.filter("yesno", function(){
 	};
 });
 
-app.controller("lobby", ["$scope", "$stateParams", function($scope, params){
+app.controller("lobby", ["$scope", "$stateParams", "$state", function($scope, params, $state){
 	$scope.lobbySettings = {
 		players: [null, null, null, null, null, null],
 		fragLimit: 10,
@@ -40,20 +45,47 @@ app.controller("lobby", ["$scope", "$stateParams", function($scope, params){
 	};
 
 	$scope.playerIndex = -1;
-	$scope.local = params.local === "1";
+	$scope.lobbySettings.local = params.local === "1";
+	$scope.ready = false;
 
-	if($scope.local){
+	if($scope.lobbySettings.local){
 		$scope.playerIndex = 0;
 		$scope.lobbySettings.name = "Single player";
 		$scope.lobbySettings.players[0] = {
-			name: "User",
+			name: localStorage.playerName || "User",
 			color: 1,
 			ready: true
 		};
+		$scope.ready = true;
 	}
 
 	$scope.currentPlayer = $scope.lobbySettings.players[$scope.playerIndex];
+
+	$scope.startGame = function(){
+		$state.go("game", {settings: JSON.stringify($scope.lobbySettings)});
+	};
+
+	$scope.$watch("lobbySettings.players", function(){
+		$scope.ready = $scope.lobbySettings.players.every(function(item){
+			return item === null || item.ready;
+		});
+	}, true);
+
+	$scope.$watch("currentPlayer.name", function(value){
+		localStorage.playerName = value;
+	});
 }]);
+
+app.controller("game", ["$rootScope", "$stateParams", function($rootScope, params){
+	$rootScope.showGame = true;
+
+	var settings = JSON.parse(params.settings);
+	window.game.startGame(settings);
+
+	setTimeout(function(){
+		document.getElementById("gameCanvas").focus();
+	}, 10);
+}])
 
 app.run(["$state", function($state){
 	$state.go("mainmenu");

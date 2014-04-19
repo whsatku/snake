@@ -16,7 +16,7 @@
 						<td ng-if="!player" colspan="3">Open</td>
 						<td ng-if="player && $index != playerIndex" ng-bind="player.name"></td>
 						<td ng-if="player && $index == playerIndex">
-							<input type="text" ng-model="player.name" class="form-control">
+							<input type="text" ng-model="player.name" class="form-control" maxlength="8">
 						</td>
 						<td ng-if="player && $index != playerIndex" ng-bind="player.color | snakeColor" class="snake-color-{{player.color}}"></td>
 						<td ng-if="player && $index == playerIndex">
@@ -29,16 +29,16 @@
 					</tr>
 				</tbody>
 			</table>
-			<a href="#" class="btn btn-primary" ng-if="playerIndex == 0">Start game</a>
-			<a ng-if="local" ui-sref="mainmenu" class="btn btn-danger">Leave lobby</a>
-			<a ng-if="!local" ui-sref="mainmenu" class="btn btn-danger">Leave lobby</a>
+			<a href="#" ng-click="startGame()" class="btn btn-primary" ng-if="playerIndex == 0" ng-disabled="!ready">Start game</a>
+			<a ng-if="lobbySettings.local" ui-sref="mainmenu" class="btn btn-danger">Leave lobby</a>
+			<a ng-if="!lobbySettings.local" ui-sref="mainmenu" class="btn btn-danger">Leave lobby</a>
 		</div>
 		<div class="col-md-4">
 			<h2>Game settings</h2>
 			<p>Map selector</p>
-			<div class="form-group" ng-if="playerIndex == 0 && !local">
+			<div class="form-group" ng-if="playerIndex == 0 && !lobbySettings.local">
 				<label for="lobbyName">Lobby name</label>
-				<input type="text" id="lobbyName" class="form-control" ng-model="lobbySettings.name">
+				<input type="text" id="lobbyName" class="form-control" ng-model="lobbySettings.name" maxlength="8">
 			</div>
 			<div class="form-group">
 				<label for="scoreLimit">Score limit</label>

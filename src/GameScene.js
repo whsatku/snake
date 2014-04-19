@@ -3,8 +3,9 @@
 "use strict";
 
 window.GameScene = cc.Scene.extend({
-	ctor: function(){
+	ctor: function(settings){
 		this._super();
+		this.settings = settings;
 		this.logs = [];
 	},
 
