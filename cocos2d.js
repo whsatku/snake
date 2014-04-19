@@ -11,9 +11,6 @@
 		//engineDir: 'cocos2d/',
 		SingleEngineFile: 'cocos2d.min.js',
 		appFiles:[
-			'build/index.js',
-			'src/WebRTC.js',
-			'src/Netcode.js',
 			'src/GameScene.js',
 			'src/KeyboardControlLayer.js',
 			'src/WorldObjectNode.js',

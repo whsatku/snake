@@ -1,12 +1,14 @@
 (function(){
 "use strict";
 
-var Netcode = function(game){
+var Netcode = function(){
 	if(!(this instanceof Netcode)){
-		return new Netcode(game);
+		return new Netcode();
 	}
-	this.game = game;
+	GameLogic.event.call(this);
 };
+
+Netcode.prototype = GameLogic.event.prototype;
 
 Netcode.Const = {
 	LobbyState: {
@@ -21,6 +23,7 @@ Netcode.Const = {
  */
 Netcode.prototype.log = function(txt){
 	console.log(txt);
+	this.emit("log", txt);
 };
 
 Netcode.prototype.getServer = function(){
@@ -39,15 +42,18 @@ Netcode.prototype.connect = function(){
 };
 
 Netcode.prototype.onOpen = function(){
+	this.connected = true;
 	this.log("Connected to server");
+	this.emit("connected", true);
 	if(WebRTC.isSupported()){
 		this.send({command: "rtc"});
 	}
-	this.send({command: "lobbyjoin", lobby: 0});
 };
 
 Netcode.prototype.onClose = function(){
+	this.connected = false;
 	this.log("Connection lost! Attempting to reconnect...");
+	this.emit("connected", false);
 };
 
 Netcode.prototype.onData = function(data){
@@ -67,6 +73,7 @@ Netcode.prototype.onData = function(data){
 			if(hash != data.hash){
 				console.error("desync", "local", hash, "server", data.hash);
 				this.send({command: "desync"});
+				this.emit("desync");
 			}else{
 				this.send({command: "ready"});
 			}
@@ -76,17 +83,20 @@ Netcode.prototype.onData = function(data){
 		this.game.player = data.snakeIndex;
 	}
 	if(data.motd !== undefined){
-		this.log("Message of the Day:\n" + data.motd);
+		this.emit("motd", data.motd);
+		this.motd = data.motd;
 	}
 	if(data.online !== undefined){
-		this.log("Players online: " + data.online);
+		this.emit("online", data.online);
+		this.online = data.online;
 	}
-	if(data.rtcOffer !== undefined){
-		this.rtcAnswer(data);
-	}
-	if(data.rtc !== undefined){
-		this.rtcCall(data.rtc);
-	}
+	// if(data.rtcOffer !== undefined){
+	// 	this.rtcAnswer(data);
+	// }
+	// if(data.rtc !== undefined){
+	// 	this.rtcCall(data.rtc);
+	// }
+	this.emit("data", data);
 };
 
 Netcode.prototype.send = function(data){

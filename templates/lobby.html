@@ -1,7 +1,7 @@
 <form name="lobby" class="container">
 	<div class="row">
 		<div class="col-md-8">
-			<h1 ng-bind="lobbySettings.name"></h1>
+			<h1 ng-bind="lobbySettings.name||Untitled"></h1>
 			
 			<table class="table table-striped table-bordered">
 				<thead>
@@ -12,7 +12,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="player in lobbySettings.players track by $index">
+					<tr ng-repeat="player in players track by $index">
 						<td ng-if="!player" colspan="3">Open</td>
 						<td ng-if="player && $index != playerIndex" ng-bind="player.name"></td>
 						<td ng-if="player && $index == playerIndex">
@@ -21,7 +21,12 @@
 						<td ng-if="player && $index != playerIndex" ng-bind="player.color | snakeColor" class="snake-color-{{player.color}}"></td>
 						<td ng-if="player && $index == playerIndex">
 							<select ng-model="player.color" class="form-control">
-								<option ng-repeat="color in [1,2,3,4,5,6]" value="{{color}}" ng-bind="color|snakeColor" class="snake-color-{{color}}"></option>
+								<option value="1" ng-bind="1|snakeColor" class="snake-color-1"></option>
+								<option value="2" ng-bind="2|snakeColor" class="snake-color-2"></option>
+								<option value="3" ng-bind="3|snakeColor" class="snake-color-3"></option>
+								<option value="4" ng-bind="4|snakeColor" class="snake-color-4"></option>
+								<option value="5" ng-bind="5|snakeColor" class="snake-color-5"></option>
+								<option value="6" ng-bind="6|snakeColor" class="snake-color-6"></option>
 							</select>
 						</td>
 						<td ng-if="player && $index != playerIndex">{{player.ready | yesno}}</td>
@@ -30,8 +35,8 @@
 				</tbody>
 			</table>
 			<a href="#" ng-click="startGame()" class="btn btn-primary" ng-if="playerIndex == 0" ng-disabled="!ready || lobby.$invalid">Start game</a>
-			<a ng-if="lobbySettings.local" ui-sref="mainmenu" class="btn btn-danger">Leave lobby</a>
-			<a ng-if="!lobbySettings.local" ui-sref="mainmenu" class="btn btn-danger">Leave lobby</a>
+			<a ng-if="lobbySettings.local" ui-sref="mainmenu" class="btn btn-default">Leave lobby</a>
+			<a ng-if="!lobbySettings.local" ui-sref="browse" class="btn btn-default">Leave lobby</a>
 		</div>
 		<div class="col-md-4">
 			<h2>Game settings</h2>
@@ -64,3 +69,5 @@
 		</div>
 	</div>
 </form>
+<!-- trigger child controller to fire -->
+<div ui-view></div>

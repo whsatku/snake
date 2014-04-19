@@ -42,6 +42,12 @@ describe("SnakeServer", function(){
 			};
 			this.server.handleMessage({}, {"command": "lobbyjoin", "lobby": "unittest"});
 		});
+		it("handle lobbylist message", function(done){
+			this.server.listLobby = function(){
+				done();
+			};
+			this.server.handleMessage({}, {"command": "lobbylist"});
+		});
 		it("handle lobbystart message", function(done){
 			this.server.startLobby = function(){
 				done();
@@ -94,6 +100,11 @@ describe("SnakeServer", function(){
 			var call = target.write.firstCall.args[0];
 			expect(call.to).to.eql(target.id);
 			expect(call.from).to.eql(this.spark.id);
+		});
+		it("handle lobbyleave", function(){
+			this.server.handleMessage(this.spark, {"command": "lobbyleave"});
+			expect(this.lobby.clients).to.not.include(this.spark);
+			expect(this.spark.lobby).to.be.undefined;
 		});
 	});
 
@@ -221,6 +232,36 @@ describe("SnakeServer", function(){
 			this.server.demoServer();
 			expect(this.server.lobby["0"]).to.be.an.instanceof(Lobby);
 			expect(this.server.lobby["0"].state).to.eql(Lobby.STATE.IN_GAME);
+		});
+	});
+
+	describe("#listLobby", function(){
+		it("write a list of lobby to spark", function(){
+			var spark = MockSpark();
+
+			this.server.createLobby(MockSpark());
+			this.server.joinLobby(MockSpark(), 0);
+			this.server.joinLobby(MockSpark(), 0);
+
+			this.server.createLobby(MockSpark());
+
+			this.server.listLobby(spark);
+			var data = spark.write.firstCall.args[0].lobby;
+			expect(data[0]).to.eql({
+				id: 0,
+				name: "Untitled",
+				players: 3,
+				maxPlayers: 6,
+				map: Lobby.DEFAULT_MAP
+			});
+
+			expect(data[1]).to.eql({
+				id: 1,
+				name: "Untitled",
+				players: 1,
+				maxPlayers: 6,
+				map: Lobby.DEFAULT_MAP
+			});
 		});
 	});
 });
