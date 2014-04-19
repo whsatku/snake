@@ -71,8 +71,19 @@ app.controller("lobby", ["$scope", "$stateParams", "$state", function($scope, pa
 		});
 	}, true);
 
+	$scope.$watch("currentPlayer.ready", function(value){
+		if(value && $scope.currentPlayer.name.length === 0){
+			$currentPlayer.ready = false;
+		}
+	});
+
 	$scope.$watch("currentPlayer.name", function(value){
+		value = value || "";
 		localStorage.playerName = value;
+
+		if(value.length === 0){
+			$scope.currentPlayer.ready = false;
+		}
 	});
 }]);
 

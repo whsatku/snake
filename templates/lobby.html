@@ -1,4 +1,4 @@
-<div class="container">
+<form name="lobby" class="container">
 	<div class="row">
 		<div class="col-md-8">
 			<h1 ng-bind="lobbySettings.name"></h1>
@@ -16,7 +16,7 @@
 						<td ng-if="!player" colspan="3">Open</td>
 						<td ng-if="player && $index != playerIndex" ng-bind="player.name"></td>
 						<td ng-if="player && $index == playerIndex">
-							<input type="text" ng-model="player.name" class="form-control" maxlength="8">
+							<input name="player[]" type="text" ng-model="player.name" class="form-control" maxlength="8" required>
 						</td>
 						<td ng-if="player && $index != playerIndex" ng-bind="player.color | snakeColor" class="snake-color-{{player.color}}"></td>
 						<td ng-if="player && $index == playerIndex">
@@ -29,7 +29,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<a href="#" ng-click="startGame()" class="btn btn-primary" ng-if="playerIndex == 0" ng-disabled="!ready">Start game</a>
+			<a href="#" ng-click="startGame()" class="btn btn-primary" ng-if="playerIndex == 0" ng-disabled="!ready || lobby.$invalid">Start game</a>
 			<a ng-if="lobbySettings.local" ui-sref="mainmenu" class="btn btn-danger">Leave lobby</a>
 			<a ng-if="!lobbySettings.local" ui-sref="mainmenu" class="btn btn-danger">Leave lobby</a>
 		</div>
@@ -37,22 +37,22 @@
 			<h2>Game settings</h2>
 			<p>Map selector</p>
 			<div class="form-group" ng-if="playerIndex == 0 && !lobbySettings.local">
-				<label for="lobbyName">Lobby name</label>
+				<label class="control-label" for="lobbyName">Lobby name</label>
 				<input type="text" id="lobbyName" class="form-control" ng-model="lobbySettings.name" maxlength="8">
 			</div>
-			<div class="form-group">
-				<label for="scoreLimit">Score limit</label>
-				<input type="number" id="scoreLimit" class="form-control" ng-model="lobbySettings.scoreLimit">
+			<div class="form-group" ng-class="{'has-error': lobby.scoreLimit.$invalid}">
+				<label class="control-label" for="scoreLimit">Score limit</label>
+				<input name="scoreLimit" id="scoreLimit" type="number" class="form-control" ng-model="lobbySettings.scoreLimit" min="1">
 				<p class="help-block">Game will wins after a snake reached this score</p>
 			</div>
-			<div class="form-group">
-				<label for="itemLimit">Item limit</label>
-				<input type="number" id="itemLimit" class="form-control" ng-model="lobbySettings.itemLimit">
+			<div class="form-group" ng-class="{'has-error': lobby.itemLimit.$invalid}">
+				<label class="control-label" for="itemLimit">Item limit</label>
+				<input name="itemLimit" id="itemLimit" type="number" class="form-control" ng-model="lobbySettings.itemLimit" min="1">
 				<p class="help-block">Game will ends after this items collected</p>
 			</div>
-			<div class="form-group">
-				<label for="fragLimit">Respawn limit</label>
-				<input type="number" id="fragLimit" class="form-control" ng-model="lobbySettings.fragLimit">
+			<div class="form-group" ng-class="{'has-error': lobby.fragLimit.$invalid}">
+				<label class="control-label" for="fragLimit">Respawn limit</label>
+				<input name="fragLimit" id="fragLimit" type="number" class="form-control" ng-model="lobbySettings.fragLimit" min="0">
 				<p class="help-block">Snake will be removed from play after being killed this times</p>
 			</div>
 			<div class="form-group">
@@ -63,4 +63,4 @@
 			</div>
 		</div>
 	</div>
-</div>
+</form>
