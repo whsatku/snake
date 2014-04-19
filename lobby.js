@@ -83,7 +83,7 @@ app.controller("game", ["$rootScope", "$stateParams", function($rootScope, param
 	window.game.startGame(settings);
 
 	setTimeout(function(){
-		document.getElementById("gameCanvas").focus();
+		document.getElementById("game").children[0].focus();
 	}, 10);
 }])
 

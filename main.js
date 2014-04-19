@@ -11,7 +11,7 @@ var Cocos2dApp = cc.Application.extend({
 		this.startScene = scene;
 		cc.COCOS2D_DEBUG = this.config.COCOS2D_DEBUG;
 		cc.initDebugSetting();
-		cc.setup(this.config.tag);
+		cc.setup(this.config.tag, 800, 600);
 		cc.AppController.shareAppController().didFinishLaunchingWithOptions();
 	},
 
