@@ -189,9 +189,7 @@ window.GameLayer = cc.LayerColor.extend({
 		for(var i = 0; i < players.length; i++){
 			var player = players[i];
 			if(player){
-				var snake = this.game.addSnake();
-				snake.name = player.name;
-				snake.color = player.color;
+				var snake = this.game.addSnake(player);
 			}
 		}
 	},

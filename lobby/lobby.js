@@ -32,7 +32,7 @@ angular.module("snake")
 	$scope.currentPlayer = $scope.players[$scope.playerIndex];
 
 	$scope.startGame = function(){
-		$state.go("game", {settings: JSON.stringify($scope.lobbySettings)});
+		$state.go("game", {settings: JSON.stringify($scope.lobbySettings), players: JSON.stringify($scope.players)});
 	};
 
 	$scope.$watch("players", function(){

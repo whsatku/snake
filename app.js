@@ -22,7 +22,7 @@ app.config(["$stateProvider", function($stateProvider){
 	}).state("game", {
 		template: " ",
 		controller: "game",
-		params: ["settings"]
+		params: ["settings", "players"]
 	});
 }]);
 

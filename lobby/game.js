@@ -7,6 +7,8 @@ angular.module("snake")
 	$rootScope.showGame = true;
 
 	var settings = JSON.parse(params.settings);
+	var players = JSON.parse(params.players);
+	settings.players = players;
 	if(settings.local){
 		window.game.startGame(settings);
 	}else{

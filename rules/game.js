@@ -78,8 +78,10 @@ Game.prototype.removeSnake = function(snake){
 
 Game.prototype._createSnake = function(data){
 	var snake = new Snake(this);
-	snake.name = data.name;
-	snake.color = data.color;
+	if(data instanceof Object){
+		snake.name = data.name;
+		snake.color = data.color;
+	}
 	return snake;
 };
 
