@@ -37,12 +37,12 @@ var Cocos2dApp = cc.Application.extend({
 		// TODO: Make this dispatch event
 	},
 
-	startGame: function(args){
+	startGame: function(args, netcode){
 		if(!this.ready){
 			console.error("startGame call before game was loaded");
 			return;
 		}
-		cc.Director.getInstance().replaceScene(new this.startScene(args));
+		cc.Director.getInstance().replaceScene(new this.startScene(args, netcode));
 	}
 });
 

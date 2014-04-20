@@ -58,8 +58,9 @@ angular.module("snake")
 
 	if(!$scope.lobbySettings.local){
 		var initialPlayerName = localStorage.playerName;
-		$injector.invoke(["netcode", function(netcode){
+		$injector.invoke(["netcode", "$timeout", function(netcode, $timeout){
 			var hasInitialData = false;
+			var inServerSend = false;
 
 			var onData = function(data){
 				if(!hasInitialData && data.players !== undefined){
@@ -69,7 +70,7 @@ angular.module("snake")
 					hasInitialData = true;
 					return;
 				}
-				console.log(data);
+				inServerSend = true;
 				$scope.$apply(function(){
 					if(data.playerIndex !== undefined){
 						$scope.playerIndex = data.playerIndex;
@@ -84,12 +85,18 @@ angular.module("snake")
 						}
 						$scope.currentPlayer = $scope.players[$scope.playerIndex];
 					}
+					if(data.state === Netcode.Const.LobbyState.WAIT_FOR_LOAD){
+						$scope.startGame();
+					}
+				});
+				$timeout(function(){
+					inServerSend = false;
 				});
 			};
 			netcode.on("data", onData);
 
 			$scope.$watch("currentPlayer", function(value, oldValue){
-				if(value === undefined || oldValue === undefined){
+				if(inServerSend || value === undefined || oldValue === undefined){
 					return;
 				}
 				if(value.name != oldValue.name || value.color != oldValue.color){
@@ -100,10 +107,31 @@ angular.module("snake")
 				}
 			}, true);
 
+			$scope.$watch("currentPlayer.ready", function(value){
+				if(inServerSend || value === undefined){
+					return;
+				}
+				netcode.send({command: "ready", ready: value});
+			});
+
+			var leaveToGame = false;
+
 			$scope.$on("$destroy", function(){
 				netcode.off("data", onData);
+				if(leaveToGame){
+					return;
+				}
 				netcode.send({command: "lobbyleave"});
 			});
+
+			var origStartGame = $scope.startGame;
+			$scope.startGame = function(){
+				leaveToGame = true;
+				if($scope.playerIndex === 0){
+					netcode.send({command: "lobbystart"});
+				}
+				origStartGame();
+			};
 		}]);
 	}
 }]);

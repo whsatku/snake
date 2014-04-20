@@ -13,8 +13,9 @@ Netcode.prototype = GameLogic.event.prototype;
 Netcode.Const = {
 	LobbyState: {
 		"LOBBY": 0,
-		"IN_GAME": 1,
-		"FINISHED": 2
+		"WAIT_FOR_LOAD": 1,
+		"IN_GAME": 2,
+		"FINISHED": 3
 	}
 };
 
@@ -59,7 +60,7 @@ Netcode.prototype.onClose = function(){
 Netcode.prototype.onData = function(data){
 	var self = this;
 
-	if(data.state === Netcode.Const.LobbyState.IN_GAME){
+	if(this.game !== undefined){
 		if(typeof data.game == "object"){
 			this.game.loadState(data.game);
 			this.send({command: "ready"});
@@ -67,7 +68,14 @@ Netcode.prototype.onData = function(data){
 			data.cmd.forEach(function(cmd){
 				self.game[cmd[0]].apply(self.game, cmd.slice(1));
 			});
-			this.game.step();
+			if(!this.game.$firstHash){
+				// after waiting for players to load
+				// the server will send first hash which is state after adding all snakes
+				// but no step is performed yet
+				this.game.$firstHash = true;
+			}else{
+				this.game.step();
+			}
 			this.game.prepareState();
 			var hash = this.game.hashState();
 			if(hash != data.hash){
@@ -78,6 +86,9 @@ Netcode.prototype.onData = function(data){
 				this.send({command: "ready"});
 			}
 		}
+	}
+	if(typeof data.game == "object"){
+		this.lastGameState = data.game;
 	}
 	if(data.snakeIndex !== undefined){
 		this.game.player = data.snakeIndex;

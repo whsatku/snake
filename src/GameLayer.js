@@ -67,15 +67,19 @@ window.GameLayer = cc.LayerColor.extend({
 	initNetworkGame: function(){
 		var self = this;
 		this.mode = GameLayer.MODES.NETWORK;
-		this.log("Connecting to server...");
 
-		this.netcode = new Netcode(this.game);
-		this.netcode.log = this.log.bind(this);
-		this.netcode.connect();
+		this.netcode = this.getParent().netcode;
+		this.netcode.game = this.game;
+		this.netcode.on("log", this.log.bind(this));
+
+		if(this.netcode.lastGameState){
+			this.game.loadState(this.netcode.lastGameState);
+			this.netcode.send({command: "ready"});
+		}
 
 		if(WebRTC.isSupported()){
 			this.webrtc = new WebRTC();
-			this.webrtc.log = this.netcode.log;
+			// this.webrtc.log = this.netcode.log;
 			this.webrtc.bind(this.netcode);
 		}
 	},

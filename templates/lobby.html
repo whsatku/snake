@@ -40,7 +40,7 @@
 		</div>
 		<div class="col-md-4">
 			<h2>Game settings</h2>
-			<p>Map selector</p>
+			<p>Map: {{lobbySettings.map}}</p>
 			<div class="form-group" ng-if="playerIndex == 0 && !lobbySettings.local">
 				<label class="control-label" for="lobbyName">Lobby name</label>
 				<input type="text" id="lobbyName" class="form-control" ng-model="lobbySettings.name" maxlength="8">

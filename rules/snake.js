@@ -11,6 +11,8 @@ var Snake = function Snake(){
 	this.index = -1;
 	this.perks = {};
 	this.invulnerable = false;
+	this.name = "";
+	this.color = 1;
 
 	this.on("collision", this.onCollide.bind(this));
 	this.on("perkAdd", this.onAddPerk.bind(this));
@@ -214,6 +216,8 @@ Snake.prototype.getState = function(){
 	// FIXME: not a clone
 	state.perks = this.perks;
 	state.invulnerable = this.invulnerable;
+	state.name = this.name;
+	state.color = this.color;
 	return state;
 };
 
@@ -224,6 +228,8 @@ Snake.prototype.loadState = function(state){
 	this.index = state.index;
 	this.perks = state.perks;
 	this.invulnerable = state.invulnerable;
+	this.name = state.name;
+	this.color = state.color;
 };
 
 Snake.prototype.addPerk = function(name, duration){

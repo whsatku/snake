@@ -32,8 +32,9 @@ var Lobby = function Lobby(id){
 
 Lobby.STATE = {
 	"LOBBY": 0,
-	"IN_GAME": 1,
-	"FINISHED": 2
+	"WAIT_FOR_LOAD": 1,
+	"IN_GAME": 2,
+	"FINISHED": 3
 };
 
 Lobby.MAX_CLIENT = 6;
@@ -48,6 +49,7 @@ Lobby.prototype.addClient = function(spark){
 	}
 
 	if(spark.useRTC){
+		// TODO: Make this send after game started or mid-game joining
 		this.broadcast({"rtc": spark.id});
 	}
 
@@ -68,13 +70,19 @@ Lobby.prototype.addClient = function(spark){
 };
 
 Lobby.prototype.createSnakeForClient = function(spark){
-	spark.snake = this.game.addSnake();
+	spark.snake = this.game.addSnake({
+		name: spark.name,
+		color: spark.color
+	});
 	spark.snakeIndex = spark.snake.index;
 	spark.write({
 		lobby: this.id,
 		snakeIndex: spark.snakeIndex
 	});
-	this.cmdQueue.push(["addSnake"]);
+	this.cmdQueue.push(["addSnake", {
+		name: spark.name,
+		color: spark.color
+	}]);
 };
 
 Lobby.prototype.removeClient = function(spark){
@@ -95,12 +103,21 @@ Lobby.prototype.removeClient = function(spark){
 	}
 };
 
+Lobby.prototype.startLobby = function(){
+	this.setAllReady(false);
+	this.state = Lobby.STATE.WAIT_FOR_LOAD;
+	this.game = new GameLogic.Game();
+	// TODO: Lobby configuration
+	this.game.loadMap("empty");
+	this.sendStateToAll();
+};
+
 Lobby.prototype.startGame = function(){
 	if(this.state === Lobby.STATE.IN_GAME){
 		return;
 	}
+	this.setAllReady(false);
 	this.state = Lobby.STATE.IN_GAME;
-	this.game = new GameLogic.Game();
 
 	for(var i = 0; i < this.clients.length; i++){
 		this.createSnakeForClient(this.clients[i]);
@@ -108,10 +125,7 @@ Lobby.prototype.startGame = function(){
 
 	this.lastTick = new Date().getTime();
 
-	// TODO: Lobby configuration
-	this.game.loadMap("empty");
-
-	this.sendStateToAll();
+	this.sendStateToAll(true);
 };
 
 /**
@@ -192,29 +206,39 @@ Lobby.prototype.isAllReady = function(){
 
 Lobby.prototype.setReady = function(spark, val){
 	spark.ready = val;
+
+	if(this.state === Lobby.STATE.LOBBY){
+		this.sendStateToAll();
+	}
+
 	if(this.isAllReady()){
 		this.emit("ready");
 	}
 };
 
 Lobby.prototype.onReady = function(){
-	if(this.state !== Lobby.STATE.IN_GAME){
-		return;
-	}else if(this.waitTick){
-		return;
-	}
+	switch(this.state){
+		case Lobby.STATE.WAIT_FOR_LOAD:
+			this.startGame();
+			break;
+		case Lobby.STATE.IN_GAME:
+			if(this.waitTick){
+				return;
+			}
 
-	var self = this;
-	var timeSinceTick = new Date().getTime() - this.lastTick;
+			var self = this;
+			var timeSinceTick = new Date().getTime() - this.lastTick;
 
-	if(timeSinceTick >= this.game.state.updateRate){
-		this.nextTick();
-	}else{
-		this.waitTick = true;
-		setTimeout(function(){
-			self.waitTick = false;
-			self.nextTick();
-		}, this.game.state.updateRate - timeSinceTick);
+			if(timeSinceTick >= this.game.state.updateRate){
+				this.nextTick();
+			}else{
+				this.waitTick = true;
+				setTimeout(function(){
+					self.waitTick = false;
+					self.nextTick();
+				}, this.game.state.updateRate - timeSinceTick);
+			}
+			break;
 	}
 };
 

@@ -43,9 +43,6 @@ SnakeServer.prototype.handleMessage = function(spark, data){
 		case "lobbyjoin":
 			this.joinLobby(spark, data.lobby);
 			break;
-		case "lobbystart":
-			this.startLobby(spark);
-			break;
 		case "lobbylist":
 			this.listLobby(spark);
 			break;
@@ -56,7 +53,7 @@ SnakeServer.prototype.handleMessage = function(spark, data){
 	if(spark.lobby){
 		switch(data.command){
 			case "ready":
-				spark.lobby.setReady(spark, true);
+				spark.lobby.setReady(spark, data.ready !== undefined ? !!data.ready : true);
 				break;
 			case "input":
 				spark.lobby.input(spark, data.key);
@@ -67,6 +64,9 @@ SnakeServer.prototype.handleMessage = function(spark, data){
 				break;
 			case "rtcOffer":
 				this.relayRTCOffer(spark, data);
+				break;
+			case "lobbystart":
+				this.startLobby(spark);
 				break;
 			case "lobbyleave":
 				spark.lobby.removeClient(spark);
@@ -112,7 +112,7 @@ SnakeServer.prototype.startLobby = function(spark){
 		winston.warn("[Lobby %s] Attempted start by %s", spark.lobby.id, spark.address.ip);
 		return;
 	}
-	spark.lobby.startGame();
+	spark.lobby.startLobby();
 	winston.info("[Lobby %s] Started by %s", spark.lobby.id, spark.address.ip);
 };
 
