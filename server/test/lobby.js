@@ -7,6 +7,7 @@ var MockSpark = require("./mockspark");
 describe("Lobby", function(){
 	beforeEach(function(){
 		this.lobby = new Lobby();
+		this.lobby.waitClients = true;
 	});
 
 	it("has a list of clients", function(){
@@ -49,6 +50,13 @@ describe("Lobby", function(){
 			this.lobby.addClient(spark);
 
 			expect(testSpark.write.firstCall.args[0].rtc).to.eql(spark.id);
+		});
+
+		it("return false when lobby is full", function(){
+			this.lobby.maxClients = 1;
+			this.lobby.addClient(MockSpark());
+
+			expect(this.lobby.addClient(MockSpark())).to.be.false;
 		});
 	});
 

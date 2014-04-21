@@ -40,8 +40,8 @@ Game.prototype._seedRng = function(){
 };
 
 Game.prototype.addSnake = function(snake, alive){
-	if(!snake){
-		snake = this._createSnake();
+	if(!(snake instanceof Snake)){
+		snake = this._createSnake(snake);
 	}
 	this._bindSnake(snake);
 	this.objects.push(snake);
@@ -76,8 +76,12 @@ Game.prototype.removeSnake = function(snake){
 	return snake;
 };
 
-Game.prototype._createSnake = function(){
+Game.prototype._createSnake = function(data){
 	var snake = new Snake(this);
+	if(data instanceof Object){
+		snake.name = data.name;
+		snake.color = data.color;
+	}
 	return snake;
 };
 

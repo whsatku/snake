@@ -7,5 +7,6 @@ module.exports = {
 	"Powerup": require("./powerup"),
 	"PerkPowerup": require("./perkpowerup"),
 	"Spawn": require("./spawn"),
-	"map": require("./maps")
+	"map": require("./maps"),
+	"event": require("eventemitter2").EventEmitter2,
 };

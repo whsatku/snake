@@ -1,15 +1,17 @@
 /* globals cc, GameScene */
+(function(){
 /* jshint unused:false */
 "use strict";
 var Cocos2dApp = cc.Application.extend({
 	config: document.ccConfig,
+	ready: false,
 
 	ctor: function(scene) {
 		this._super();
 		this.startScene = scene;
 		cc.COCOS2D_DEBUG = this.config.COCOS2D_DEBUG;
 		cc.initDebugSetting();
-		cc.setup(this.config.tag);
+		cc.setup(this.config.tag, 800, 600);
 		cc.AppController.shareAppController().didFinishLaunchingWithOptions();
 	},
 
@@ -25,12 +27,24 @@ var Cocos2dApp = cc.Application.extend({
 		// set FPS. the default value is 1.0/60 if you don"t call this
 		director.setAnimationInterval(1.0/this.config.frameRate);
 
-		cc.LoaderScene.preload(this.config.resourceFiles, function(){
-			director.replaceScene(new this.startScene());
-		}, this);
+		cc.LoaderScene.preload(this.config.resourceFiles, this.onLoaded, this);
 
 		return true;
+	},
+
+	onLoaded: function(){
+		this.ready = true;
+		// TODO: Make this dispatch event
+	},
+
+	startGame: function(args, netcode){
+		if(!this.ready){
+			console.error("startGame call before game was loaded");
+			return;
+		}
+		cc.Director.getInstance().replaceScene(new this.startScene(args, netcode));
 	}
 });
 
-var app = new Cocos2dApp(GameScene);
+window.game = new Cocos2dApp(GameScene);
+})();

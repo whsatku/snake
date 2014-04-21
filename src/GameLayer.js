@@ -26,31 +26,40 @@ window.GameLayer = cc.LayerColor.extend({
 	init: function() {
 		this._super(cc.c4b(0, 0, 0, 255), 0, 0);
 
+		this.settings = this.getParent().settings;
+
+		this.log(this.settings.name);
+
 		// ease debugging
 		window.gamelayer = this;
+
 		this.initGame();
-		// this.initLocalGame();
-		this.initNetworkGame();
 		this.initPerkBar();
+
+		if(this.settings.local){
+			this.initLocalGame();
+		}else{
+			this.initNetworkGame();
+		}
 	},
 
 	initGame: function(){
 		this.game = new GameLogic.Game();
 		this.game.on("step", this.onGameStepped.bind(this));
 		this.game.on("loadState", this.onLoadState.bind(this));
-		this.game.on("snakeDie", this.onSnakeDie.bind(this));
+		this.game.on("snake.dead", this.onSnakeDie.bind(this));
 		this.game.on("perkCollect", this.onPerkCollect.bind(this));
 	},
 
 	initLocalGame: function(){
 		this.mode = GameLayer.MODES.LOCAL;
-		this.schedule(this.gameStep.bind(this), this.game.state.updateRate / 1000, Infinity, 0);
 		this.game.loadMap(this.map);
 		this.game.player = 0;
 		this.initMap();
 
-		this.game.addSnake();
-		this.game.addSnake();
+		this.createPlayer();
+
+		this.schedule(this.gameStep.bind(this), this.game.state.updateRate / 1000, Infinity, 0);
 
 		this.syncFromEngine();
 	},
@@ -58,22 +67,26 @@ window.GameLayer = cc.LayerColor.extend({
 	initNetworkGame: function(){
 		var self = this;
 		this.mode = GameLayer.MODES.NETWORK;
-		this.log("Connecting to server...");
 
-		this.netcode = new Netcode(this.game);
-		this.netcode.log = this.log.bind(this);
-		this.netcode.connect();
+		this.netcode = this.getParent().netcode;
+		this.netcode.game = this.game;
+		this.netcode.on("log", this.log.bind(this));
+
+		if(this.netcode.lastGameState){
+			this.game.loadState(this.netcode.lastGameState);
+			this.netcode.send({command: "ready"});
+		}
 
 		if(WebRTC.isSupported()){
 			this.webrtc = new WebRTC();
-			this.webrtc.log = this.netcode.log;
+			// this.webrtc.log = this.netcode.log;
 			this.webrtc.bind(this.netcode);
 		}
 	},
 
 	initPerkBar: function(){
 		this.perkBar = new PerkBar(this.game);
-		this.getParent().addChild(this.perkBar);
+		this.getParent().addChild(this.perkBar, 100);
 		this.perkBar.init();
 		this.perkBar.setAnchorPoint(0, 1);
 
@@ -103,11 +116,11 @@ window.GameLayer = cc.LayerColor.extend({
 	},
 
 	onSnakeDie: function(snake){
-		this.log("Player "+(snake.index+1)+" died!");
+		this.log(snake.name+" died!");
 	},
 
 	onPerkCollect: function(perk, snake){
-		this.log(this.perkName[perk] + " was collected by "+(snake.index+1));
+		this.log(this.perkName[perk] + " was collected by "+snake.name);
 	},
 
 	fillFloor: function(){
@@ -169,6 +182,16 @@ window.GameLayer = cc.LayerColor.extend({
 		});
 
 		this.perkBar.syncFromEngine(this.game.getSnake(this.game.player));
+	},
+
+	createPlayer: function(){
+		var players = this.settings.players;
+		for(var i = 0; i < players.length; i++){
+			var player = players[i];
+			if(player){
+				var snake = this.game.addSnake(player);
+			}
+		}
 	},
 
 	input: function(key){

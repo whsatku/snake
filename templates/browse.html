@@ -1,0 +1,36 @@
+<div class="container">
+	<div class="row">
+		<div class="col-md-9">
+			<h1>Multiplayer</h1>
+		</div>
+		<div class="col-md-3" style="margin-top: 20px;">
+			<a ui-sref="lobby.create({local: false})" class="btn btn-primary">Create lobby</a>
+			<a ui-sref="mainmenu()" class="btn btn-default">Main menu</a>
+		</div>
+	</div>
+	<p ng-bind="motd"></p>
+	<div ng-show="connected">
+		<p><strong>Online user:</strong> <span ng-bind="online"></span></p>
+		<div class="row">
+			<table class="table table-bordered table-hover">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Map</th>
+						<th>Players</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="pointer" ui-sref="lobby.join({local: false, id: item.id})" ng-repeat="item in lobby track by item.id">
+						<td ng-bind="item.name"></td>
+						<td ng-bind="item.map"></td>
+						<td>{{item.players}}/{{item.maxPlayers}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div ng-show="!connected" class="text-center">
+		<h4>Connecting...</h4>
+	</div>
+</div>
