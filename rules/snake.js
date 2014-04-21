@@ -327,8 +327,10 @@ Snake.prototype.reverse = function(){
 		}
 		this.positions[i][2] = MovingWorldObject.getOpposite(this.positions[i][2]);
 	}
-	this.x = this.positions[0][0];
-	this.y = this.positions[0][1];
+	if(this.positions.length > 0){
+		this.x = this.positions[0][0];
+		this.y = this.positions[0][1];
+	}
 	this.direction = this.positions[0][2];
 };
 
