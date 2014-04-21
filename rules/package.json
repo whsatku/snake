@@ -6,11 +6,12 @@
   "devDependencies": {
     "chai": "^1.9.0",
     "mocha": "^1.17.1",
-    "gulp-browserify": "^0.4.6",
-    "gulp": "^3.5.5",
+    "gulp": "^3.6.1",
     "gulp-uglify": "^0.2.1",
-    "browserify": "^3.32.0",
-    "sinon": "^1.9.0"
+    "browserify": "^3.44.1",
+    "sinon": "^1.9.0",
+    "vinyl-source-stream": "^0.1.1",
+    "gulp-streamify": "0.0.5"
   },
   "dependencies": {
     "randy": "^1.4.3",
