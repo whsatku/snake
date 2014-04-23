@@ -60,7 +60,7 @@ window.PerkBar = cc.Node.extend({
 				animateDuration = 0;
 			}
 
-			sprite.value--;
+			sprite.value-- 	;
 
 			sprite.setPosition(cc.p(i * (this.spriteWidth + this.spritePad), 0));
 

@@ -60,38 +60,12 @@ Netcode.prototype.onClose = function(){
 Netcode.prototype.onData = function(data){
 	var self = this;
 
-	if(this.game !== undefined){
-		if(typeof data.game == "object"){
-			this.game.loadState(data.game);
-			this.send({command: "ready"});
-		}else if(data.hash !== undefined){
-			data.cmd.forEach(function(cmd){
-				self.game[cmd[0]].apply(self.game, cmd.slice(1));
-			});
-			if(!this.game.$firstHash){
-				// after waiting for players to load
-				// the server will send first hash which is state after adding all snakes
-				// but no step is performed yet
-				this.game.$firstHash = true;
-			}else{
-				this.game.step();
-			}
-			this.game.prepareState();
-			var hash = this.game.hashState();
-			if(hash != data.hash){
-				console.error("desync", "local", hash, "server", data.hash);
-				this.send({command: "desync"});
-				this.emit("desync");
-			}else{
-				this.send({command: "ready"});
-			}
-		}
+	if(typeof data.state !== undefined && data.state !== this.lastLobbyState){
+		this.lastLobbyState = data.state;
+		this.emit("state", data.state);
 	}
 	if(typeof data.game == "object"){
 		this.lastGameState = data.game;
-	}
-	if(data.snakeIndex !== undefined){
-		this.game.player = data.snakeIndex;
 	}
 	if(data.motd !== undefined){
 		this.emit("motd", data.motd);

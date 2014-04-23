@@ -17,13 +17,12 @@ var Game = function SnakeGame(){
 	this._snakes = [];
 	this.state = {
 		state: Game.STATES.PREPARE,
-		powerUpCollected: 0,
-		powerUpToEnd: 5,
 		width: 40,
 		height: 30,
 		updateRate: 150,
 		map: null,
-		step: 0
+		step: 0,
+		countdown: (Game.COUNTDOWN_COUNT * Game.TICK_PER_COUNTDOWN) + 1
 	};
 	this._seedRng();
 };
@@ -32,6 +31,10 @@ Game.STATES = {
 	IN_PROGRESS: 1,
 	END: 2
 };
+// best: update_rate = 150, 6*150 = 900
+// worst: update_rate = 200, 6*200 = 1200
+Game.TICK_PER_COUNTDOWN = 6;
+Game.COUNTDOWN_COUNT = 3;
 
 require("util").inherits(Game, EventEmitter);
 
@@ -87,6 +90,30 @@ Game.prototype._createSnake = function(data){
 
 Game.prototype.step = function(){
 	this.state.state = Game.STATES.IN_PROGRESS;
+
+	if(this.state.countdown > 0){
+		this._countdownStep();
+	}else{
+		this._gameStep();
+	}
+	this.emit("step");
+};
+
+Game.prototype._countdownStep = function(){
+	var lastCd = Math.ceil(this.state.countdown / Game.TICK_PER_COUNTDOWN);
+	this.state.countdown--;
+	var currentCd = Math.ceil(this.state.countdown / Game.TICK_PER_COUNTDOWN);
+
+	if(currentCd != lastCd){
+		if(currentCd === 0){
+			// if snakes are spawning, spawn them immediately
+			this._spawnAllSnakes();
+		}
+		this.emit("countdown", currentCd);
+	}
+};
+
+Game.prototype._gameStep = function(){
 	this.state.step++;
 	var objects = this.objects.slice(0);
 	for(var index in objects){
@@ -97,8 +124,17 @@ Game.prototype.step = function(){
 	}
 	this.checkAllCollision();
 	this.generatePowerup();
-	this.emit("step");
 };
+
+Game.prototype._spawnAllSnakes = function(){
+	for(var i = 0; i < this._snakes.length; i++){
+		var snake = this._snakes[i];
+		if(!(snake instanceof Snake)){
+			continue;
+		}
+		snake.removePerk("respawn");
+	}
+}
 
 Game.prototype.checkAllCollision = function(){
 	var objects = this.objects.slice(0);

@@ -4,7 +4,7 @@
 			<h1>Multiplayer</h1>
 		</div>
 		<div class="col-md-3" style="margin-top: 20px;">
-			<a ui-sref="lobby.create({local: false})" class="btn btn-primary">Create lobby</a>
+			<a ui-sref="lobby.create({local: false})" ng-show="connected" class="btn btn-primary">Create lobby</a>
 			<a ui-sref="mainmenu()" class="btn btn-default">Main menu</a>
 		</div>
 	</div>

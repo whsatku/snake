@@ -49,6 +49,7 @@ window.GameLayer = cc.LayerColor.extend({
 		this.game.on("loadState", this.onLoadState.bind(this));
 		this.game.on("snake.dead", this.onSnakeDie.bind(this));
 		this.game.on("perkCollect", this.onPerkCollect.bind(this));
+		this.game.on("countdown", this.onCountdown.bind(this));
 	},
 
 	initLocalGame: function(){
@@ -68,13 +69,22 @@ window.GameLayer = cc.LayerColor.extend({
 		var self = this;
 		this.mode = GameLayer.MODES.NETWORK;
 
+		this.log = this.log.bind(this);
+		this.onLobbyStateChange = this.onLobbyStateChange.bind(this);
+		this.onNetData = this.onNetData.bind(this);
+
 		this.netcode = this.getParent().netcode;
 		this.netcode.game = this.game;
-		this.netcode.on("log", this.log.bind(this));
+		this.netcode.on("log", this.log);
+		this.netcode.on("state", this.onLobbyStateChange);
+		this.netcode.on("data", this.onNetData);
 
 		if(this.netcode.lastGameState){
 			this.game.loadState(this.netcode.lastGameState);
 			this.netcode.send({command: "ready"});
+		}
+		if(this.netcode.lastLobbyState){
+			this.onLobbyStateChange(this.netcode.lastLobbyState);
 		}
 
 		if(WebRTC.isSupported()){
@@ -101,6 +111,12 @@ window.GameLayer = cc.LayerColor.extend({
 		this.fillFloor();
 	},
 
+	initWaitLoadLayer: function(){
+		this.waitLoadLayer = new WaitLoad();
+		this.getParent().addChild(this.waitLoadLayer, 150);
+		this.waitLoadLayer.init();
+	},
+
 	gameStep: function(){
 		this.game.step();
 	},
@@ -121,6 +137,54 @@ window.GameLayer = cc.LayerColor.extend({
 
 	onPerkCollect: function(perk, snake){
 		this.log(this.perkName[perk] + " was collected by "+snake.name);
+	},
+
+	onCountdown: function(value){
+		this.log(value);
+	},
+
+	onLobbyStateChange: function(state){ 	
+		if(state === Netcode.Const.LobbyState.WAIT_FOR_LOAD){
+			this.initWaitLoadLayer();
+		}else if(this.waitLoadLayer){
+			this.waitLoadLayer.removeFromParent();
+			this.waitLoadLayer = null;
+		}
+	},
+
+	onNetData: function(data){
+		if(data.snakeIndex !== undefined){
+			this.game.player = data.snakeIndex;
+		}
+		if(typeof data.game == "object"){
+			// full state object
+			this.game.loadState(data.game);
+			this.netcode.send({command: "ready"});
+		}else if(data.hash !== undefined && data.state === Netcode.Const.LobbyState.IN_GAME){
+			// game step
+			data.cmd.forEach(function(cmd){
+				this.game[cmd[0]].apply(this.game, cmd.slice(1));
+			}, this);
+			if(!this.game.$firstHash){
+				// after waiting for players to load
+				// the server will send first hash which is state after adding all snakes
+				// but no step is performed yet
+				this.game.$firstHash = true;
+			}else{
+				this.game.step();
+			}
+			this.game.prepareState();
+			var hash = this.game.hashState();
+			if(hash != data.hash){
+				console.error("desync", "local", hash, "server", data.hash);
+				this.netcode.send({command: "desync"});
+			}else{
+				this.netcode.send({command: "ready"});
+			}
+		}
+		if(data.state === Netcode.Const.LobbyState.WAIT_FOR_LOAD && this.waitLoadLayer){
+			this.waitLoadLayer.updateLoadingStatus(data.players);
+		}
 	},
 
 	fillFloor: function(){
@@ -237,6 +301,19 @@ window.GameLayer = cc.LayerColor.extend({
 
 	log: function(txt){
 		this.getParent().log(txt);
+	},
+
+	getPlayerColor: function(index){
+		var map = [
+			cc.c3b(0,0,0),
+			cc.c3b(66, 157, 11),
+			cc.c3b(157, 131, 11),
+			cc.c3b(157, 59, 11),
+			cc.c3b(157, 11, 100),
+			cc.c3b(11, 114, 157),
+			cc.c3b(11, 157, 111),
+		];
+		return map[index];
 	}
 });
 
