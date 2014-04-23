@@ -330,8 +330,8 @@ Snake.prototype.reverse = function(){
 	if(this.positions.length > 0){
 		this.x = this.positions[0][0];
 		this.y = this.positions[0][1];
+		this.direction = this.positions[0][2];
 	}
-	this.direction = this.positions[0][2];
 };
 
 module.exports = Snake;
