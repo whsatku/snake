@@ -22,6 +22,7 @@
 			'src/PerkBar.js',
 			'src/GameNodeFactory.js',
 			'src/GameLayer.js',
+			'src/WaitLoad.js'
 		],
 		resourceFiles: [
 			{src: 'res/snake-1.png'},

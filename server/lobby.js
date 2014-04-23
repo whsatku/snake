@@ -21,6 +21,7 @@ var Lobby = function Lobby(id){
 	this.maxClients = Lobby.MAX_CLIENT;
 	this.state = Lobby.STATE.LOBBY;
 	this.on("ready", this.onReady.bind(this));
+	this.on("playerReady", this.onPlayerReady.bind(this));
 	this.lastTick = 0;
 	this.cmdQueue = [];
 	this.waitClients = false;
@@ -98,6 +99,10 @@ Lobby.prototype.removeClient = function(spark){
 	this.clients = _.without(this.clients, spark);
 	delete spark.lobby;
 
+	if(this.isAllReady()){
+		this.emit("ready");
+	}
+
 	if(this.state == Lobby.STATE.LOBBY){
 		this.sendStateToAll();
 	}
@@ -168,7 +173,8 @@ Lobby.prototype.getState = function(hashed){
 			state.cmd = this.cmdQueue;
 			delete state.game;
 		}
-	}else{
+	}
+	if(this.state === Lobby.STATE.LOBBY || this.state === Lobby.STATE.WAIT_FOR_LOAD){
 		state.settings = this.settings;
 		state.players = [];
 		for(var i = 0; i < this.clients.length; i++){
@@ -207,12 +213,16 @@ Lobby.prototype.isAllReady = function(){
 Lobby.prototype.setReady = function(spark, val){
 	spark.ready = val;
 
-	if(this.state === Lobby.STATE.LOBBY){
-		this.sendStateToAll();
-	}
+	this.emit("playerReady");
 
 	if(this.isAllReady()){
 		this.emit("ready");
+	}
+};
+
+Lobby.prototype.onPlayerReady = function(){
+	if(this.state === Lobby.STATE.LOBBY || this.state === Lobby.STATE.WAIT_FOR_LOAD){
+		this.sendStateToAll(true);
 	}
 };
 
