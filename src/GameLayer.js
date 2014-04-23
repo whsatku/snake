@@ -49,6 +49,7 @@ window.GameLayer = cc.LayerColor.extend({
 		this.game.on("loadState", this.onLoadState.bind(this));
 		this.game.on("snake.dead", this.onSnakeDie.bind(this));
 		this.game.on("perkCollect", this.onPerkCollect.bind(this));
+		this.game.on("countdown", this.onCountdown.bind(this));
 	},
 
 	initLocalGame: function(){
@@ -136,6 +137,10 @@ window.GameLayer = cc.LayerColor.extend({
 
 	onPerkCollect: function(perk, snake){
 		this.log(this.perkName[perk] + " was collected by "+snake.name);
+	},
+
+	onCountdown: function(value){
+		this.log(value);
 	},
 
 	onLobbyStateChange: function(state){ 	
