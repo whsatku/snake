@@ -3,7 +3,7 @@
 "use strict";
 
 angular.module("snake")
-.controller("browse", ["$scope", "netcode", function($scope, netcode){
+.controller("browse", ["$scope", "netcode", "$interval", function($scope, netcode, $interval){
 	$scope.lobby = [];
 
 	netcode.send({command: "lobbylist"});
@@ -31,6 +31,10 @@ angular.module("snake")
 		});
 	};
 
+	var autorefresh = $interval(function(){
+		netcode.send({command: "lobbylist"});
+	}, 2500);
+
 	$scope.motd = netcode.motd;
 	$scope.online = netcode.online;
 	$scope.connected = netcode.connected;
@@ -45,6 +49,7 @@ angular.module("snake")
 		netcode.off("online", onOnline);
 		netcode.off("connected", onConnected);
 		netcode.off("data", onData);
+		$interval.cancel(autorefresh);
 	});
 }]);
 

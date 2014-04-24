@@ -114,6 +114,13 @@ angular.module("snake")
 				netcode.send({command: "ready", ready: value});
 			});
 
+			$scope.$watch("lobbySettings", function(value){
+				if(inServerSend || value === undefined || !hasInitialData){
+					return;
+				}
+				netcode.send({command: "lobbysettings", settings: value});
+			}, true);
+
 			var leaveToGame = false;
 
 			$scope.$on("$destroy", function(){

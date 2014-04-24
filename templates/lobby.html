@@ -43,26 +43,26 @@
 			<p>Map: {{lobbySettings.map}}</p>
 			<div class="form-group" ng-if="playerIndex == 0 && !lobbySettings.local">
 				<label class="control-label" for="lobbyName">Lobby name</label>
-				<input type="text" id="lobbyName" class="form-control" ng-model="lobbySettings.name" maxlength="8">
+				<input type="text" id="lobbyName" class="form-control" ng-model="lobbySettings.name" maxlength="24">
 			</div>
 			<div class="form-group" ng-class="{'has-error': lobby.scoreLimit.$invalid}">
 				<label class="control-label" for="scoreLimit">Score limit</label>
-				<input name="scoreLimit" id="scoreLimit" type="number" class="form-control" ng-model="lobbySettings.scoreLimit" min="1">
+				<input name="scoreLimit" id="scoreLimit" type="number" class="form-control" ng-model="lobbySettings.scoreLimit" min="1" ng-disabled="playerIndex != 0">
 				<p class="help-block">Game will wins after a snake reached this score</p>
 			</div>
 			<div class="form-group" ng-class="{'has-error': lobby.itemLimit.$invalid}">
 				<label class="control-label" for="itemLimit">Item limit</label>
-				<input name="itemLimit" id="itemLimit" type="number" class="form-control" ng-model="lobbySettings.itemLimit" min="1">
+				<input name="itemLimit" id="itemLimit" type="number" class="form-control" ng-model="lobbySettings.itemLimit" min="1" ng-disabled="playerIndex != 0">
 				<p class="help-block">Game will ends after this items collected</p>
 			</div>
 			<div class="form-group" ng-class="{'has-error': lobby.fragLimit.$invalid}">
 				<label class="control-label" for="fragLimit">Respawn limit</label>
-				<input name="fragLimit" id="fragLimit" type="number" class="form-control" ng-model="lobbySettings.fragLimit" min="0">
+				<input name="fragLimit" id="fragLimit" type="number" class="form-control" ng-model="lobbySettings.fragLimit" min="0" ng-disabled="playerIndex != 0">
 				<p class="help-block">Snake will be removed from play after being killed this times</p>
 			</div>
 			<div class="form-group">
 				<label>
-					<input type="checkbox" ng-model="lobbySettings.perk">
+					<input type="checkbox" ng-model="lobbySettings.perk" ng-disabled="playerIndex != 0"> 
 					Spawn perk
 				</label>
 			</div>

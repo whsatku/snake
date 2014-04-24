@@ -41,6 +41,7 @@ Lobby.STATE = {
 Lobby.MAX_CLIENT = 6;
 Lobby.DEFAULT_NAME = "Untitled";
 Lobby.DEFAULT_MAP = "plain";
+Lobby.VALID_SETTINGS = ["name", "map", "scoreLimit", "itemLimit", "fragLimit", "perk"];
 
 require("util").inherits(Lobby, EventEmitter);
 
@@ -325,6 +326,15 @@ Lobby.prototype.getFreeColors = function(){
 
 Lobby.prototype.getFreeColor = function(){
 	return this.getFreeColors()[0];
+};
+
+Lobby.prototype.isLobbyHead = function(spark){
+	return this.clients.indexOf(spark) === 0;
+};
+
+Lobby.prototype.setSettings = function(settings){
+	_.extend(this.settings, _.pick(settings, Lobby.VALID_SETTINGS));
+	this.sendStateToAll();
 };
 
 module.exports = Lobby;

@@ -71,6 +71,14 @@ SnakeServer.prototype.handleMessage = function(spark, data){
 			case "lobbyleave":
 				spark.lobby.removeClient(spark);
 				break;
+			case "lobbysettings":
+				if(!spark.lobby.isLobbyHead(spark)){
+					spark.write({error: "noperm"});
+					winston.info("[Lobby %s] Spark %s tried to set settings", spark.lobby.id, spark.id);
+					break;
+				}
+				spark.lobby.setSettings(data.settings);
+				break;
 			case "user":
 				spark.lobby.setUserData(spark, data.user);
 				break;
@@ -104,9 +112,6 @@ SnakeServer.prototype.joinLobby = function(spark, lobbyid){
 };
 
 SnakeServer.prototype.startLobby = function(spark){
-	if(spark.lobby === undefined){
-		return;
-	}
 	if(spark.lobby.clients[0] !== spark){
 		spark.write({error: "noperm"});
 		winston.warn("[Lobby %s] Attempted start by %s", spark.lobby.id, spark.address.ip);
