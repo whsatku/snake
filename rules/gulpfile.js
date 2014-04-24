@@ -1,16 +1,19 @@
 "use strict";
 
 var gulp = require("gulp");
-var browserify = require("gulp-browserify");
+var browserify = require("browserify");
 var uglify = require("gulp-uglify");
+var source = require("vinyl-source-stream");
+var streamify = require('gulp-streamify')
 
 gulp.task("default", function() {
-	gulp.src("index.js")
-		.pipe(browserify({
+	return browserify("./index.js")
+		.bundle({
 			standalone: "GameLogic"
-		}))
-		.pipe(uglify({
+		})
+		.pipe(source("index.js"))
+		.pipe(streamify(uglify({
 			preserveComments: "some"
-		}))
+		})))
 		.pipe(gulp.dest("../build/"));
 });
