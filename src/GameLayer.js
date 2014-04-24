@@ -5,6 +5,7 @@
 window.GameLayer = cc.LayerColor.extend({
 	gridSize: [16, 16],
 	map: "empty",
+	scoreboardHideDuration: 0.05,
 
 	objectsMap: {
 	},
@@ -35,6 +36,7 @@ window.GameLayer = cc.LayerColor.extend({
 
 		this.initGame();
 		this.initPerkBar();
+		this.initScoreboard();
 
 		if(this.settings.local){
 			this.initLocalGame();
@@ -104,6 +106,15 @@ window.GameLayer = cc.LayerColor.extend({
 		this.perkBar.setPosition(10, parentBB.height - 10);
 	},
 
+	initScoreboard: function(){
+		this.scoreboard = new Scoreboard();
+		this.getParent().addChild(this.scoreboard, 180);
+		this.scoreboard.init();
+
+		var parentBB = this.getParent().getBoundingBox();
+		this.scoreboard.setPosition(-this.scoreboard.width, parentBB.height - 10 - this.scoreboard.height);
+	},
+
 	initMap: function(){
 		var w = this.game.state.width * this.gridSize[0];
 		var h = this.game.state.height * this.gridSize[1];
@@ -131,8 +142,17 @@ window.GameLayer = cc.LayerColor.extend({
 		this.syncFromEngine();
 	},
 
-	onSnakeDie: function(snake){
-		this.log(snake.name+" died!");
+	onSnakeDie: function(snake, killer){
+		if(killer !== undefined){
+			var killer = this.game.getSnake(killer);
+			if(killer === snake){
+				this.log(snake.name+" suicided!");
+			}else{
+				this.log(snake.name+" was killed by "+killer.name);
+			}
+		}else{
+			this.log(snake.name+" died!");
+		}
 	},
 
 	onPerkCollect: function(perk, snake){
@@ -314,7 +334,17 @@ window.GameLayer = cc.LayerColor.extend({
 			cc.c3b(11, 157, 111),
 		];
 		return map[index];
-	}
+	},
+
+	showScoreboard: function(show){
+		console.log(show);
+		var x = show ? 10 : -this.scoreboard.width;
+		var parentBB = this.getParent().getBoundingBox();
+		var action = cc.MoveTo.create(this.scoreboardHideDuration, cc.p(x, parentBB.height - 10 - this.scoreboard.height));
+
+		this.scoreboard.stopAllActions();
+		this.scoreboard.runAction(action);
+	},
 });
 
 window.GameLayer.MODES = {

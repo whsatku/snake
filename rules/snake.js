@@ -13,6 +13,10 @@ var Snake = function Snake(){
 	this.invulnerable = false;
 	this.name = "";
 	this.color = 1;
+	this.kill = 0;
+	this.killStreak = 0;
+	this.death = 0;
+	this.score = 0;
 
 	this.on("collision", this.onCollide.bind(this));
 	this.on("perkAdd", this.onAddPerk.bind(this));
@@ -24,6 +28,9 @@ Snake.cls = "Snake";
 Snake.DEFAULT_MAX_LENGTH = 4;
 Snake.RESPAWN_DELAY = 10; // ticks
 Snake.PERK_PRESERVE_ON_DEATH = ["inverse"];
+Snake.SCORE_PER_POWERUP = 4;
+Snake.SCORE_PER_PERK = 2;
+Snake.SCORE_PER_DEATH = 3;
 
 var MovingWorldObject = require("./movingworldobject");
 var Powerup = require("./powerup");
@@ -133,12 +140,14 @@ Snake.prototype.isCollideWith = function(b, crosscheck){
 	return b.isCollideWith(this, false);
 };
 
-Snake.prototype.die = function(dontCountDead){
+Snake.prototype.die = function(dontCountDead, killer){
 	this.reset();
 	this.addPerk("respawn", Snake.RESPAWN_DELAY);
 
 	if(dontCountDead !== true){
-		this.emit("dead");
+		this.death++;
+		this.score -= Snake.SCORE_PER_DEATH;
+		this.emit("dead", killer);
 	}
 };
 
@@ -162,6 +171,7 @@ Snake.prototype.respawn = function(){
 Snake.prototype.reset = function(){
 	this.maxLength = Snake.DEFAULT_MAX_LENGTH;
 	this.positions = [];
+	this.killStreak = 0;
 	this.randomPosition();
 	for(var perk in this.perks){
 		if(Snake.PERK_PRESERVE_ON_DEATH.indexOf(perk) == -1){
@@ -182,22 +192,28 @@ Snake.prototype.onCollide = function(target){
 	if(this.hidden){
 		return false;
 	}
-	if(target instanceof Powerup){
-		this.maxLength += target.growth;
-	}
 	if(target instanceof PerkPowerup){
 		this.addPerk(target.perk, target.perkTime);
+		this.score += Snake.SCORE_PER_PERK;
+	}else if(target instanceof Powerup){
+		this.maxLength += target.growth;
+		this.score += Snake.SCORE_PER_POWERUP;
 	}
 	if(target instanceof Snake){
 		if(target !== this && this.x == target.x && this.y == target.y){
 			// head-on-head collision
 			if(!this.invulnerable){
-				this.nextTick("die");
+				this.nextTick("die", null, target.index);
 			}
 		}else if(this.isCollideWith(target, false)){
 			// head-on-body collision
 			if(!this.invulnerable){
-				this.nextTick("die");
+				this.nextTick("die", null, target.index);
+				if(target !== this){
+					target.kill++;
+					target.killStreak++;
+					target.score += Math.floor(this.positions.length / 4);
+				}
 			}
 			if(this.hasPerk("bite")){
 				target.emit("bitten", this);
@@ -218,6 +234,10 @@ Snake.prototype.getState = function(){
 	state.invulnerable = this.invulnerable;
 	state.name = this.name;
 	state.color = this.color;
+	state.kill = this.kill;
+	state.death = this.death;
+	state.score = this.score;
+	state.killStreak = this.killStreak;
 	return state;
 };
 
@@ -230,6 +250,10 @@ Snake.prototype.loadState = function(state){
 	this.invulnerable = state.invulnerable;
 	this.name = state.name;
 	this.color = state.color;
+	this.kill = state.kill;
+	this.death = state.death;
+	this.score = state.score;
+	this.killStreak = state.killStreak;
 };
 
 Snake.prototype.addPerk = function(name, duration){
@@ -307,10 +331,16 @@ Snake.prototype.onBitten = function(snake){
 	if(chopIndex === false){
 		return;
 	}else if(chopIndex <= 1){
+		snake.kill++;
+		snake.killStreak++;
+		snake.score += Math.floor(this.positions.length / 4);
 		this.die();
 		return;
 	}
 
+	if(snake !== this){
+		snake.score += Math.min(8, Math.floor((this.positions.length - chopIndex) / 3));
+	}
 	this.positions = this.positions.slice(0, chopIndex);
 	this.maxLength = chopIndex;
 };

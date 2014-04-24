@@ -15,19 +15,26 @@ window.KeyboardControlLayer = cc.Layer.extend({
 	onKeyDown: function(e){
 		var key;
 
-		if(e === cc.KEY.v){
-			var webrtc = this._root.webrtc;
-			if(webrtc){
-				webrtc.muteMic(false);
-			}
-			return;
+		switch(e){
+			case cc.KEY.v:
+				var webrtc = this._root.webrtc;
+				if(webrtc){
+					webrtc.muteMic(false);
+				}
+				return;
+			case cc.KEY.tab:
+				return this._root.showScoreboard(true);
 		}
 
 		var map = {};
 		map[cc.KEY.up] = "up";
+		map[cc.KEY.w] = "up";
 		map[cc.KEY.down] = "down";
+		map[cc.KEY.s] = "down";
 		map[cc.KEY.left] = "left";
+		map[cc.KEY.a] = "left";
 		map[cc.KEY.right] = "right";
+		map[cc.KEY.d] = "right";
 
 		if(map[e]){
 			this._root.input(map[e]);
@@ -35,12 +42,15 @@ window.KeyboardControlLayer = cc.Layer.extend({
 	},
 
 	onKeyUp: function(e){
-		if(e === cc.KEY.v){
-			var webrtc = this._root.webrtc;
-			if(webrtc){
-				webrtc.muteMic(true);
-			}
-			return;
+		switch(e){
+			case cc.KEY.v:
+				var webrtc = this._root.webrtc;
+				if(webrtc){
+					webrtc.muteMic(true);
+				}
+				return;
+			case cc.KEY.tab:
+				return this._root.showScoreboard(false);
 		}
 	}
 });
