@@ -30,7 +30,7 @@
 							</select>
 						</td>
 						<td ng-if="player && $index != playerIndex">{{player.ready | yesno}}</td>
-						<td ng-if="player && $index == playerIndex"><input type="checkbox" ng-model="player.ready"></td>
+						<td ng-if="player && $index == playerIndex"><input type="checkbox" ng-model="player.ready" ng-disabled="player.name.length == 0"></td>
 					</tr>
 				</tbody>
 			</table>

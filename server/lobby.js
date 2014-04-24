@@ -213,14 +213,17 @@ Lobby.prototype.isAllReady = function(){
 Lobby.prototype.setReady = function(spark, val){
 	spark.ready = val;
 
-	this.emit("playerReady");
+	this.emit("playerReady", spark);
 
 	if(this.isAllReady()){
 		this.emit("ready");
 	}
 };
 
-Lobby.prototype.onPlayerReady = function(){
+Lobby.prototype.onPlayerReady = function(spark){
+	if(this.state === Lobby.STATE.LOBBY && !spark.name){
+		spark.ready = false;
+	}
 	if(this.state === Lobby.STATE.LOBBY || this.state === Lobby.STATE.WAIT_FOR_LOAD){
 		this.sendStateToAll(true);
 	}
@@ -295,7 +298,7 @@ Lobby.prototype.input = function(spark, input){
 };
 
 Lobby.prototype.setUserData = function(spark, data){
-	spark.name = data.name !== undefined ? data.name || "User" : spark.name;
+	spark.name = data.name !== undefined ? data.name : spark.name;
 
 	if(data.color !== undefined && data.color != spark.color){
 		// check for duplicate color

@@ -51,7 +51,7 @@ angular.module("snake")
 		value = value || "";
 		localStorage.playerName = value;
 
-		if(value.length === 0 && false){
+		if(value.length === 0 && $scope.currentPlayer){
 			$scope.currentPlayer.ready = false;
 		}
 	});
@@ -101,7 +101,7 @@ angular.module("snake")
 				}
 				if(value.name != oldValue.name || value.color != oldValue.color){
 					netcode.send({command: "user", user: {
-						name: value.name,
+						name: value.name || "",
 						color: value.color
 					}});
 				}
