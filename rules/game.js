@@ -169,7 +169,7 @@ Game.prototype.generatePowerup = function(){
 
 		this.objects.push(powerup);
 	}
-	if(!this.hasActivePowerup(false)){
+	if(!this.hasActivePowerup(false) && this.state.perk){
 		if(this.random.random() < 0.01){
 			var perk = this.getRandomPerk();
 			if(perk !== undefined){
