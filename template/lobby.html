@@ -38,16 +38,15 @@
 			<a ng-if="lobbySettings.local" ui-sref="mainmenu" class="btn btn-default">Leave lobby</a>
 			<a ng-if="!lobbySettings.local" ui-sref="browse" class="btn btn-default">Leave lobby</a>
 		</div>
-		<div class="col-md-4">
-			<h2>Game settings</h2>
+		<div class="col-md-4" style="padding-top: 20px;">
 			<div class="row">
 				<div class="thumbnail col-md-8 col-md-offset-2">
 					<img src="lobby-asset/maps/{{lobbySettings.map}}.png">
 					<div class="caption">
-						<strong>Map:</strong> {{lobbySettings.map|ucfirst}}
-						<div ng-if="playerIndex == 0">
+						<div ng-if="playerIndex == 0" class="pull-right">
 							<a class="btn btn-sm btn-default" ng-click="selectMap()">Change</a>
 						</div>
+						<strong>Map:</strong> {{lobbySettings.map|ucfirst}}
 					</div>
 				</div>
 			</div>
@@ -58,22 +57,22 @@
 			<div class="form-group" ng-class="{'has-error': lobby.scoreLimit.$invalid}">
 				<label class="control-label" for="scoreLimit">Score limit</label>
 				<input name="scoreLimit" id="scoreLimit" type="number" class="form-control" ng-model="lobbySettings.scoreLimit" min="1" ng-disabled="playerIndex != 0">
-				<p class="help-block">Game will wins after a snake reached this score</p>
+				<p class="help-block">Game will wins after any snake reached a score threshold</p>
 			</div>
 			<div class="form-group" ng-class="{'has-error': lobby.itemLimit.$invalid}">
 				<label class="control-label" for="itemLimit">Item limit</label>
 				<input name="itemLimit" id="itemLimit" type="number" class="form-control" ng-model="lobbySettings.itemLimit" min="1" ng-disabled="playerIndex != 0">
-				<p class="help-block">Game will ends after this items collected</p>
+				<p class="help-block">Game will ends after a number of items collected</p>
 			</div>
 			<div class="form-group" ng-class="{'has-error': lobby.fragLimit.$invalid}">
 				<label class="control-label" for="fragLimit">Respawn limit</label>
 				<input name="fragLimit" id="fragLimit" type="number" class="form-control" ng-model="lobbySettings.fragLimit" min="0" ng-disabled="playerIndex != 0">
-				<p class="help-block">Snake will be removed from play after being killed this times</p>
+				<p class="help-block">Snake will be removed from play after being killed a number of time</p>
 			</div>
 			<div class="form-group">
 				<label>
 					<input type="checkbox" ng-model="lobbySettings.perk" ng-disabled="playerIndex != 0"> 
-					Spawn perk
+					Spawn special items
 				</label>
 			</div>
 		</div>
