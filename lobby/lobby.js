@@ -3,10 +3,10 @@
 "use strict";
 
 angular.module("snake")
-.controller("lobby", ["$scope", "$stateParams", "$state", "$injector", function($scope, params, $state, $injector){
+.controller("lobby", ["$scope", "$stateParams", "$state", "$injector", "$modal", function($scope, params, $state, $injector, $modal){
 	$scope.lobbySettings = {
 		fragLimit: 10,
-		scoreLimit: 20,
+		scoreLimit: 200,
 		itemLimit: 100,
 		perk: true,
 		map: "plain",
@@ -33,6 +33,23 @@ angular.module("snake")
 
 	$scope.startGame = function(){
 		$state.go("game", {settings: JSON.stringify($scope.lobbySettings), players: JSON.stringify($scope.players)});
+	};
+
+	$scope.selectMap = function(){
+		var map = $modal.open({
+			templateUrl: "template/maps.html",
+			controller: ["$modalInstance", "$scope", function($modalInstance, $scope){
+				$scope.select = function(map){
+					$modalInstance.close(map);
+				};
+				$scope.cancel = function(){
+					$modalInstance.dismiss("cancel");
+				};
+			}],
+		});
+		map.result.then(function(map){
+			$scope.lobbySettings.map = map;
+		});
 	};
 
 	$scope.$watch("players", function(){

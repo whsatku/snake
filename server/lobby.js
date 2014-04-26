@@ -27,7 +27,11 @@ var Lobby = function Lobby(id){
 	this.waitClients = false;
 	this.settings = {
 		name: Lobby.DEFAULT_NAME,
-		map: Lobby.DEFAULT_MAP
+		map: Lobby.DEFAULT_MAP,
+		fragLimit: 10,
+		scoreLimit: 200,
+		itemLimit: 100,
+		perk: true
 	};
 };
 
@@ -113,8 +117,7 @@ Lobby.prototype.startLobby = function(){
 	this.setAllReady(false);
 	this.state = Lobby.STATE.WAIT_FOR_LOAD;
 	this.game = new GameLogic.Game();
-	// TODO: Lobby configuration
-	this.game.loadMap("empty");
+	this.game.setSettings(this.settings);
 	this.sendStateToAll();
 };
 

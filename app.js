@@ -2,13 +2,13 @@
 (function(){
 "use strict";
 
-var app = angular.module("snake", ["ui.router"]);
+var app = angular.module("snake", ["ui.router", "ui.bootstrap.modal"]);
 
 app.config(["$stateProvider", function($stateProvider){
 	$stateProvider.state("mainmenu", {
-		templateUrl: "templates/mainmenu.html"
+		templateUrl: "template/mainmenu.html"
 	}).state("lobby", {
-		templateUrl: "templates/lobby.html",
+		templateUrl: "template/lobby.html",
 		controller: "lobby",
 		params: ["local"]
 	}).state("lobby.create", {
@@ -17,7 +17,7 @@ app.config(["$stateProvider", function($stateProvider){
 		controller: "lobbyjoin",
 		params: ["id", "local"]
 	}).state("browse", {
-		templateUrl: "templates/browse.html",
+		templateUrl: "template/browse.html",
 		controller: "browse"
 	}).state("game", {
 		template: " ",
@@ -36,6 +36,12 @@ app.filter("snakeColor", function(){
 app.filter("yesno", function(){
 	return function(input){
 		return input ? "Yes" : "No";
+	};
+});
+
+app.filter("ucfirst", function(){
+	return function(input){
+		return input.charAt(0).toUpperCase() + input.slice(1);
 	};
 });
 

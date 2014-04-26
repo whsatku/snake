@@ -56,7 +56,7 @@ window.GameLayer = cc.LayerColor.extend({
 
 	initLocalGame: function(){
 		this.mode = GameLayer.MODES.LOCAL;
-		this.game.loadMap(this.map);
+		this.game.setSettings(this.settings);
 		this.game.player = 0;
 		this.initMap();
 

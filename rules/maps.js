@@ -43,75 +43,83 @@ exports.empty.tileset = "brick";
 
 exports.plain = new String(multiline(function(){
 /*!
-W########     #########     ########W
-W                                   W
-W                                   W
-W                                   W
-W                                   W
-W                                   W
-#                                   #
+W##########       ###########       ##########W
+W                                             W
+W                                             W
+W                                             W
+W                                             W
+W                                             W
+W                                             W
+#                                             #
 
 
 
 
-W                                   W
-W                                   W
-W                                   W
-W                                   W
-W                                   W
-#                                   #
+W                                             W
+W                                             W
+W                                             W
+W                                             W
+W                                             W
+W                                             W
+W                                             W
+#                                             #
 
 
 
 
 
-W                                   W
-W                                   W
-W                                   W
-W                                   W
-W                                   W
-W                                   W
-#########     #########     #########
+W                                             W
+W                                             W
+W                                             W
+W                                             W
+W                                             W
+W                                             W
+W                                             W
+W##########       ###########       ##########W
 */
 return 0;}));
 exports.plain.tileset = "brick";
 
 exports.line = new String(multiline(function(){
 /*!
-T                                    T
+T                                             T
 
 
 
 
 
 
-     ############################     
+
+     #####################################     
 
 
 
 
 
 
-     ############################     
+
+     #####################################     
 
 
 
 
 
 
-     ############################     
+
+     #####################################     
 
 
 
 
 
 
-T                                    T
+
+T                                             T
 */
 return 0;}));
 exports.line.tileset = "grass";
 
-exports.swastika = new String(multiline(function(){
+exports.rooms = new String(multiline(function(){
 /*!
 #######     #########                  #
 #                   #
@@ -146,39 +154,41 @@ exports.swastika = new String(multiline(function(){
 #                   ########     #######
 */
 return 0;}));
-exports.swastika.tileset = "lava";
+exports.rooms.tileset = "lava";
 
 exports.u = new String(multiline(function(){
 /*!
-#                                    #
+#                                            #
 
 
 
-     W                          W
-     W                          W
-     W                          W
-     W                          W
-     W                          W
-     W                          W
-     W                          W     
-     W                          W
-     W                          W
-     W                          W
-     W                          W
-     W                          W
-     W                          W
-     W                          W     
-     W                          W
-     W                          W
-     W                          W
-     W                          W
-     W                          W
-     W                          W
-     ############################     
+
+        W                          W
+        W                          W
+        W                          W
+        W                          W
+        W                          W
+        W                          W
+        W                          W     
+        W                          W
+        W                          W
+        W                          W
+        W                          W
+        W                          W
+        W                          W
+        W                          W     
+        W                          W
+        W                          W
+        W                          W
+        W                          W
+        W                          W
+        W                          W
+        ############################     
 
 
 
-#                                    #
+
+#                                            #
 */
 return 0;}));
 exports.u.tileset = "palace";

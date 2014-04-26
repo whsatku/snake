@@ -35,6 +35,7 @@ Game.STATES = {
 // worst: update_rate = 200, 6*200 = 1200
 Game.TICK_PER_COUNTDOWN = 6;
 Game.COUNTDOWN_COUNT = 3;
+Game.VALID_SETTINGS = ["map", "scoreLimit", "itemLimit", "fragLimit", "perk"];
 
 require("util").inherits(Game, EventEmitter);
 
@@ -336,6 +337,17 @@ Game.prototype.loadState = function(state){
 	});
 
 	this.emit("loadState");
+};
+
+Game.prototype.setSettings = function(settings){
+	for(var key in settings){
+		if(Game.VALID_SETTINGS.indexOf(key) != -1){
+			this.state[key] = settings[key];
+		}
+		if(key == "map"){
+			this.loadMap(settings[key]);
+		}
+	}
 };
 
 module.exports = Game;

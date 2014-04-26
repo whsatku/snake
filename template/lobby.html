@@ -40,7 +40,17 @@
 		</div>
 		<div class="col-md-4">
 			<h2>Game settings</h2>
-			<p>Map: {{lobbySettings.map}}</p>
+			<div class="row">
+				<div class="thumbnail col-md-8 col-md-offset-2">
+					<img src="lobby-asset/maps/{{lobbySettings.map}}.png">
+					<div class="caption">
+						<strong>Map:</strong> {{lobbySettings.map|ucfirst}}
+						<div ng-if="playerIndex == 0">
+							<a class="btn btn-sm btn-default" ng-click="selectMap()">Change</a>
+						</div>
+					</div>
+				</div>
+			</div>
 			<div class="form-group" ng-if="playerIndex == 0 && !lobbySettings.local">
 				<label class="control-label" for="lobbyName">Lobby name</label>
 				<input type="text" id="lobbyName" class="form-control" ng-model="lobbySettings.name" maxlength="24">

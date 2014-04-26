@@ -1,0 +1,71 @@
+<div class="modal-header">
+	<button type="button" class="close" ng-click="cancel()">&times;</button>
+	 <h4 class="modal-title">Select map</h4>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<div class="col-md-6">
+			<div class="thumbnail">
+				<img src="lobby-asset/maps/empty.png">
+				<div class="caption">
+					<h4>Empty</h4>
+					<p>Large, blank map</p>
+					<p><a ng-click="select('empty')" class="btn btn-default" role="button">Select</a></p>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="thumbnail">
+				<img src="lobby-asset/maps/plain.png">
+				<div class="caption">
+					<h4>Plain</h4>
+					<p>Medium closed map with some openings</p>
+					<p><a ng-click="select('plain')" class="btn btn-default" role="button">Select</a></p>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="thumbnail">
+				<img src="lobby-asset/maps/line.png">
+				<div class="caption">
+					<h4>Line</h4>
+					<p>Classical map with two horizontal lines</p>
+					<p><a ng-click="select('line')" class="btn btn-default" role="button">Select</a></p>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="thumbnail">
+				<img src="lobby-asset/maps/rooms.png">
+				<div class="caption">
+					<h4>Rooms</h4>
+					<p>4 rooms with tricky opening require players to look in both way before crossing</p>
+					<p><a ng-click="select('rooms')" class="btn btn-default" role="button">Select</a></p>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="thumbnail">
+				<img src="lobby-asset/maps/u.png">
+				<div class="caption">
+					<h4>U</h4>
+					<p>U-shaped map</p>
+					<p><a ng-click="select('u')" class="btn btn-default" role="button">Select</a></p>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="thumbnail">
+				<img src="lobby-asset/maps/dota.png">
+				<div class="caption">
+					<h4>Dota</h4>
+					<p>Inspired by Defense of the Ancient, this map has a lot of juke path and narrow corners</p>
+					<p><a ng-click="select('dota')" class="btn btn-default" role="button">Select</a></p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
