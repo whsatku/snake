@@ -29,6 +29,7 @@ var Game = function SnakeGame(){
 		fragLimit: 0
 	};
 	this._seedRng();
+	this.startTime = new Date().getTime();
 	this.on("snake.dead", this.onSnakeDead.bind(this));
 };
 Game.STATES = {
@@ -360,9 +361,31 @@ Game.prototype.setSettings = function(settings){
 
 Game.prototype.onSnakeDead = function(snake){
 	if(this.state.fragLimit > 0 && snake.death >= this.state.fragLimit){
-		this.removeSnake(snake);
 		this.emit("snake.gameOver", snake);
+		this.removeSnake(snake);
 	}
+};
+
+Game.prototype.getEndscreenData = function(){
+	var out = {
+		settings: {},
+		snakes: [],
+		time: new Date().getTime() - this.startTime
+	}
+
+	Game.VALID_SETTINGS.forEach(function(item){
+		out.settings[item] = this.state[item];
+	}, this);
+
+	this._snakes.forEach(function(snake){
+		if(!(snake instanceof Snake)){
+			return;
+		}
+
+		out.snakes.push(snake.getEndscreenData());
+	});
+
+	return out;
 };
 
 module.exports = Game;

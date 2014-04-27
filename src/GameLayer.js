@@ -159,7 +159,7 @@ window.GameLayer = cc.LayerColor.extend({
 
 	onSnakeGameOver: function(snake){
 		if(snake.index === 0){
-			cc.Application.getInstance().endGame();
+			cc.Application.getInstance().endGame(this.game.getEndscreenData());
 		}
 	},
 

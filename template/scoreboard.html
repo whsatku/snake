@@ -2,43 +2,62 @@
 	<h1>{{data.name}}</h1>
 	
 	<p>
-		<strong>Game time:</strong>
-		2h50m
+		<div><strong>Game time:</strong> {{data.time}}</div>
+		<div><strong>Map:</strong> {{data.settings.map|ucfirst}}</div>
+		<div><strong>Score limit:</strong> {{data.settings.scoreLimit}}</div>
+		<div><strong>Item limit:</strong> {{data.settings.itemLimit}}</div>
+		<div><strong>Death limit:</strong> {{data.settings.fragLimit}}</div>
+		<div><strong>Spawn special items:</strong> {{data.settings.perk|yesno}}</div>
 	</p>
 	
 	<table class="table table-bordered">
 		<thead>
 			<tr>
 				<th></th>
-				<th>Player A</th>
-				<th>Player B</th>
-				<th>Player C</th>
-				<th>Player D</th>
-				<th>Player E</th>
-				<th>Player F</th>
+				<th ng-repeat="snake in data.snakes" class="snake-color-{{snake.color}}" ng-bind="snake.name"></th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
 				<th>Score</th>
-				<td>1</td>
+				<td ng-repeat="snake in data.snakes" ng-bind="snake.score"></td>
 			</tr>
 			<tr>
 				<th>Kill</th>
-				<td>1</td>
+				<td ng-repeat="snake in data.snakes">
+					<div ng-bind="snake.kill"></div>
+					<div ng-repeat="name, killData in snake.killDetails">
+						<strong class="snake-color-{{killData.color}}">{{name|ucfirst}}:</strong>
+						{{killData.count}}
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<th>Max kill streak</th>
+				<td ng-repeat="snake in data.snakes" ng-bind="snake.maxStreak"></td>
 			</tr>
 			<tr>
 				<th>Death</th>
-				<td>1</td>
+				<td ng-repeat="snake in data.snakes" ng-bind="snake.death"></td>
+			</tr>
+			<tr>
+				<th>Longest length</th>
+				<td ng-repeat="snake in data.snakes" ng-bind="snake.longest"></td>
 			</tr>
 			<tr>
 				<th>Items collected</th>
-				<td>1</td>
+				<td ng-repeat="snake in data.snakes" ng-bind="snake.items"></td>
 			</tr>
 			<tr>
 				<th>Powerup collected</th>
-				<td>1</td>
+				<td ng-repeat="snake in data.snakes">
+					<div ng-repeat="name, value in snake.powerup">
+						<strong>{{name|ucfirst}}:</strong>
+						{{value}}
+					</div>
+				</td>
 			</tr>
 		</tbody>
 	</table>
+	<a class="btn btn-default" ui-sref="mainmenu">Main menu</a>
 </div>

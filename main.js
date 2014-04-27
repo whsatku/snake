@@ -56,11 +56,11 @@ var Cocos2dApp = cc.Application.extend({
 		this.event.emit("gameStart");
 	},
 
-	endGame: function(){
+	endGame: function(data){
 		var director = cc.Director.getInstance();
 		director.replaceScene(this.emptyScene);
 		director.pause();
-		this.event.emit("gameEnd");
+		this.event.emit("gameEnd", data);
 	}
 });
 

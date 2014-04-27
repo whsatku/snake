@@ -15,8 +15,13 @@ var Snake = function Snake(){
 	this.color = 1;
 	this.kill = 0;
 	this.killStreak = 0;
+	this.maxKillStreak = 0;
+	this.longest = 0;
 	this.death = 0;
 	this.score = 0;
+	this.itemsCollected = 0;
+	this.powerupCollected = {};
+	this.killDetails = {};
 
 	this.on("collision", this.onCollide.bind(this));
 	this.on("perkAdd", this.onAddPerk.bind(this));
@@ -39,6 +44,8 @@ var PerkPowerup = require("./perkpowerup");
 require("util").inherits(Snake, MovingWorldObject);
 
 Snake.prototype.update = function(){
+	this.maxKillStreak = Math.max(this.killStreak, this.maxKillStreak);
+
 	this.expirePerk();
 
 	if(this.hasPerk("respawn")){
@@ -61,6 +68,8 @@ Snake.prototype.update = function(){
 	this.positions.unshift([this.x, this.y, this.direction]);
 
 	this._trimPositionToLength();
+
+	this.longest = Math.max(this.positions.length, this.longest);
 };
 
 Snake.prototype._trimPositionToLength = function(){
@@ -194,11 +203,17 @@ Snake.prototype.onCollide = function(target){
 		return false;
 	}
 	if(target instanceof PerkPowerup){
+		if(this.powerupCollected[target.perk] === undefined){
+			this.powerupCollected[target.perk] = 0;
+		}
+		this.powerupCollected[target.perk]++;
+
 		this.addPerk(target.perk, target.perkTime);
 		this.score += Snake.SCORE_PER_PERK;
 	}else if(target instanceof Powerup){
 		this.maxLength += target.growth;
 		this.score += Snake.SCORE_PER_POWERUP;
+		this.itemsCollected++;
 	}
 	if(target instanceof Snake){
 		if(target !== this && this.x == target.x && this.y == target.y){
@@ -214,6 +229,14 @@ Snake.prototype.onCollide = function(target){
 					target.kill++;
 					target.killStreak++;
 					target.score += Math.floor(this.positions.length / 4);
+
+					if(target.killDetails[this.name] === undefined){
+						target.killDetails[this.name] = {
+							color: this.color,
+							count: 0
+						}
+					}
+					target.killDetails[this.name].count++;
 				}
 			}
 			if(this.hasPerk("bite")){
@@ -363,6 +386,21 @@ Snake.prototype.reverse = function(){
 		this.y = this.positions[0][1];
 		this.direction = this.positions[0][2];
 	}
+};
+
+Snake.prototype.getEndscreenData = function(){
+	return {
+		name: this.name,
+		color: this.color,
+		kill: this.kill,
+		maxStreak: this.maxKillStreak,
+		death: this.death,
+		score: this.score,
+		items: this.itemsCollected,
+		powerup: this.powerupCollected,
+		killDetails: this.killDetails,
+		longest: this.longest
+	};
 };
 
 module.exports = Snake;

@@ -17,8 +17,11 @@ angular.module("snake")
 		}]);
 	}
 
-	window.game.event.once("gameEnd", function(){
-		$state.go("scoreboard");
+	window.game.event.once("gameEnd", function(data){
+		data.name = settings.name;
+		$state.go("scoreboard", {
+			data: JSON.stringify(data)
+		});
 	});
 
 	setTimeout(function(){
