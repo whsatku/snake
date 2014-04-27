@@ -9,9 +9,14 @@ var Cocos2dApp = cc.Application.extend({
 	ctor: function(scene) {
 		this._super();
 		this.startScene = scene;
+
 		cc.COCOS2D_DEBUG = this.config.COCOS2D_DEBUG;
 		cc.initDebugSetting();
 		cc.setup(this.config.tag, 800, 600);
+
+		this.emptyScene = cc.Scene.create();
+		this.event = new GameLogic.event();
+
 		cc.AppController.shareAppController().didFinishLaunchingWithOptions();
 	},
 
@@ -34,15 +39,28 @@ var Cocos2dApp = cc.Application.extend({
 
 	onLoaded: function(){
 		this.ready = true;
-		// TODO: Make this dispatch event
+		var director = cc.Director.getInstance();
+		director.replaceScene(this.emptyScene);
+		director.pause();
+		this.event.emit("loaded");
 	},
 
 	startGame: function(args, netcode){
 		if(!this.ready){
-			console.error("startGame call before game was loaded");
+			this.event.once("loaded", this.startGame.bind(this, args, netcode));
 			return;
 		}
-		cc.Director.getInstance().replaceScene(new this.startScene(args, netcode));
+		var director = cc.Director.getInstance();
+		director.resume();
+		director.replaceScene(new this.startScene(args, netcode));
+		this.event.emit("gameStart");
+	},
+
+	endGame: function(){
+		var director = cc.Director.getInstance();
+		director.replaceScene(this.emptyScene);
+		director.pause();
+		this.event.emit("gameEnd");
 	}
 });
 

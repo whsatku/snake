@@ -28,7 +28,7 @@ var Lobby = function Lobby(id){
 	this.settings = {
 		name: Lobby.DEFAULT_NAME,
 		map: Lobby.DEFAULT_MAP,
-		fragLimit: 10,
+		fragLimit: 0,
 		scoreLimit: 200,
 		itemLimit: 100,
 		perk: true

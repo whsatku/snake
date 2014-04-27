@@ -5,7 +5,7 @@
 angular.module("snake")
 .controller("lobby", ["$scope", "$stateParams", "$state", "$injector", "$modal", function($scope, params, $state, $injector, $modal){
 	$scope.lobbySettings = {
-		fragLimit: 10,
+		fragLimit: 0,
 		scoreLimit: 200,
 		itemLimit: 100,
 		perk: true,

@@ -23,6 +23,10 @@ app.config(["$stateProvider", function($stateProvider){
 		template: " ",
 		controller: "game",
 		params: ["settings", "players"]
+	}).state("scoreboard", {
+		templateUrl: "template/scoreboard.html",
+		controller: "scoreboard",
+		params: ["data"]
 	});
 }]);
 

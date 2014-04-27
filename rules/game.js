@@ -22,9 +22,14 @@ var Game = function SnakeGame(){
 		updateRate: 150,
 		map: null,
 		step: 0,
-		countdown: (Game.COUNTDOWN_COUNT * Game.TICK_PER_COUNTDOWN) + 1
+		countdown: (Game.COUNTDOWN_COUNT * Game.TICK_PER_COUNTDOWN) + 1,
+		perk: true,
+		scoreLimit: 0,
+		itemLimit: 0,
+		fragLimit: 0
 	};
 	this._seedRng();
+	this.on("snake.dead", this.onSnakeDead.bind(this));
 };
 Game.STATES = {
 	PREPARE: 0,
@@ -90,7 +95,10 @@ Game.prototype._createSnake = function(data){
 };
 
 Game.prototype.step = function(){
-	this.state.state = Game.STATES.IN_PROGRESS;
+	if(this.state.state !== Game.STATES.IN_PROGRESS){
+		this.state.state = Game.STATES.IN_PROGRESS;
+		this.emit("stateChange", Game.STATES.IN_PROGRESS);
+	}
 
 	if(this.state.countdown > 0){
 		this._countdownStep();
@@ -347,6 +355,13 @@ Game.prototype.setSettings = function(settings){
 		if(key == "map"){
 			this.loadMap(settings[key]);
 		}
+	}
+};
+
+Game.prototype.onSnakeDead = function(snake){
+	if(this.state.fragLimit > 0 && snake.death >= this.state.fragLimit){
+		this.removeSnake(snake);
+		this.emit("snake.gameOver", snake);
 	}
 };
 

@@ -57,17 +57,17 @@
 			<div class="form-group" ng-class="{'has-error': lobby.scoreLimit.$invalid}">
 				<label class="control-label" for="scoreLimit">Score limit</label>
 				<input name="scoreLimit" id="scoreLimit" type="number" class="form-control" ng-model="lobbySettings.scoreLimit" min="1" ng-disabled="playerIndex != 0">
-				<p class="help-block">Game will wins after any snake reached a score threshold</p>
+				<p class="help-block">Game will wins after any snake reached a score threshold (0=no limit)</p>
 			</div>
 			<div class="form-group" ng-class="{'has-error': lobby.itemLimit.$invalid}">
 				<label class="control-label" for="itemLimit">Item limit</label>
 				<input name="itemLimit" id="itemLimit" type="number" class="form-control" ng-model="lobbySettings.itemLimit" min="1" ng-disabled="playerIndex != 0">
-				<p class="help-block">Game will ends after a number of items collected</p>
+				<p class="help-block">Game will ends after a number of items collected (0=no limit)</p>
 			</div>
 			<div class="form-group" ng-class="{'has-error': lobby.fragLimit.$invalid}">
 				<label class="control-label" for="fragLimit">Respawn limit</label>
 				<input name="fragLimit" id="fragLimit" type="number" class="form-control" ng-model="lobbySettings.fragLimit" min="0" ng-disabled="playerIndex != 0">
-				<p class="help-block">Snake will be removed from play after being killed a number of time</p>
+				<p class="help-block">Snake will be removed from play after being killed a number of time (0=no limit, 1=no continue, 2=1 continue)</p>
 			</div>
 			<div class="form-group">
 				<label>

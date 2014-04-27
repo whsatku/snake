@@ -3,7 +3,7 @@
 "use strict";
 
 angular.module("snake")
-.controller("game", ["$rootScope", "$stateParams", "$injector", function($rootScope, params, $injector){
+.controller("game", ["$rootScope", "$stateParams", "$injector", "$scope", "$state", function($rootScope, params, $injector, $scope, $state){
 	$rootScope.showGame = true;
 
 	var settings = JSON.parse(params.settings);
@@ -16,6 +16,10 @@ angular.module("snake")
 			window.game.startGame(settings, netcode);
 		}]);
 	}
+
+	window.game.event.once("gameEnd", function(){
+		$state.go("scoreboard");
+	});
 
 	setTimeout(function(){
 		document.getElementById("game").children[0].focus();

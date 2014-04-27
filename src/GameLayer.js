@@ -64,6 +64,8 @@ window.GameLayer = cc.LayerColor.extend({
 
 		this.schedule(this.gameStep.bind(this), this.game.state.updateRate / 1000, Infinity, 0);
 
+		this.game.on("snake.gameOver", this.onSnakeGameOver.bind(this));
+
 		this.syncFromEngine();
 	},
 
@@ -152,6 +154,12 @@ window.GameLayer = cc.LayerColor.extend({
 			}
 		}else{
 			this.log(snake.name+" died!");
+		}
+	},
+
+	onSnakeGameOver: function(snake){
+		if(snake.index === 0){
+			cc.Application.getInstance().endGame();
 		}
 	},
 
@@ -345,6 +353,19 @@ window.GameLayer = cc.LayerColor.extend({
 		this.scoreboard.stopAllActions();
 		this.scoreboard.runAction(action);
 	},
+
+	cleanup: function(){
+		this._super();
+		this.game.removeAllListeners();
+		this.game = null;
+
+		if(this.netcode){
+			this.netcode.game = null;
+			this.netcode.off("log", this.log);
+			this.netcode.off("state", this.onLobbyStateChange);
+			this.netcode.off("data", this.onNetData);
+		}
+	}
 });
 
 window.GameLayer.MODES = {

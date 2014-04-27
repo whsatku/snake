@@ -186,6 +186,7 @@ Snake.prototype.cleanup = function(){
 	if(this.spawn){
 		this.world.removeChild(this.spawn);
 	}
+	this.removed = true;
 };
 
 Snake.prototype.onCollide = function(target){
