@@ -1,7 +1,7 @@
 "use strict";
 
 var GameLogic = require("../rules/");
-var _ = require("underscore");
+var _ = require("lodash");
 var EventEmitter = require("events").EventEmitter;
 var winston = require("winston");
 
@@ -51,6 +51,9 @@ require("util").inherits(Lobby, EventEmitter);
 
 Lobby.prototype.addClient = function(spark){
 	if(this.clients.length >= this.maxClients && this.maxClients > 0){
+		return false;
+	}
+	if(this.state === Lobby.STATE.FINISHED){
 		return false;
 	}
 

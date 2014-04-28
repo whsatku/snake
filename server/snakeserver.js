@@ -1,13 +1,13 @@
 "use strict";
 
-var _ = require("underscore");
+var _ = require("lodash");
 var Lobby = require("./lobby");
 var winston = require("winston");
 
 var SnakeServer = function SnakeServer(){
 	this.lobby = {};
 	this._id = 0;
-	this.cleanupInterval = 60000;
+	this.cleanupInterval = 5000;
 	this.motd = "";
 };
 
@@ -69,7 +69,11 @@ SnakeServer.prototype.handleMessage = function(spark, data){
 				this.startLobby(spark);
 				break;
 			case "lobbyleave":
+				var lobby = spark.lobby;
 				spark.lobby.removeClient(spark);
+				// if(lobby.clients.length === 0){
+				// 	delete this.lobby[lobby.id];
+				// }
 				break;
 			case "lobbysettings":
 				if(!spark.lobby.isLobbyHead(spark)){
@@ -126,9 +130,10 @@ SnakeServer.prototype.autoCleanup = function(){
 };
 
 SnakeServer.prototype.cleanup = function(){
-	this.lobby = _.filter(this.lobby, function(item){
-		return item.clients.length > 0;
+	this.lobby = _.pick(this.lobby, function(item){
+		return item.permanent || item.clients.length > 0;
 	});
+	winston.debug("Lobby garbage collection pass");
 };
 
 SnakeServer.prototype.relayRTCOffer = function(spark, data){
@@ -164,10 +169,12 @@ SnakeServer.prototype.listLobby = function(spark){
 
 SnakeServer.prototype.demoServer = function(){
 	winston.debug("Demo mode enabled");
-	clearInterval(this._cleanupTimer);
 	var id = this.id();
 	this.lobby[id] = new Lobby(id);
-	this.lobby[id].startGame();
+	this.lobby[id].settings.name = "World Server";
+	this.lobby[id].permanent = true;
+	this.lobby[id].maxClients = 0;
+	this.lobby[id].startLobby();
 };
 
 module.exports = SnakeServer;
