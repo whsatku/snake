@@ -2,7 +2,7 @@
 (function(){
 "use strict";
 
-angular.module("snake")
+angular.module("lobby")
 .controller("browse", ["$scope", "netcode", "$interval", function($scope, netcode, $interval){
 	$scope.lobby = [];
 

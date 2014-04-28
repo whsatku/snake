@@ -34,6 +34,8 @@ var Cocos2dApp = cc.Application.extend({
 
 		cc.LoaderScene.preload(this.config.resourceFiles, this.onLoaded, this);
 
+		document.getElementById(this.config.tag).focus();
+
 		return true;
 	},
 
@@ -58,9 +60,17 @@ var Cocos2dApp = cc.Application.extend({
 
 	endGame: function(data){
 		var director = cc.Director.getInstance();
+
+		// wait until cocos run scene cleanup before emitting gameEnd
+		director.setNotificationNode({
+			visit: function(){
+				this.event.emit("gameEnd", data);
+				director.setNotificationNode(undefined);
+			}.bind(this)
+		});
+
 		director.replaceScene(this.emptyScene);
 		director.pause();
-		this.event.emit("gameEnd", data);
 	}
 });
 

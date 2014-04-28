@@ -2,7 +2,7 @@
 (function(){
 "use strict";
 
-angular.module("snake")
+angular.module("lobby")
 .controller("lobby", ["$scope", "$stateParams", "$state", "$injector", "$modal", function($scope, params, $state, $injector, $modal){
 	$scope.lobbySettings = {
 		fragLimit: 0,
@@ -168,7 +168,7 @@ angular.module("snake")
 /**
  * Used when creating lobby in multiplayer
  */
-angular.module("snake")
+angular.module("lobby")
 .controller("lobbycreate", ["$scope", "netcode", function($scope, netcode){
 	netcode.send({command: "lobbycreate"});
 }]);
@@ -176,7 +176,7 @@ angular.module("snake")
 /**
  * Used when joining lobby in multiplayer
  */
-angular.module("snake")
+angular.module("lobby")
 .controller("lobbyjoin", ["$scope", "$stateParams", "netcode", function($scope, params, netcode){
 	netcode.send({command: "lobbyjoin", lobby: params.id});
 }]);

@@ -2,7 +2,7 @@
 (function(){
 "use strict";
 
-var app = angular.module("snake", ["ui.router", "ui.bootstrap.modal"]);
+var app = angular.module("lobby", ["ui.router", "ui.bootstrap.modal"]);
 
 app.config(["$stateProvider", function($stateProvider){
 	$stateProvider.state("mainmenu", {
@@ -20,7 +20,7 @@ app.config(["$stateProvider", function($stateProvider){
 		templateUrl: "template/browse.html",
 		controller: "browse"
 	}).state("game", {
-		template: " ",
+		templateUrl: "template/game.html",
 		controller: "game",
 		params: ["settings", "players"]
 	}).state("scoreboard", {
@@ -29,6 +29,13 @@ app.config(["$stateProvider", function($stateProvider){
 		params: ["data", "local"]
 	});
 }]);
+
+app.constant("games", {
+	"snake": {
+		"name": "Snake Run",
+		"folder": "snake"
+	}
+});
 
 app.filter("snakeColor", function(){
 	return function(input){

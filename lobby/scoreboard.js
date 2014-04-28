@@ -2,7 +2,7 @@
 (function(){
 "use strict";
 
-angular.module("snake")
+angular.module("lobby")
 .controller("scoreboard", ["$scope", "$stateParams", "$injector", function($scope, params, $injector){
 	console.log(params);
 	$scope.data = JSON.parse(params.data);

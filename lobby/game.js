@@ -2,35 +2,37 @@
 (function(){
 "use strict";
 
-angular.module("snake")
-.controller("game", ["$rootScope", "$stateParams", "$injector", "$scope", "$state", function($rootScope, params, $injector, $scope, $state){
-	$rootScope.showGame = true;
-
+angular.module("lobby")
+.controller("game", ["$stateParams", "$injector", "$scope", "$state", "games", function(params, $injector, $scope, $state, games){
 	var settings = JSON.parse(params.settings);
 	var players = JSON.parse(params.players);
 	settings.players = players;
-	if(settings.local){
-		window.game.startGame(settings);
-	}else{
-		$injector.invoke(["netcode", function(netcode){
-			window.game.startGame(settings, netcode);
-		}]);
-	}
 
-	window.game.event.once("gameEnd", function(data){
-		data.name = settings.name;
-		$state.go("scoreboard", {
-			data: JSON.stringify(data),
-			local: !!settings.local
-		});
-	});
+	$scope.game = games.snake.folder;
 
-	setTimeout(function(){
-		document.getElementById("game").children[0].focus();
-	}, 10);
+	$scope.$on("$viewContentLoaded", function(){
+		var game = document.getElementById("game");
+		game.focus();
 
-	$scope.$on("$destroy", function(){
-		$rootScope.showGame = false;
+		game.addEventListener("load", function(){
+			console.log("onload fire");
+			var engine = game.contentWindow.game;
+			if(settings.local){
+				engine.startGame(settings);
+			}else{
+				$injector.invoke(["netcode", function(netcode){
+					engine.startGame(settings, netcode);
+				}]);
+			}
+
+			engine.event.once("gameEnd", function(data){
+				data.name = settings.name;
+				$state.go("scoreboard", {
+					data: JSON.stringify(data),
+					local: !!settings.local
+				});
+			});
+		}, false);
 	});
 }]);
 

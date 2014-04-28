@@ -1,6 +1,6 @@
 "use strict";
 
-var GameLogic = require("../rules/");
+var GameLogic = require("./rules");
 var _ = require("lodash");
 var EventEmitter = require("events").EventEmitter;
 var winston = require("winston");

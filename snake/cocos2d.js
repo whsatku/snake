@@ -7,10 +7,12 @@
 		loadExtension: false,
 		frameRate: 60,
 		renderMode: 0,       //Choose of RenderMode: 0(default), 1(Canvas only), 2(WebGL only)
-		tag: 'game', //the dom element to run cocos2d on
+		tag: 'gameCanvas', //the dom element to run cocos2d on
 		//engineDir: 'cocos2d/',
-		SingleEngineFile: 'cocos2d.min.js',
+		SingleEngineFile: '../cocos2d.min.js',
 		appFiles:[
+			'build/index.js',
+			'../lobby/netcode.js',
 			'src/GameScene.js',
 			'src/KeyboardControlLayer.js',
 			'src/WorldObjectNode.js',
