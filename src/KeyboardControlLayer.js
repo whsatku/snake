@@ -17,9 +17,11 @@ window.KeyboardControlLayer = cc.Layer.extend({
 
 		switch(e){
 			case cc.KEY.v:
-				var webrtc = this._root.webrtc;
-				if(webrtc){
-					webrtc.muteMic(false);
+				if(this._root.netcode){
+					var webrtc = this._root.netcode.rtc;
+					if(webrtc){
+						webrtc.muteMic(false);
+					}
 				}
 				return;
 			case cc.KEY.tab:
@@ -44,9 +46,11 @@ window.KeyboardControlLayer = cc.Layer.extend({
 	onKeyUp: function(e){
 		switch(e){
 			case cc.KEY.v:
-				var webrtc = this._root.webrtc;
-				if(webrtc){
-					webrtc.muteMic(true);
+				if(this._root.netcode){
+					var webrtc = this._root.netcode.rtc;
+					if(webrtc){
+						webrtc.muteMic(true);
+					}
 				}
 				return;
 			case cc.KEY.tab:

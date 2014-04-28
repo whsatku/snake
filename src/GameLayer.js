@@ -91,12 +91,6 @@ window.GameLayer = cc.LayerColor.extend({
 		if(this.netcode.lastLobbyState){
 			this.onLobbyStateChange(this.netcode.lastLobbyState);
 		}
-
-		if(WebRTC.isSupported()){
-			this.webrtc = new WebRTC();
-			// this.webrtc.log = this.netcode.log;
-			this.webrtc.bind(this.netcode);
-		}
 	},
 
 	initPerkBar: function(){

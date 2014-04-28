@@ -6,6 +6,11 @@ var Netcode = function(){
 		return new Netcode();
 	}
 	GameLogic.event.call(this);
+	
+	this.rtc = new WebRTC(this);
+
+	// ease debugging
+	window.netcode = this;
 };
 
 Netcode.prototype = GameLogic.event.prototype;
@@ -79,12 +84,6 @@ Netcode.prototype.onData = function(data){
 		this.emit("online", data.online);
 		this.online = data.online;
 	}
-	// if(data.rtcOffer !== undefined){
-	// 	this.rtcAnswer(data);
-	// }
-	// if(data.rtc !== undefined){
-	// 	this.rtcCall(data.rtc);
-	// }
 	this.emit("data", data);
 };
 
@@ -94,14 +93,6 @@ Netcode.prototype.send = function(data){
 
 Netcode.prototype.input = function(key){
 	return this.send({command: "input", key: key});
-};
-
-// Override these
-Netcode.prototype.rtcAnswer = function(){};
-Netcode.prototype.rtcCall = function(){};
-
-Netcode.prototype.rtcCall = function(){
-
 };
 
 window.Netcode = Netcode;

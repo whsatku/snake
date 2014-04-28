@@ -26,7 +26,7 @@ app.config(["$stateProvider", function($stateProvider){
 	}).state("scoreboard", {
 		templateUrl: "template/scoreboard.html",
 		controller: "scoreboard",
-		params: ["data"]
+		params: ["data", "local"]
 	});
 }]);
 
@@ -54,6 +54,31 @@ app.factory("netcode", function(){
 	netcode.connect();
 	return netcode;
 });
+
+app.factory("handleRtcKey", ["netcode", function(){
+	return function($scope){
+		var onKeyDown = function(e){
+			if(e.which == 86){
+				netcode.rtc.muteMic(false);
+			}
+		};
+
+		var onKeyUp = function(e){
+			if(e.which == 86){
+				netcode.rtc.muteMic(true);
+			}
+		};
+
+		document.addEventListener("keydown", onKeyDown, false);
+		document.addEventListener("keyup", onKeyUp, false);
+
+		$scope.$on("$destroy", function(){
+			document.removeEventListener("keydown", onKeyDown, false);
+			document.removeEventListener("keyup", onKeyUp, false);
+			netcode.rtc.muteMic(true);
+		});
+	};
+}]);
 
 app.run(["$state", function($state){
 	$state.go("mainmenu");

@@ -20,7 +20,8 @@ angular.module("snake")
 	window.game.event.once("gameEnd", function(data){
 		data.name = settings.name;
 		$state.go("scoreboard", {
-			data: JSON.stringify(data)
+			data: JSON.stringify(data),
+			local: !!settings.local
 		});
 	});
 

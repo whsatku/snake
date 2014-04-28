@@ -34,6 +34,7 @@
 					</tr>
 				</tbody>
 			</table>
+			<p ng-show="canTalk">Hold v to talk</p>
 			<a href="#" ng-click="startGame()" class="btn btn-primary" ng-if="playerIndex == 0" ng-disabled="!ready || lobby.$invalid">Start game</a>
 			<a ng-if="lobbySettings.local" ui-sref="mainmenu" class="btn btn-default">Leave lobby</a>
 			<a ng-if="!lobbySettings.local" ui-sref="browse" class="btn btn-default">Leave lobby</a>

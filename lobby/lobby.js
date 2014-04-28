@@ -75,9 +75,11 @@ angular.module("snake")
 
 	if(!$scope.lobbySettings.local){
 		var initialPlayerName = localStorage.playerName;
-		$injector.invoke(["netcode", "$timeout", function(netcode, $timeout){
+		$injector.invoke(["netcode", "$timeout", "handleRtcKey", function(netcode, $timeout, handleRtcKey){
 			var hasInitialData = false;
 			var inServerSend = false;
+
+			handleRtcKey($scope);
 
 			var onData = function(data){
 				if(!hasInitialData && data.players !== undefined){
@@ -138,6 +140,8 @@ angular.module("snake")
 				netcode.send({command: "lobbysettings", settings: value});
 			}, true);
 
+			$scope.canTalk = !!netcode.rtc.stream;
+
 			var leaveToGame = false;
 
 			$scope.$on("$destroy", function(){
@@ -145,6 +149,7 @@ angular.module("snake")
 				if(leaveToGame){
 					return;
 				}
+				netcode.rtc.disconnectAll();
 				netcode.send({command: "lobbyleave"});
 			});
 

@@ -7,11 +7,12 @@ window.RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConne
 window.URL = window.URL || window.webkitURL || window.mozURL;
 window.RTCSessionDescription = window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription;
 
-var WebRTC = function WebRTC(){
+var WebRTC = function WebRTC(netcode){
 	if(!(this instanceof WebRTC)){
-		return new WebRTC();
+		return new WebRTC(netcode);
 	}
 	this.connections = {};
+	this.bind(netcode);
 	navigator.getUserMedia({audio: true}, this.onGotStream.bind(this), function(err){
 		console.error(err);
 	});
@@ -29,15 +30,14 @@ WebRTC.prototype.log = function(txt){
 WebRTC.prototype.bind = function(netcode){
 	var self = this;
 	this.netcode = netcode;
-	this.netcode.rtcAnswer = function(offer){
-		self.accept(offer.from, offer.rtcOffer);
-	};
-	this.netcode.rtcCall = function(id){
-		self.call(id);
-	};
-};
-
-WebRTC.prototype.connect = function(netcode){
+	this.netcode.on("data", function(data){
+		if(data.rtcOffer !== undefined){
+			self.accept(data.from, data.rtcOffer);
+		}
+		if(data.rtc !== undefined){
+			self.call(data.rtc);
+		}
+	});
 };
 
 WebRTC.prototype.call = function(id){
@@ -120,8 +120,8 @@ WebRTC.prototype._createPeerConnection = function(id){
 				document.body.removeChild(connection.element);
 			}
 		};
-		connection.oniceconnectionstatechange = function(){
-			if(connection.element && connection.iceConnectionState == "disconnected"){
+		connection.onsignalingstatechange = function(){
+			if(connection.element && connection.signalingState == "closed"){
 				console.log("[WebRTC] Closed "+id);
 				document.body.removeChild(connection.element);
 			}
@@ -140,11 +140,23 @@ WebRTC.prototype.onGotStream = function(stream){
 };
 
 WebRTC.prototype.muteMic = function(val){
+	if(!this.stream){
+		return;
+	}
 	var tracks = this.stream.getAudioTracks();
 	if(tracks.length === 0){
 		return;
 	}
 	tracks[0].enabled = !val;
+};
+
+WebRTC.prototype.disconnectAll = function(){
+	for(var key in this.connections){
+		var peer = this.connections[key];
+		peer.close();
+		document.body.removeChild(peer.element);
+		delete this.connections[key];
+	}
 };
 
 window.WebRTC = WebRTC;
