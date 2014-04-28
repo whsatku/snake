@@ -40,10 +40,10 @@ WorldObject.prototype.isOffScreen = function(){
 	if(this.x < 0 || this.y < 0){
 		return true;
 	}
-	if(this.x > this.world.state.width - 1){
+	if(this.x > this.world.width - 1){
 		return true;
 	}
-	if(this.y > this.world.state.height - 1){
+	if(this.y > this.world.height - 1){
 		return true;
 	}
 	return false;
@@ -60,8 +60,8 @@ WorldObject.prototype.isCollideWith = function(b, crosscheck){
 };
 
 WorldObject.prototype.randomPosition = function(){
-	this.x = this.world.random.randInt(0, this.world.state.width);
-	this.y = this.world.random.randInt(0, this.world.state.height);
+	this.x = this.world.random.randInt(0, this.world.width);
+	this.y = this.world.random.randInt(0, this.world.height);
 
 	while(this.world.checkCollision(this).length > 0){
 		this.randomPosition();

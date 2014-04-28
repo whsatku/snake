@@ -119,8 +119,8 @@ window.GameLayer = cc.LayerColor.extend({
 	},
 
 	initMap: function(){
-		var w = this.game.state.width * this.gridSize[0];
-		var h = this.game.state.height * this.gridSize[1];
+		var w = this.game.width * this.gridSize[0];
+		var h = this.game.height * this.gridSize[1];
 		this.setContentSize(w, h);
 		this.fillFloor();
 	},
@@ -234,7 +234,7 @@ window.GameLayer = cc.LayerColor.extend({
 		var mapData = GameLogic.map[mapName];
 		var tileset = this.tileset[mapData.tileset || "brick"];
 
-		this.tileNode = cc.SpriteBatchNode.create("res/tiles.png", this.game.state.width * this.game.state.height);
+		this.tileNode = cc.SpriteBatchNode.create("res/tiles.png", this.game.width * this.game.height);
 		this.addChild(this.tileNode);
 
 		if(tileset instanceof cc.Color3B){
@@ -246,8 +246,8 @@ window.GameLayer = cc.LayerColor.extend({
 			this.setColor(tileset[2]);
 		}
 
-		for(var y=0; y<this.game.state.height; y++){
-			for(var x=0; x<this.game.state.width; x++){
+		for(var y=0; y<this.game.height; y++){
+			for(var x=0; x<this.game.width; x++){
 				var node = cc.Sprite.create.apply(null, tileset);
 				node.setPosition(this.toUIPosition(x, y));
 				this.tileNode.addChild(node);
@@ -334,7 +334,7 @@ window.GameLayer = cc.LayerColor.extend({
 	},
 
 	toUIPosition: function(x, y){
-		y = this.game.state.height - y - 1;
+		y = this.game.height - y - 1;
 		return cc.p(
 			x * this.gridSize[0] + this.gridSize[0]/2,
 			y * this.gridSize[1] + this.gridSize[1]/2
@@ -359,7 +359,6 @@ window.GameLayer = cc.LayerColor.extend({
 	},
 
 	showScoreboard: function(show){
-		console.log(show);
 		var x = show ? 10 : -this.scoreboard.width;
 		var parentBB = this.getParent().getBoundingBox();
 		var action = cc.MoveTo.create(this.scoreboardHideDuration, cc.p(x, parentBB.height - 10 - this.scoreboard.height));

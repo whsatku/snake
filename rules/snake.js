@@ -87,15 +87,15 @@ Snake.prototype._wrapAround = function(){
 		return;
 	}
 	if(this.x < 0){
-		this.x = this.world.state.width - 1;
+		this.x = this.world.width - 1;
 	}
 	if(this.y < 0){
-		this.y = this.world.state.height - 1;
+		this.y = this.world.height - 1;
 	}
-	if(this.x >= this.world.state.width){
+	if(this.x >= this.world.width){
 		this.x = 0;
 	}
-	if(this.y >= this.world.state.height){
+	if(this.y >= this.world.height){
 		this.y = 0;
 	}
 };

@@ -18,8 +18,6 @@ var Game = function SnakeGame(){
 	this._snakes = [];
 	this.state = {
 		state: Game.STATES.PREPARE,
-		width: 40,
-		height: 30,
 		updateRate: 150,
 		map: null,
 		step: 0,
@@ -29,6 +27,9 @@ var Game = function SnakeGame(){
 		itemLimit: 0,
 		fragLimit: 0
 	};
+	// sometimes something doesn't need to be always synced
+	// if this hit the limit, netcode would just send scoreboard to the client
+	this.itemsSpawned = 0;
 	this._seedRng();
 	this.startTime = new Date().getTime();
 	this.on("snake.dead", this.onSnakeDead.bind(this));
@@ -134,6 +135,7 @@ Game.prototype._gameStep = function(){
 		objects[index].update();
 	}
 	this.checkAllCollision();
+	this.checkWinCondition();
 	this.generatePowerup();
 };
 
@@ -178,6 +180,7 @@ Game.prototype.generatePowerup = function(){
 		powerup.randomPosition();
 
 		this.objects.push(powerup);
+		this.itemsSpawned++;
 	}
 	if(!this.hasActivePowerup(false) && this.state.perk){
 		if(this.random.random() < 0.01){
@@ -278,15 +281,15 @@ Game.prototype.loadMap = function(mapName){
 	}
 	var map = maps[mapName].split("\n");
 	this.state.map = mapName;
-	this.state.width = map[0].length;
-	this.state.height = map.length;
+	this.width = map[0].length;
+	this.height = map.length;
 
 	this.objects = [];
 
 	var Obstacle = require("./obstacle");
 
-	for(var y = 0; y < this.state.height; y++){
-		for(var x = 0; x < this.state.width; x++){
+	for(var y = 0; y < this.height; y++){
+		for(var x = 0; x < this.width; x++){
 			if(map[y] && [undefined, null, " "].indexOf(map[y][x]) == -1){
 				var instance = new Obstacle(this);
 				instance.x = x;
@@ -369,6 +372,7 @@ Game.prototype.onSnakeDead = function(snake){
 		this.emit("snake.gameOver", snake);
 	}
 	if(!this.hasSnakeAlive()){
+		this.state.state = Game.STATES.END;
 		this.emit("gameOver");
 	}
 };
@@ -398,6 +402,32 @@ Game.prototype.getEndscreenData = function(){
 Game.prototype.hasSnakeAlive = function(){
 	for(var i = 0; i < this._snakes.length; i++){
 		if(this._snakes[i] instanceof Snake && !this._snakes[i].dead){
+			return true;
+		}
+	}
+	return false;
+};
+
+Game.prototype.checkWinCondition = function(){
+	if(this.isGameWon()){
+		this.state.state = Game.STATES.END;
+		this.emit("gameOver");
+	}
+};
+
+Game.prototype.isGameWon = function(){
+	if(this.state.scoreLimit === 0 && this.state.itemLimit === 0){
+		return false;
+	}
+	if(this.itemsSpawned > this.state.itemLimit){
+		return true;
+	}
+	for(var i = 0; i < this._snakes.length; i++){
+		var snake = this._snakes[i];
+		if(!(snake instanceof Snake)){
+			continue;
+		}
+		if(snake.score >= this.state.scoreLimit){
 			return true;
 		}
 	}
