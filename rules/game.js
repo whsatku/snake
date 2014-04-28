@@ -4,6 +4,7 @@ var EventEmitter = require("eventemitter2").EventEmitter2;
 var randy = require("randy");
 var Snake = require("./snake");
 var Powerup = require("./powerup");
+var MovingWorldObject = require("./movingworldobject");
 var PerkPowerup = require("./perkpowerup");
 var maps = require("./maps");
 var crc32 = require("crc32");
@@ -248,7 +249,7 @@ Game.prototype.getSnake = function(id){
 
 Game.prototype.input = function(player, input){
 	var snake = this.getSnake(player);
-	if(!snake){
+	if(!snake || snake.dead){
 		return false;
 	}
 
@@ -361,8 +362,14 @@ Game.prototype.setSettings = function(settings){
 
 Game.prototype.onSnakeDead = function(snake){
 	if(this.state.fragLimit > 0 && snake.death >= this.state.fragLimit){
+		snake.reset();
+		snake.direction = MovingWorldObject.DIR.STOP;
+		snake.hidden = true;
+		snake.dead = true;
 		this.emit("snake.gameOver", snake);
-		this.removeSnake(snake);
+	}
+	if(!this.hasSnakeAlive()){
+		this.emit("gameOver");
 	}
 };
 
@@ -386,6 +393,15 @@ Game.prototype.getEndscreenData = function(){
 	});
 
 	return out;
+};
+
+Game.prototype.hasSnakeAlive = function(){
+	for(var i = 0; i < this._snakes.length; i++){
+		if(this._snakes[i] instanceof Snake && !this._snakes[i].dead){
+			return true;
+		}
+	}
+	return false;
 };
 
 module.exports = Game;

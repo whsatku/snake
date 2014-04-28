@@ -40,7 +40,6 @@ window.WaitLoad = cc.LayerColor.extend({
 
 	updateLoadingStatus: function(data){
 		this.playerList.removeAllChildren();
-		console.log(data);
 
 		for(var i = 0; i < data.length; i++){
 			var player = data[i];

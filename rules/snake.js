@@ -22,6 +22,7 @@ var Snake = function Snake(){
 	this.itemsCollected = 0;
 	this.powerupCollected = {};
 	this.killDetails = {};
+	this.dead = false;
 
 	this.on("collision", this.onCollide.bind(this));
 	this.on("perkAdd", this.onAddPerk.bind(this));
@@ -44,6 +45,9 @@ var PerkPowerup = require("./perkpowerup");
 require("util").inherits(Snake, MovingWorldObject);
 
 Snake.prototype.update = function(){
+	if(this.dead){
+		return;
+	}
 	this.maxKillStreak = Math.max(this.killStreak, this.maxKillStreak);
 
 	this.expirePerk();
@@ -127,6 +131,9 @@ Snake.prototype.input = function(input){
 };
 
 Snake.prototype.isCollideWith = function(b, crosscheck){
+	if(this.dead){
+		return false;
+	}
 	var target, checkObject;
 	if(b instanceof Snake){
 		target = b.positions;
@@ -262,6 +269,7 @@ Snake.prototype.getState = function(){
 	state.death = this.death;
 	state.score = this.score;
 	state.killStreak = this.killStreak;
+	state.dead = this.dead;
 	return state;
 };
 
@@ -278,6 +286,7 @@ Snake.prototype.loadState = function(state){
 	this.death = state.death;
 	this.score = state.score;
 	this.killStreak = state.killStreak;
+	this.dead = state.dead;
 };
 
 Snake.prototype.addPerk = function(name, duration){

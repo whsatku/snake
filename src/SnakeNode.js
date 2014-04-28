@@ -36,6 +36,8 @@ window.SnakeNode = WorldObjectNode.extend({
 		}
 
 		this.tailLayer.setVisible(!obj.hidden);
+		this.perkBar.setVisible(!obj.hidden);
+		this.playerName.setVisible(!obj.hidden);
 
 		this._cutTails(obj);
 		this._createTails(obj);

@@ -118,6 +118,7 @@ Lobby.prototype.startLobby = function(){
 	this.state = Lobby.STATE.WAIT_FOR_LOAD;
 	this.game = new GameLogic.Game();
 	this.game.setSettings(this.settings);
+	this.game.on("gameOver", this.onGameOver.bind(this));
 	this.sendStateToAll();
 };
 
@@ -189,6 +190,9 @@ Lobby.prototype.getState = function(hashed){
 				ready: player.ready
 			});
 		}
+	}
+	if(this.state === Lobby.STATE.FINISHED){
+		state.endscreen = this.game.getEndscreenData();
 	}
 	return state;
 };
@@ -338,6 +342,21 @@ Lobby.prototype.isLobbyHead = function(spark){
 Lobby.prototype.setSettings = function(settings){
 	_.extend(this.settings, _.pick(settings, Lobby.VALID_SETTINGS));
 	this.sendStateToAll();
+};
+
+Lobby.prototype.onGameOver = function(){
+	this.state = Lobby.STATE.FINISHED;
+
+	this.sendStateToAll(true);
+
+	this.kickAll();
+};
+
+Lobby.prototype.kickAll = function(){
+	this.clients.forEach(function(spark){
+		delete spark.lobby;
+	}, this);
+	this.clients = [];
 };
 
 module.exports = Lobby;

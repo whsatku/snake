@@ -26,8 +26,8 @@
 				<th>Kill</th>
 				<td ng-repeat="snake in data.snakes">
 					<div ng-bind="snake.kill"></div>
-					<div ng-repeat="name, killData in snake.killDetails">
-						<strong class="snake-color-{{killData.color}}">{{name|ucfirst}}:</strong>
+					<div ng-repeat="(name, killData) in snake.killDetails">
+						<strong class="snake-color-{{killData.color}}">{{name}}:</strong>
 						{{killData.count}}
 					</div>
 				</td>
@@ -51,7 +51,7 @@
 			<tr>
 				<th>Powerup collected</th>
 				<td ng-repeat="snake in data.snakes">
-					<div ng-repeat="name, value in snake.powerup">
+					<div ng-repeat="(name, value) in snake.powerup">
 						<strong>{{name|ucfirst}}:</strong>
 						{{value}}
 					</div>

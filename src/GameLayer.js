@@ -52,6 +52,7 @@ window.GameLayer = cc.LayerColor.extend({
 		this.game.on("snake.dead", this.onSnakeDie.bind(this));
 		this.game.on("perkCollect", this.onPerkCollect.bind(this));
 		this.game.on("countdown", this.onCountdown.bind(this));
+		this.game.on("gameOver", this.onGameOver.bind(this));
 	},
 
 	initLocalGame: function(){
@@ -159,7 +160,7 @@ window.GameLayer = cc.LayerColor.extend({
 
 	onSnakeGameOver: function(snake){
 		if(snake.index === 0){
-			cc.Application.getInstance().endGame(this.game.getEndscreenData());
+			this.showEndscreen();
 		}
 	},
 
@@ -169,6 +170,17 @@ window.GameLayer = cc.LayerColor.extend({
 
 	onCountdown: function(value){
 		this.log(value);
+	},
+
+	onGameOver: function(){
+		this.showEndscreen();
+	},
+
+	showEndscreen: function(data){
+		if(data === undefined){
+			data = this.game.getEndscreenData();
+		}
+		cc.Application.getInstance().endGame(data);
 	},
 
 	onLobbyStateChange: function(state){ 	
@@ -188,6 +200,8 @@ window.GameLayer = cc.LayerColor.extend({
 			// full state object
 			this.game.loadState(data.game);
 			this.netcode.send({command: "ready"});
+		}else if(typeof data.endscreen == "object"){
+			this.showEndscreen(data.endscreen);
 		}else if(data.hash !== undefined && data.state === Netcode.Const.LobbyState.IN_GAME){
 			// game step
 			data.cmd.forEach(function(cmd){

@@ -27,6 +27,10 @@ angular.module("snake")
 	setTimeout(function(){
 		document.getElementById("game").children[0].focus();
 	}, 10);
+
+	$scope.$on("$destroy", function(){
+		$rootScope.showGame = false;
+	});
 }]);
 
 })();

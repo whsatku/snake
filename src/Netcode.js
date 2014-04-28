@@ -62,10 +62,14 @@ Netcode.prototype.onData = function(data){
 
 	if(typeof data.state !== undefined && data.state !== this.lastLobbyState){
 		this.lastLobbyState = data.state;
+		delete this.lastEndScreen;
 		this.emit("state", data.state);
 	}
 	if(typeof data.game == "object"){
 		this.lastGameState = data.game;
+	}
+	if(typeof data.endscreen == "object"){
+		this.lastEndScreen = data.endscreen;
 	}
 	if(data.motd !== undefined){
 		this.emit("motd", data.motd);
