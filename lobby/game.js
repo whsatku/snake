@@ -8,7 +8,7 @@ angular.module("lobby")
 	var players = JSON.parse(params.players);
 	settings.players = players;
 
-	$scope.game = games.snake.folder;
+	$scope.game = games[settings.game].folder;
 
 	$scope.$on("$viewContentLoaded", function(){
 		var game = document.getElementById("game");

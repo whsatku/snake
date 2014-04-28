@@ -3,8 +3,9 @@
 "use strict";
 
 angular.module("lobby")
-.controller("lobby", ["$scope", "$stateParams", "$state", "$injector", "$modal", function($scope, params, $state, $injector, $modal){
+.controller("lobby", ["$scope", "$stateParams", "$state", "$injector", "$modal", "games", function($scope, params, $state, $injector, $modal, games){
 	$scope.lobbySettings = {
+		game: "snake",
 		fragLimit: 0,
 		scoreLimit: 200,
 		itemLimit: 100,
@@ -27,6 +28,14 @@ angular.module("lobby")
 			ready: true
 		};
 		$scope.ready = true;
+	}
+
+	$scope.games = {};
+	for(var key in games){
+		var data = games[key];
+		if(!$scope.lobbySettings.local || !data.multionly){
+			$scope.games[key] = data;
+		}
 	}
 
 	$scope.currentPlayer = $scope.players[$scope.playerIndex];
@@ -159,6 +168,7 @@ angular.module("lobby")
 				if($scope.playerIndex === 0){
 					netcode.send({command: "lobbystart"});
 				}
+				$scope.startGame = angular.noop;
 				origStartGame();
 			};
 		}]);

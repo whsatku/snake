@@ -34,6 +34,11 @@ app.constant("games", {
 	"snake": {
 		"name": "Snake Run",
 		"folder": "snake"
+	},
+	"nunin": {
+		"name": "Nunin",
+		"folder": "nunin",
+		"multionly": true
 	}
 });
 

@@ -1,6 +1,5 @@
 "use strict";
 
-var GameLogic = require("./rules");
 var _ = require("lodash");
 var EventEmitter = require("events").EventEmitter;
 var winston = require("winston");
@@ -26,6 +25,7 @@ var Lobby = function Lobby(id){
 	this.cmdQueue = [];
 	this.waitClients = false;
 	this.settings = {
+		game: "snake",
 		name: Lobby.DEFAULT_NAME,
 		map: Lobby.DEFAULT_MAP,
 		fragLimit: 0,
@@ -45,7 +45,7 @@ Lobby.STATE = {
 Lobby.MAX_CLIENT = 6;
 Lobby.DEFAULT_NAME = "Untitled";
 Lobby.DEFAULT_MAP = "plain";
-Lobby.VALID_SETTINGS = ["name", "map", "scoreLimit", "itemLimit", "fragLimit", "perk"];
+Lobby.VALID_SETTINGS = ["game", "name", "map", "scoreLimit", "itemLimit", "fragLimit", "perk"];
 
 require("util").inherits(Lobby, EventEmitter);
 
@@ -119,9 +119,20 @@ Lobby.prototype.removeClient = function(spark){
 Lobby.prototype.startLobby = function(){
 	this.setAllReady(false);
 	this.state = Lobby.STATE.WAIT_FOR_LOAD;
-	this.game = new GameLogic.Game();
+
+	switch(this.settings.game){
+		case "snake":
+			var GameLogic = require("./rules");
+			this.game = new GameLogic.Game();
+			break;
+		case "nunin":
+			this.game = new (require("./nunin"))();
+			break;
+	}
+
 	this.game.setSettings(this.settings);
 	this.game.on("gameOver", this.onGameOver.bind(this));
+
 	this.sendStateToAll();
 };
 
@@ -139,6 +150,7 @@ Lobby.prototype.startGame = function(){
 	this.lastTick = new Date().getTime();
 
 	this.sendStateToAll(true);
+	this._autoNextTick();
 };
 
 /**
@@ -253,14 +265,16 @@ Lobby.prototype.onReady = function(){
 			var self = this;
 			var timeSinceTick = new Date().getTime() - this.lastTick;
 
-			if(timeSinceTick >= this.game.state.updateRate){
-				this.nextTick();
-			}else{
-				this.waitTick = true;
-				setTimeout(function(){
-					self.waitTick = false;
-					self.nextTick();
-				}, this.game.state.updateRate - timeSinceTick);
+			if(this.waitClients){
+				if(timeSinceTick >= this.game.state.updateRate){
+					this.nextTick();
+				}else{
+					this.waitTick = true;
+					setTimeout(function(){
+						self.waitTick = false;
+						self.nextTick();
+					}, this.game.state.updateRate - timeSinceTick);
+				}
 			}
 			break;
 	}
@@ -278,13 +292,14 @@ Lobby.prototype.nextTick = function(){
 	this.setAllReady(false);
 	this.game.step();
 	this.sendStateToAll(true);
-	if(!this.waitClients){
-		this._autoNextTick();
-	}
+	this._autoNextTick();
 };
 
 Lobby.prototype._autoNextTick = function(){
 	var self = this;
+	if(this.waitClients){
+		return;
+	}
 	if(this._autoNextTickTimer){
 		return;
 	}
@@ -292,9 +307,8 @@ Lobby.prototype._autoNextTick = function(){
 		return;
 	}
 	this._autoNextTickTimer = setTimeout(function(){
-		winston.warn("[Lobby %s] Client lags too much! Doing forcefully tick.", self.id);
 		self.nextTick();
-	}, this.game.state.updateRate + 50);
+	}, this.game.state.updateRate);
 };
 
 Lobby.prototype.input = function(spark, input){
