@@ -4,7 +4,6 @@
 
 angular.module("snake")
 .controller("scoreboard", ["$scope", "$stateParams", "$injector", function($scope, params, $injector){
-	console.log(params);
 	$scope.data = JSON.parse(params.data);
 	
 	if(params.local == "false"){
