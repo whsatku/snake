@@ -76,6 +76,9 @@ Netcode.prototype.onData = function(data){
 	if(typeof data.endscreen == "object"){
 		this.lastEndScreen = data.endscreen;
 	}
+	if(typeof data.ping == "object"){
+		this.ping = data.ping;
+	}
 	if(data.motd !== undefined){
 		this.emit("motd", data.motd);
 		this.motd = data.motd;

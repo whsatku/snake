@@ -172,7 +172,8 @@ Lobby.prototype.sendState = function(spark, hashed){
 Lobby.prototype.getState = function(hashed){
 	var state = {
 		lobby: this.id,
-		state: this.state
+		state: this.state,
+		ping: _.pluck(this.clients, "ping")
 	};
 	if(this.game){
 		state.game = this.game.prepareState();
@@ -223,6 +224,10 @@ Lobby.prototype.isAllReady = function(){
 
 Lobby.prototype.setReady = function(spark, val){
 	spark.ready = val;
+
+	if(this.lastTick){
+		spark.ping = new Date().getTime() - this.lastTick;
+	}
 
 	this.emit("playerReady", spark);
 

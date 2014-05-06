@@ -3,14 +3,14 @@
 
 window.Scoreboard = cc.LayerColor.extend({
 	background: cc.c4b(0, 0, 0, 150),
-	width: 230,
+	width: 300,
 	height: 300,
 
 	rowHeight: 30,
 	padTop: 10,
 	padLeft: 10,
 	padRight: 10,
-	cellWidth: 30,
+	cellWidth: 40,
 
 	init: function() {
 		this._super(this.background, this.width, this.height);
@@ -18,20 +18,17 @@ window.Scoreboard = cc.LayerColor.extend({
 
 		this.players = [];
 
-		var headerS = this.createText("Score", true);
-		headerS.setPosition(this.width - this.padRight - this.cellWidth*2, this.height - this.padTop);
-		var headerK = this.createText("K", true);
-		headerK.setPosition(this.width - this.padRight - this.cellWidth, this.height - this.padTop);
-		var headerD = this.createText("D", true);
-		headerD.setPosition(this.width - this.padRight, this.height - this.padTop);
-		this.addChild(headerS);
-		this.addChild(headerK);
-		this.addChild(headerD);
+		["Lag", "D", "K", "Score"].forEach(function(text, index){
+			var header = this.createText(text, true, 16);
+			header.setPosition(this.width - this.padRight - this.cellWidth*index, this.height - this.padTop);
+			this.addChild(header);
+		}, this);
 	},
 
 	update: function(){
 		var game = this.getGameLayer().game;
 		var realSnakeCount = 0;
+		var netcode = this.getGameLayer().netcode;
 		for(var i = 0; i < game._snakes.length; i++){
 			var snake = game._snakes[i];
 			if(!(snake instanceof GameLogic.Snake)){
@@ -45,6 +42,7 @@ window.Scoreboard = cc.LayerColor.extend({
 			this.players[realSnakeCount][Scoreboard.POS.SCORE].setString(snake.score);
 			this.players[realSnakeCount][Scoreboard.POS.KILL].setString(snake.kill);
 			this.players[realSnakeCount][Scoreboard.POS.DEATH].setString(snake.death);
+			this.players[realSnakeCount][Scoreboard.POS.PING].setString(netcode ? netcode.ping[snake.index] : 0);
 			realSnakeCount++;
 		}
 		for(var i = realSnakeCount; i < this.players.length; i++){
@@ -68,8 +66,8 @@ window.Scoreboard = cc.LayerColor.extend({
 		}
 	},
 
-	createText: function(text, alignRight){
-		var out = cc.LabelTTF.create(text, "Tahoma", 18);
+	createText: function(text, alignRight, size){
+		var out = cc.LabelTTF.create(text, "Tahoma", size || 18);
 		out.setAnchorPoint(alignRight === true ? 1 : 0, 1);
 		return out;
 	},
@@ -83,7 +81,7 @@ window.Scoreboard = cc.LayerColor.extend({
 
 		var out = [name];
 
-		for(var i = 2; i >= 0; i--){
+		for(var i = 3; i >= 0; i--){
 			var row = this.createText("", true);
 			row.setPosition(this.width - this.padRight - this.cellWidth*i, y);
 			this.addChild(row);
@@ -98,5 +96,6 @@ Scoreboard.POS = {
 	NAME: 0,
 	SCORE: 1,
 	KILL: 2,
-	DEATH: 3
+	DEATH: 3,
+	PING: 4
 };
