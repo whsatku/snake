@@ -49,6 +49,18 @@ app.filter("ucfirst", function(){
 	};
 });
 
+app.filter("timehumanize", function(){
+	return function(input){
+		input /= 1000;
+		var min = Math.floor(input/60);
+		var sec = Math.ceil(input - min*60);
+		if(sec.toString().length < 2){
+			sec = "0" + sec;
+		}
+		return min+":"+sec;
+	};
+});
+
 app.factory("netcode", function(){
 	var netcode = new Netcode();
 	netcode.connect();

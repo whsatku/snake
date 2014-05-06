@@ -2,7 +2,7 @@
 	<h1>{{data.name}}</h1>
 	
 	<p>
-		<div><strong>Game time:</strong> {{data.time}}</div>
+		<div><strong>Game time:</strong> {{data.time|timehumanize}}</div>
 		<div><strong>Map:</strong> {{data.settings.map|ucfirst}}</div>
 		<div><strong>Score limit:</strong> {{data.settings.scoreLimit}}</div>
 		<div><strong>Item limit:</strong> {{data.settings.itemLimit}}</div>
