@@ -24,14 +24,14 @@ var Lobby = function Lobby(id){
 	this.on("playerReady", this.onPlayerReady.bind(this));
 	this.lastTick = 0;
 	this.cmdQueue = [];
-	this.waitClients = false;
 	this.settings = {
 		name: Lobby.DEFAULT_NAME,
 		map: Lobby.DEFAULT_MAP,
 		fragLimit: 0,
 		scoreLimit: 200,
 		itemLimit: 100,
-		perk: true
+		perk: true,
+		lagMode: 1
 	};
 };
 
@@ -42,10 +42,16 @@ Lobby.STATE = {
 	"FINISHED": 3
 };
 
+Lobby.LAG_MODE = {
+	"WAIT": 0,
+	"MAX_WAIT": 1,
+	"NO_WAIT": 2
+}
+
 Lobby.MAX_CLIENT = 6;
 Lobby.DEFAULT_NAME = "Untitled";
 Lobby.DEFAULT_MAP = "plain";
-Lobby.VALID_SETTINGS = ["name", "map", "scoreLimit", "itemLimit", "fragLimit", "perk"];
+Lobby.VALID_SETTINGS = ["name", "map", "scoreLimit", "itemLimit", "fragLimit", "perk", "lagMode"];
 
 require("util").inherits(Lobby, EventEmitter);
 
@@ -251,7 +257,7 @@ Lobby.prototype.onReady = function(){
 			this.startGame();
 			break;
 		case Lobby.STATE.IN_GAME:
-			if(this.waitTick){
+			if((this.settings.lagMode === Lobby.LAG_MODE.NO_WAIT && this._autoNextTickTimer) || this.waitTick){
 				return;
 			}
 
@@ -283,7 +289,7 @@ Lobby.prototype.nextTick = function(){
 	this.setAllReady(false);
 	this.game.step();
 	this.sendStateToAll(true);
-	if(!this.waitClients){
+	if(this.settings.lagMode !== Lobby.LAG_MODE.WAIT){
 		this._autoNextTick();
 	}
 };
@@ -299,7 +305,7 @@ Lobby.prototype._autoNextTick = function(){
 	this._autoNextTickTimer = setTimeout(function(){
 		winston.warn("[Lobby %s] Client lags too much! Doing forcefully tick.", self.id);
 		self.nextTick();
-	}, this.game.state.updateRate + 50);
+	}, this.settings.lagMode === Lobby.LAG_MODE.MAX_WAIT ? this.game.state.updateRate + 50 : this.game.state.updateRate);
 };
 
 Lobby.prototype.input = function(spark, input){
@@ -349,6 +355,7 @@ Lobby.prototype.isLobbyHead = function(spark){
 
 Lobby.prototype.setSettings = function(settings){
 	_.extend(this.settings, _.pick(settings, Lobby.VALID_SETTINGS));
+	this.settings.lagMode = parseInt(this.settings.lagMode, 10);
 	this.sendStateToAll();
 };
 
