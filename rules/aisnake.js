@@ -2,6 +2,7 @@
 
 var pathfinder = require("a-star");
 var Powerup = require("./powerup");
+var WorldObject = require("./worldobject");
 
 var AISnake = function AISnake(){
 	AISnake.super_.apply(this, arguments);
@@ -10,6 +11,8 @@ var AISnake = function AISnake(){
 		this[fn] = this[fn].bind(this);
 	}, this);
 };
+
+AISnake.AI_BUDGET = 5;
 
 // AI calculation should not be redone on other clients
 AISnake.cls = "Snake";
@@ -20,9 +23,9 @@ AISnake.prototype.beforeStep = function(){
 	AISnake.super_.prototype.beforeStep.apply(this, arguments);
 
 	this._powerup = this.getPowerup();
-	var path = this.findPath(1).path;
-	if(path.length > 1){
-		var next = path[1];
+	var path = this.findPath(AISnake.AI_BUDGET);
+	if(path.path.length > 1){
+		var next = path.path[1];
 		var input = this.getInputTo(next);
 		if(input !== undefined && this.input(input)){
 			this.emit("input", input);
@@ -57,20 +60,20 @@ AISnake.prototype.neighbor = function(node){
 	for(var i = 0; i < neighborMatrix.length; i++){
 		var x = (node[0] + neighborMatrix[i][0] + this.world.width) % this.world.width;
 		var y = (node[1] + neighborMatrix[i][1] + this.world.height) % this.world.height;
-		var tile = this.world.getObjectAt(x, y);
-		// TODO: More elaborate check for snakes
-		if(tile && tile.deadly){
+		var nNode = [x, y];
+		if(!this.isWalkable(nNode)){
 			continue;
 		}
-		out.push([x, y]);
+		out.push(nNode);
 	}
 	return out;
 };
 AISnake.prototype.distance = function(a, b){
 	return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
-}
+};
 AISnake.prototype.heuristic = function(node){
 	if(!this._powerup){
+		console.error("powerup not found");
 		return 1000;
 	}
 	return this.distance(node, [this._powerup.x, this._powerup.y]);
@@ -95,6 +98,19 @@ AISnake.prototype.findPath = function(timeout, start){
 	});
 };
 
+AISnake.prototype.isWalkable = function(node){
+	var object = new WorldObject(this.world);
+	object.x = node[0];
+	object.y = node[1];
+	var collision = this.world.checkCollision(object);
+	for(var i = 0; i < collision.length; i++){
+		if(collision[i].deadly){
+			return false;
+		}
+	}
+	return true;
+};
+
 AISnake.prototype.getInputTo = function(target, start){
 	if(start === undefined){
 		start = this.getStartNode();
@@ -103,14 +119,22 @@ AISnake.prototype.getInputTo = function(target, start){
 	var xDiff = start[0] - target[0];
 	var yDiff = start[1] - target[1];
 
-	if(xDiff < 0){
+	if(xDiff == -1){
 		return "right";
-	}else if(xDiff > 0){
+	}else if(xDiff == 1){
 		return "left";
-	}else if(yDiff < 0){
+	}else if(yDiff == -1){
 		return "down";
-	}else if(yDiff > 0){
+	}else if(yDiff == 1){
 		return "up";
+	}else if(xDiff < 0){ // wrap left
+		return "left";
+	}else if(xDiff > 0){
+		return "right";
+	}else if(yDiff < 0){
+		return "up";
+	}else if(yDiff > 0){
+		return "down";
 	}
 };
 
