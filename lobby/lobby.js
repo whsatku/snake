@@ -52,6 +52,26 @@ angular.module("snake")
 		});
 	};
 
+	$scope.addBot = function(){
+		for(var i = 0; i < $scope.players.length; i++){
+			if($scope.players[i] === null){
+				$scope.players[i] = {
+					name: "Bot",
+					// TODO: Make color unique
+					color: Math.floor(Math.random() * 5)+1,
+					ready: true,
+					bot: true
+				};
+				break;
+			}
+		}
+	};
+	$scope.kick = function(index){
+		if($scope.players[index].bot){
+			$scope.players[index] = null;
+		}
+	};
+
 	$scope.$watch("players", function(){
 		$scope.ready = $scope.players.every(function(item){
 			return item === null || item.ready;

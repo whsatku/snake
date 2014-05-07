@@ -14,9 +14,10 @@
     "gulp-streamify": "0.0.5"
   },
   "dependencies": {
-    "randy": "^1.4.3",
-    "multiline": "^0.2.0",
+    "a-star": "^0.1.0",
     "crc32": "~0.2.2",
-    "eventemitter2": "^0.4.13"
+    "eventemitter2": "^0.4.13",
+    "multiline": "^0.2.0",
+    "randy": "^1.4.3"
   }
 }

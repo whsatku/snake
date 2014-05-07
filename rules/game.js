@@ -3,6 +3,7 @@
 var EventEmitter = require("eventemitter2").EventEmitter2;
 var randy = require("randy");
 var Snake = require("./snake");
+var AISnake = require("./aisnake");
 var Powerup = require("./powerup");
 var MovingWorldObject = require("./movingworldobject");
 var PerkPowerup = require("./perkpowerup");
@@ -89,7 +90,12 @@ Game.prototype.removeSnake = function(snake){
 };
 
 Game.prototype._createSnake = function(data){
-	var snake = new Snake(this);
+	var snake;
+	if(data.bot){
+		snake = new AISnake(this);
+	}else{
+		snake = new Snake(this);
+	}
 	if(data instanceof Object){
 		snake.name = data.name;
 		snake.color = data.color;
@@ -432,6 +438,21 @@ Game.prototype.isGameWon = function(){
 		}
 	}
 	return false;
+};
+
+Game.prototype.getObjectAt = function(x, y){
+	// note: does not work with multitile object (eg. snake)
+	if(y === undefined){
+		y = x[1];
+		x = x[0];
+	}
+	for(var i = 0; i < this.objects.length; i++){
+		var obj = this.objects[i];
+		if(obj.x === x && obj.y === y){
+			return obj;
+		}
+	}
+	return null;
 };
 
 module.exports = Game;

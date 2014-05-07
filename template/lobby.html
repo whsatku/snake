@@ -29,13 +29,15 @@
 								<option value="6" ng-bind="6|snakeColor" class="snake-color-6"></option>
 							</select>
 						</td>
-						<td ng-if="player && $index != playerIndex">{{player.ready | yesno}}</td>
+						<td ng-if="player && !player.bot && $index != playerIndex">{{player.ready | yesno}}</td>
+						<td ng-if="player.bot"><a href="#" ng-click="kick($index)">Kick</a></td>
 						<td ng-if="player && $index == playerIndex"><input type="checkbox" ng-model="player.ready" ng-disabled="player.name.length == 0"></td>
 					</tr>
 				</tbody>
 			</table>
 			<p ng-show="canTalk">Hold v to talk</p>
 			<a href="#" ng-click="startGame()" class="btn btn-primary" ng-if="playerIndex == 0" ng-disabled="!ready || lobby.$invalid">Start game</a>
+			<a href="#" class="btn btn-default" ng-if="playerIndex == 0" ng-click="addBot()">Add bot</a>
 			<a ng-if="lobbySettings.local" ui-sref="mainmenu" class="btn btn-default">Leave lobby</a>
 			<a ng-if="!lobbySettings.local" ui-sref="browse" class="btn btn-default">Leave lobby</a>
 		</div>

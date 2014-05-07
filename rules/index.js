@@ -4,6 +4,7 @@ module.exports = {
 	"MovingWorldObject": require("./movingworldobject"),
 	"Obstacle": require("./obstacle"),
 	"Snake": require("./snake"),
+	"AISnake": require("./aisnake"),
 	"Powerup": require("./powerup"),
 	"PerkPowerup": require("./perkpowerup"),
 	"Spawn": require("./spawn"),
