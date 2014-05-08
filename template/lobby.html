@@ -30,7 +30,10 @@
 							</select>
 						</td>
 						<td ng-if="player && !player.bot && $index != playerIndex">{{player.ready | yesno}}</td>
-						<td ng-if="player.bot"><a href="#" ng-click="kick($index)">Kick</a></td>
+						<td ng-if="player.bot">
+							<a href="#" ng-click="kick($index)" ng-if="playerIndex == 0">Kick</a>
+							<span ng-if="playerIndex != 0">Bot</span>
+						</td>
 						<td ng-if="player && $index == playerIndex"><input type="checkbox" ng-model="player.ready" ng-disabled="player.name.length == 0"></td>
 					</tr>
 				</tbody>

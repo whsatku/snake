@@ -87,13 +87,17 @@ Lobby.prototype.addClient = function(spark){
 Lobby.prototype.createSnakeForClient = function(spark){
 	spark.snake = this.game.addSnake({
 		name: spark.name,
-		color: spark.color
+		color: spark.color,
+		bot: spark.bot
 	});
 	spark.snakeIndex = spark.snake.index;
-	spark.write({
-		lobby: this.id,
-		snakeIndex: spark.snakeIndex
-	});
+	if(typeof spark.write == "function"){
+		spark.write({
+			lobby: this.id,
+			snakeIndex: spark.snakeIndex,
+			bot: spark.bot
+		});
+	}
 	this.cmdQueue.push(["addSnake", {
 		name: spark.name,
 		color: spark.color
@@ -128,6 +132,7 @@ Lobby.prototype.startLobby = function(){
 	this.game = new GameLogic.Game();
 	this.game.setSettings(this.settings);
 	this.game.on("gameOver", this.onGameOver.bind(this));
+	this.game.on("snake.input", this.onFakeInput.bind(this));
 	this.sendStateToAll();
 };
 
@@ -155,6 +160,10 @@ Lobby.prototype.startGame = function(){
  */
 Lobby.prototype.broadcast = function(data, each){
 	for(var i = 0; i < this.clients.length; i++){
+		if(typeof this.clients[i].write != "function"){
+			// Bot
+			continue;
+		}
 		if(typeof each == "function"){
 			each(data, this.clients[i], i);
 		}
@@ -179,7 +188,7 @@ Lobby.prototype.getState = function(hashed){
 	var state = {
 		lobby: this.id,
 		state: this.state,
-		ping: _.pluck(this.clients, "ping")
+		ping: this.getClientsPing()
 	};
 	if(this.game){
 		state.game = this.game.prepareState();
@@ -197,7 +206,8 @@ Lobby.prototype.getState = function(hashed){
 			state.players.push({
 				name: player.name,
 				color: player.color,
-				ready: player.ready
+				ready: player.ready,
+				bot: player.bot
 			});
 		}
 	}
@@ -209,7 +219,7 @@ Lobby.prototype.getState = function(hashed){
 
 Lobby.prototype.setAllReady = function(val){
 	for(var i = 0; i < this.clients.length; i++){
-		this.clients[i].ready = val;
+		this.clients[i].ready = this.clients[i].bot ? true : val;
 	}
 	if(val){
 		this.emit("ready");
@@ -299,7 +309,10 @@ Lobby.prototype._autoNextTick = function(){
 	if(this._autoNextTickTimer){
 		return;
 	}
-	if(this.clients.length === 0){
+	var hasNonBot = this.clients.some(function(client){
+		return !client.bot;
+	});
+	if(!hasNonBot){
 		return;
 	}
 	this._autoNextTickTimer = setTimeout(function(){
@@ -359,6 +372,10 @@ Lobby.prototype.setSettings = function(settings){
 	this.sendStateToAll();
 };
 
+Lobby.prototype.onFakeInput = function(snake, input){
+	this.cmdQueue.push(["input", snake.index, input]);
+};
+
 Lobby.prototype.onGameOver = function(){
 	this.state = Lobby.STATE.FINISHED;
 
@@ -372,6 +389,28 @@ Lobby.prototype.kickAll = function(){
 		delete spark.lobby;
 	}, this);
 	this.clients = [];
+};
+
+Lobby.prototype.addBot = function(){
+	if(this.clients.length < this.maxClients){
+		this.clients.push({
+			name: "Bot",
+			color: this.getFreeColor(),
+			ready: true,
+			bot: true,
+			lobby: this
+		});
+		this.sendStateToAll();
+	}
+};
+
+Lobby.prototype.getClientsPing = function(){
+	var ping = [];
+	for(var i = 0; i < this.clients.length; i++){
+		var client = this.clients[i];
+		ping.push(client.bot ? client.snake && client.snake.lastCalcTime || 0 : client.ping);
+	}
+	return ping;
 };
 
 module.exports = Lobby;

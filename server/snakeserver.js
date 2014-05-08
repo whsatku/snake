@@ -71,9 +71,7 @@ SnakeServer.prototype.handleMessage = function(spark, data){
 			case "lobbyleave":
 				var lobby = spark.lobby;
 				spark.lobby.removeClient(spark);
-				// if(lobby.clients.length === 0){
-				// 	delete this.lobby[lobby.id];
-				// }
+				this.cleanup();
 				break;
 			case "lobbysettings":
 				if(!spark.lobby.isLobbyHead(spark)){
@@ -82,6 +80,25 @@ SnakeServer.prototype.handleMessage = function(spark, data){
 					break;
 				}
 				spark.lobby.setSettings(data.settings);
+				break;
+			case "lobbyaddbot":
+				if(!spark.lobby.isLobbyHead(spark)){
+					spark.write({error: "noperm"});
+					winston.info("[Lobby %s] Spark %s tried to add bot", spark.lobby.id, spark.id);
+					break;
+				}
+				spark.lobby.addBot();
+				break;
+			case "lobbykick":
+				if(!spark.lobby.isLobbyHead(spark)){
+					spark.write({error: "noperm"});
+					winston.info("[Lobby %s] Spark %s tried to kick", spark.lobby.id, spark.id);
+					break;
+				}
+				var target = spark.lobby.clients[data.index];
+				if(target && target.bot){
+					spark.lobby.removeClient(target);
+				}
 				break;
 			case "user":
 				spark.lobby.setUserData(spark, data.user);
@@ -131,7 +148,10 @@ SnakeServer.prototype.autoCleanup = function(){
 
 SnakeServer.prototype.cleanup = function(){
 	this.lobby = _.pick(this.lobby, function(item){
-		return item.permanent || item.clients.length > 0;
+		var hasNonBot = item.clients.some(function(client){
+			return !client.bot;
+		});
+		return item.permanent || hasNonBot;
 	});
 	winston.debug("Lobby garbage collection pass");
 };

@@ -23,7 +23,9 @@ AISnake.prototype.beforeStep = function(){
 	AISnake.super_.prototype.beforeStep.apply(this, arguments);
 
 	this._powerup = this.getPowerup();
+	var timeStart = new Date().getTime();
 	var path = this.findPath(AISnake.AI_BUDGET);
+	this.lastCalcTime = new Date().getTime() - timeStart;
 	if(path.path.length > 1){
 		var next = path.path[1];
 		var input = this.getInputTo(next);

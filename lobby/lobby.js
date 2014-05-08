@@ -181,6 +181,14 @@ angular.module("snake")
 				}
 				origStartGame();
 			};
+
+			$scope.addBot = function(){
+				netcode.send({command: "lobbyaddbot"});
+			};
+
+			$scope.kick = function(index){
+				netcode.send({command: "lobbykick", index: index});
+			};
 		}]);
 	}
 }]);

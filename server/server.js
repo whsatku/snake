@@ -19,5 +19,7 @@ snake.bind(primus);
 snake.autoCleanup();
 snake.demoServer();
 
+var GameLogic = require("../rules");
+
 server.listen(45634);
 console.log("port 45634");
