@@ -3,6 +3,7 @@
 var pathfinder = require("a-star");
 var Powerup = require("./powerup");
 var WorldObject = require("./worldobject");
+var Snake = require("./snake");
 
 var AISnake = function AISnake(){
 	AISnake.super_.apply(this, arguments);
@@ -17,7 +18,7 @@ AISnake.AI_BUDGET = 5;
 // AI calculation should not be redone on other clients
 AISnake.cls = "Snake";
 
-require("util").inherits(AISnake, require("./snake"));
+require("util").inherits(AISnake, Snake);
 
 AISnake.prototype.beforeStep = function(){
 	AISnake.super_.prototype.beforeStep.apply(this, arguments);
@@ -37,13 +38,18 @@ AISnake.prototype.beforeStep = function(){
 };
 
 AISnake.prototype.getPowerup = function(){
+	var minObject, minDistance = 1E10;
 	for(var i = 0; i < this.world.objects.length; i++){
 		var obj = this.world.objects[i];
-		// only simple powerup counts
-		if(obj.constructor.cls == Powerup.cls){
-			return obj;
+		if(obj instanceof Powerup){
+			var distance = this.distance(this.getStartNode(), [obj.x, obj.y]);
+			if(!minObject || distance < minDistance){
+				minObject = obj;
+				minDistance = distance;
+			}
 		}
 	}
+	return minObject;
 };
 
 AISnake.prototype.isEnd = function(node){
@@ -105,8 +111,13 @@ AISnake.prototype.isWalkable = function(node){
 	object.x = node[0];
 	object.y = node[1];
 	var collision = this.world.checkCollision(object);
+	var canBite = this.hasPerk("bite");
 	for(var i = 0; i < collision.length; i++){
-		if(collision[i].deadly){
+		var obj = collision[i];
+		if(canBite && obj !== this && obj instanceof Snake){
+			continue;
+		}
+		if(obj.deadly){
 			return false;
 		}
 	}
