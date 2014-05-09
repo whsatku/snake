@@ -37,7 +37,6 @@ window.GameLayer = cc.LayerColor.extend({
 		this.initGame();
 		this.initPerkBar();
 		this.initScoreboard();
-		this.scheduleUpdate();
 
 		if(this.settings.local){
 			this.initLocalGame();
