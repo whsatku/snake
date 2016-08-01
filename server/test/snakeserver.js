@@ -2,7 +2,7 @@ var expect = require("chai").expect;
 var SnakeServer = require("../snakeserver");
 var Lobby = require("../lobby");
 var GameLogic = require("../../rules/");
-var _ = require("underscore");
+var _ = require("lodash");
 var MockSpark = require("./mockspark");
 
 describe("SnakeServer", function(){
@@ -144,7 +144,7 @@ describe("SnakeServer", function(){
 			var spark = MockSpark();
 			var lobby = this.server.createLobby(spark);
 			var lobby2 = this.server.createLobby(spark);
-			
+
 			expect(Object.keys(this.server.lobby)).to.have.length(2);
 
 			this.server.cleanup();
